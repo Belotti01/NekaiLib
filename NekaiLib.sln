@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.32912.340
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nekai.Common", "Nekai.Common\Nekai.Common.csproj", "{DF0905DB-BA25-48F8-98FF-384ED71770B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nekai.Interactivity", "Nekai.Interactivity\Nekai.Interactivity.csproj", "{D1551EFC-C512-4378-A17C-F65BC1FFB8FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF0905DB-BA25-48F8-98FF-384ED71770B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF0905DB-BA25-48F8-98FF-384ED71770B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF0905DB-BA25-48F8-98FF-384ED71770B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF0905DB-BA25-48F8-98FF-384ED71770B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1551EFC-C512-4378-A17C-F65BC1FFB8FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1551EFC-C512-4378-A17C-F65BC1FFB8FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1551EFC-C512-4378-A17C-F65BC1FFB8FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1551EFC-C512-4378-A17C-F65BC1FFB8FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {70BBF8E8-1188-4AED-9FBC-3FFFDE7971EA}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,2 @@
+﻿- Create an ILogger based on the CLI methods.
+- Allow _string[]_ parameters (with compatibility from/to _string_) to be passed to the _CommandSet.TryRun_ method.
