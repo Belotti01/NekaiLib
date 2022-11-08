@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace Nekai.Common;
+namespace Nekai.Common.Reflection;
 
 public static class TypeConversion {
     private static readonly Dictionary<Type, ICustomConverter> _customConverters;
