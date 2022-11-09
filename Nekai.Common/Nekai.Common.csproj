@@ -14,7 +14,6 @@
 	  <Description>Extension methods and utilities for faster development.</Description>
 	  <AssemblyVersion>0.1.0</AssemblyVersion>
 	  <FileVersion>0.1.0</FileVersion>
-	  <AnalysisLevel>preview-minimum</AnalysisLevel>
 	  <OutputType>Exe</OutputType>
   </PropertyGroup>
 
