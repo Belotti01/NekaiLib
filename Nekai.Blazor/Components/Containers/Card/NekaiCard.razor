@@ -1,0 +1,35 @@
+﻿@namespace Nekai.Blazor.Components
+
+@inherits NekaiPositionableComponent
+
+<FluentCard Class=@Class
+			Style=@Style
+			AdditionalAttributes="AdditionalAttributes"
+			BackReference="BackReference">
+	<NekaiDiv Flex="@FlexType.Column" AlignItems="@_contentAlignment">
+		@NekaiCardHeader
+		@NekaiCardBody
+		@NekaiCardFooter
+	</NekaiDiv>
+</FluentCard>
+
+@code {
+	[Parameter]
+	public bool CenterContent {get; set; } = false;
+	private PositioningType _contentAlignment = PositioningType.None;
+
+	[Parameter]
+	public RenderFragment? NekaiCardHeader { get; set; }
+	[Parameter]
+	public RenderFragment? NekaiCardBody { get; set; }
+	[Parameter]
+	public RenderFragment? NekaiCardFooter { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if(CenterContent) {
+			_contentAlignment = PositioningType.Center;
+		}
+	}
+}

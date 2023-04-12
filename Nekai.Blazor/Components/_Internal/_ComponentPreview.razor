@@ -1,0 +1,22 @@
+﻿@namespace Nekai.Blazor.Components.Internal
+
+@inherits NekaiContainerBase
+
+<NekaiCell ContentAlignment="@PositioningType.Center" Flex="@FlexType.Column" Borders="@Borders.All" YPadding="PaddingType.Medium">
+	@if(Title is not null)
+	{
+		<NekaiText XMargin="@MarginType.Auto" TextType="@TextType.H4" Alignment="@PositioningType.Center">
+			@Title
+		</NekaiText>
+	}
+	<div class="w-100 h-100">
+		@ChildContent
+	</div>
+</NekaiCell>
+
+@code {
+	[Parameter]
+	public string? Title { get; set; }
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+}

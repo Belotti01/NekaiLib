@@ -1,0 +1,34 @@
+﻿@page "/preview/container"
+
+
+<_ComponentsPreviewGrid Title="NekaiContainer">
+	<_ComponentPreview Title="Default">
+		<NekaiContainer>
+			Default
+		</NekaiContainer>
+	</_ComponentPreview>
+	<_ComponentPreview Title="Border Size">
+		<NekaiAutoGrid Items="@Enumerable.Range(1, 5)" Context="size" Columns="3">
+			<CellTemplate>
+				<NekaiContainer YPadding="@PaddingType.Medium" BorderSize="@size" Margin="@MarginType.Small">
+					Size @size
+				</NekaiContainer>
+			</CellTemplate>
+		</NekaiAutoGrid>
+	</_ComponentPreview>
+	<_ComponentPreview Title="Border Color">
+		<NekaiAutoGrid Items="@_Colors" Context="color" Columns="3">
+			<CellTemplate>
+				<NekaiContainer YPadding="@PaddingType.Medium" BorderSize="1" BorderColor="@color" Margin="@MarginType.Small">
+					@color
+				</NekaiContainer>
+			</CellTemplate>
+		</NekaiAutoGrid>
+	</_ComponentPreview>
+</_ComponentsPreviewGrid>
+
+
+
+@code {
+	readonly ColorType[] _Colors = Enum.GetValues<ColorType>();
+}

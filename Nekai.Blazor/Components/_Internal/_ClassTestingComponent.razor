@@ -1,0 +1,24 @@
+﻿@using System.ComponentModel.DataAnnotations
+@namespace Nekai.Blazor.Components.Internal
+
+<div class="w-100 border border-2">
+	<!-- Input -->
+	<div class="d-flex border border-2 m-2 p-1">
+		Class:
+		<InputText class="w-75 ms-3" @bind-Value="Class" />
+	</div>
+	
+	<!-- Preview -->
+	<div class="border border-2 m-2 p-1">
+		Preview:
+		<div class="w-100 m-2 border border-3">
+			@ChildContent(Class)
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter, Required]
+	public RenderFragment<string> ChildContent { get; set; } = null!;
+	public string Class { get; set; } = "";
+}

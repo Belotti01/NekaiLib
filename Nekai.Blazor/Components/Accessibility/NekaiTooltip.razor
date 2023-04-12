@@ -1,0 +1,18 @@
+﻿@namespace Nekai.Blazor.Components
+
+@inherits NekaiContainerBase
+@implements IDisableableComponent
+
+<FluentTooltip Position="@Position"
+			   Visible="@IsDisabled">
+	@ChildContent
+</FluentTooltip>
+
+@code {
+	[Parameter]
+	public TooltipPosition Position { get; set; } = TooltipPosition.Top;
+	[Parameter]
+	public bool IsDisabled { get; set; } = false;
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+}

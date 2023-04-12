@@ -1,0 +1,21 @@
+﻿@page "/preview/button"
+
+
+<_ComponentsPreviewGrid Title="NekaiButton">
+	<_ComponentPreview Title="Default">
+		<NekaiButton>Default</NekaiButton>
+	</_ComponentPreview>
+	<_ComponentPreview Title="Colored">
+		<NekaiAutoGrid TItem="ColorType" Items=@_Colors Columns="3" NoGutter>
+			<CellTemplate>
+				<NekaiButton ButtonColor="@context">@(context.ToString())</NekaiButton>
+			</CellTemplate>
+		</NekaiAutoGrid>
+	</_ComponentPreview>
+</_ComponentsPreviewGrid>
+
+
+
+@code {
+	readonly ColorType[] _Colors = Enum.GetValues<ColorType>();
+}

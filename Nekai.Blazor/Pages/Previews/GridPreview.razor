@@ -1,0 +1,27 @@
+﻿@page "/preview/grid"
+
+<_ComponentsPreviewGrid Title="NekaiButton">
+	<_ComponentPreview Title="Using DefaultColSpan">
+		<NekaiGrid Class="w-75" DefaultColSpan="4" BorderSize="5" BorderColor="@ColorType.Primary">
+			<Rows>
+				<NekaiRow BorderColor="@ColorType.Danger" BorderSize="3">
+					<NekaiCell BorderSize="2">Default Cell</NekaiCell>
+					<NekaiCell BorderSize="2">NoGutter Cell</NekaiCell>
+				</NekaiRow>
+				<NekaiRow BorderColor="@ColorType.Danger" BorderSize="3">
+					<NekaiCell BorderSize="2">Overridden ColSpan</NekaiCell>
+					<NekaiCell BorderSize="2"></NekaiCell>
+				</NekaiRow>
+			</Rows>
+		</NekaiGrid>
+	</_ComponentPreview>
+	<_ComponentPreview Title="Colored">
+
+	</_ComponentPreview>
+</_ComponentsPreviewGrid>
+
+
+
+@code {
+	readonly ColorType[] _Colors = Enum.GetValues<ColorType>();
+}

@@ -1,0 +1,12 @@
+﻿@namespace Nekai.Blazor.Components
+
+@inherits NekaiDynamicComponentBase
+
+<div class="@Class" style="@Style">
+	@ChildContent
+</div>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+}

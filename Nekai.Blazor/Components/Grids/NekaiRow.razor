@@ -1,0 +1,24 @@
+﻿@namespace Nekai.Blazor.Components
+
+@inherits NekaiContainerBase
+
+<div class=@Class style=@Style>
+	<CascadingValue Name="@nameof(NekaiCell.ColSpan)" Value="@DefaultColSpan" IsFixed>
+		@ChildContent
+	</CascadingValue>
+</div>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+	[Parameter, CascadingParameter(Name = nameof(NekaiCell.ColSpan))]
+	public int? DefaultColSpan { get; set; }
+	[Parameter, CascadingParameter(Name = nameof(NekaiCell.ResponsiveColSpan))]
+	public int[]? ResponsiveColSpan { get; set; }
+
+	protected override void OnStyling(ClassBuilder classBuilder)
+	{
+		base.OnStyling(classBuilder);
+		classBuilder.WithClass("row");
+	}
+}

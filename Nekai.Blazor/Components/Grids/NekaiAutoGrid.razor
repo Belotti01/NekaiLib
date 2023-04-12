@@ -1,0 +1,54 @@
+﻿@using System.ComponentModel.DataAnnotations;
+@namespace Nekai.Blazor.Components
+
+@inherits NekaiPositionableComponent
+
+@typeparam TItem
+
+<div class=@Class style=@Style>
+	@foreach(TItem[] row in _rows)
+	{
+		<div class="row">
+			@foreach(TItem item in row) {
+				<div class=@_columnClass>
+					@CellTemplate(item)
+				</div>
+			}
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter, Required]
+	public RenderFragment<TItem> CellTemplate { get; set; } = null!;
+	[Parameter, Required]
+	public IEnumerable<TItem> Items { get; set; } = null!;
+	[Parameter, Required]
+	public int Columns { get; set; }
+	[Parameter]
+	public bool NoGutter { get; set; }
+	
+	private string? _columnClass;
+	private IEnumerable<TItem[]> _rows = null!;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		// Amount of columns cannot exceed 12
+		if (Columns is <= 0 or > 12) {
+			NekaiLogs.Shared.Warning($"Columns count out of range in {nameof(NekaiAutoGrid<TItem>)}: expected between 1 and 12 (inclusive), but found {Columns}.");
+			Columns = Math.Clamp(Columns, 1, 12);
+		}
+		_rows = Items.Chunk(Columns);
+		_columnClass = $"col col-{(12 / Columns)}";
+	}
+
+
+	protected override void OnStyling(ClassBuilder classBuilder)
+	{
+		base.OnStyling(classBuilder);
+		classBuilder
+			.WithClass("container")
+			.WithNoGutter(NoGutter);
+	}
+}

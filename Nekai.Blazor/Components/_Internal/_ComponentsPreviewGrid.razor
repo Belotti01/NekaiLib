@@ -1,0 +1,40 @@
+﻿@namespace Nekai.Blazor.Components.Internal
+
+@inherits NekaiDynamicComponentBase
+
+<NekaiGrid Borders="@Borders.All" ContentAlignment="PositioningType.Center" NoGutter>
+	<HeaderContent>
+		<NekaiText TextType="@TextType.H2" XPadding="@PaddingType.Auto" Alignment="PositioningType.Center" BackgroundColor="@ColorType.Primary">
+			@(Title ?? "Previews")
+		</NekaiText>
+	</HeaderContent>
+	
+	<Rows>
+		<CascadingValue Name="@nameof(NekaiCell.ColSpan)" Value="@_colSpan" IsFixed>
+			@ChildContent
+		</CascadingValue>
+	</Rows>
+</NekaiGrid>
+
+@code {
+	[Parameter]
+	public string? Title { get; set; }
+	[Parameter]
+	public bool SingleColumn { get; set; }
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	private int _colSpan;
+
+	protected override void OnParametersSet()
+	{
+		base.BorderSize = 2;
+		base.ContentAlignment = PositioningType.Center;
+
+		base.OnParametersSet();
+
+		_colSpan = SingleColumn
+			? 12
+			: 6;
+	}
+}

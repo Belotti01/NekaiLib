@@ -1,0 +1,43 @@
+﻿@namespace Nekai.Blazor.Components
+
+@inherits NekaiContainerBase
+@implements ISelfPositioningComponent
+
+@code {
+	[Parameter]
+	public PositioningType Alignment { get; set; } = PositioningType.None;
+	[Parameter]
+	public int? FlexSize { get; set; }
+	[Parameter]
+	public int? ItemOrder { get; set; }
+	[Parameter]
+	public bool FlexFill { get; set; }
+	[Parameter]
+	public StyleSet StyleSet { get; set; } = StyleSet.None;
+	[Parameter]
+	public DisplayType Display { get; set; } = DisplayType.None;
+
+	[Parameter]
+	public MarginType Margin { get; set; } = MarginType.None;
+	[Parameter]
+	public MarginType XMargin { get; set; } = MarginType.None;
+	[Parameter]
+	public MarginType YMargin { get; set; } = MarginType.None;
+
+
+	protected override void OnStyling(ClassBuilder classBuilder)
+	{
+		base.OnStyling(classBuilder);
+
+		classBuilder
+			.WithStyleSet(StyleSet)
+			.WithDisplay(Display)
+			.WithAlignSelf(Alignment)
+			.WithMargin(Margin, Dimension.All)
+			.WithMargin(XMargin, Dimension.X)
+			.WithMargin(YMargin, Dimension.Y)
+			.WithFlexGrowOrShrink(FlexSize)
+			.WithFlexFill(FlexFill)
+			.WithItemOrder(ItemOrder);
+	}
+}

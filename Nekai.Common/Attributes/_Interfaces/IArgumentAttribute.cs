@@ -3,12 +3,13 @@
 /// <summary>
 /// Defines a container of data regarding an argument-parameter pair.
 /// </summary>
-public interface IArgumentAttribute {
-
+public interface IArgumentAttribute
+{
 	/// <summary>
 	/// The attribute to search for inside the arguments string to extract the value for this Field or Property.
 	/// </summary>
 	public string Attribute { get; }
+
 	/// <summary>
 	/// Alternative argument names for this Field or Property.
 	/// </summary>

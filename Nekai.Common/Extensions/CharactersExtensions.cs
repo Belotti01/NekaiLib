@@ -1,7 +1,11 @@
 ﻿namespace Nekai.Common;
-public static class CharactersExtensions {
-	public static bool Equals(this char c, char other, StringComparison comparison) {
-		return comparison switch {
+
+public static class CharactersExtensions
+{
+	public static bool Equals(this char c, char other, StringComparison comparison)
+	{
+		return comparison switch
+		{
 			StringComparison.Ordinal => c.Equals(other),
 			StringComparison.OrdinalIgnoreCase => char.ToLower(c).Equals(char.ToLower(other)),
 			StringComparison.InvariantCultureIgnoreCase => c.ToLowerInvariant().Equals(other.ToLowerInvariant()),
@@ -21,4 +25,13 @@ public static class CharactersExtensions {
 
 	public static char ToLowerInvariant(this char c)
 		=> char.ToLowerInvariant(c);
+
+	public static bool IsNumber(this char c)
+		=> char.IsNumber(c);
+
+	public static bool IsUpper(this char c)
+		=> char.IsUpper(c);
+
+	public static bool IsLower(this char c)
+		=> char.IsLower(c);
 }

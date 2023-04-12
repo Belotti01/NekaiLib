@@ -1,6 +1,7 @@
 ﻿namespace Nekai.Common;
 
-public enum ImplementationType {
+public enum ImplementationType
+{
 	Field,
 	Property,
 	Method,
