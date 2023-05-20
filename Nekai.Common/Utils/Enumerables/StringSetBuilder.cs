@@ -17,7 +17,7 @@ public class StringSetBuilder
 	{
 		if(string.IsNullOrEmpty(value))
 			return this;
-		
+
 		lock(this)
 		{
 			Set.Add(value);

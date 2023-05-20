@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 /// <summary>
 /// Enum that lists all languages supported by the Nekai framework.

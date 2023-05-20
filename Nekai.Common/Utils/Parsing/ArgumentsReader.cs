@@ -16,8 +16,11 @@ public class ArgumentsReader
 	public ArgumentsReader(IEnumerable<string> args, char parameterPrefix = DEFAULT_PARAMETER_PREFIX)
 	{
 		ParameterPrefix = parameterPrefix;
-		// Pre-allocate for the whole text + one " character for each argument (which is meant to be two for each value)
-		// + another for each argument -1 to include the spaces between them + one space at the end to avoid useless checks
+		// Pre-allocate memory for:
+		// The whole text
+		// + 2x " characters for each argument
+		// + One space between each argument
+		// + One space at the end to avoid an additional check in the loop
 		StringBuilder sb = new(args.Sum(x => x.Length) + args.Count() * 2);
 
 		foreach(string arg in args)
@@ -34,13 +37,13 @@ public class ArgumentsReader
 			sb.Append(' ');
 		}
 
-		NewParse(sb.ToString());
+		Parse(sb.ToString());
 	}
 
 	public ArgumentsReader(string args, char parameterPrefix = DEFAULT_PARAMETER_PREFIX)
 	{
 		ParameterPrefix = parameterPrefix;
-		NewParse(args);
+		Parse(args);
 	}
 
 	public bool TryRead(string parameter, [NotNullWhen(true)] out string? value)
@@ -82,12 +85,12 @@ public class ArgumentsReader
 		return value is not null;
 	}
 
-	protected void NewParse(string args)
+	protected void Parse(string args)
 	{
 		char? wrapper;
 		Dictionary<string, string> parameters = new();
 		args = args.Trim();
-		var span = args.AsSpan();
+		ReadOnlySpan<char> span = args.AsSpan();
 		string? lastKey = null, lastValue = null;
 		int endIndex;
 
@@ -150,107 +153,13 @@ public class ArgumentsReader
 		_arguments = parameters;
 	}
 
-	private string ParseKey(ReadOnlySpan<char> part)
+	private static string ParseKey(ReadOnlySpan<char> part)
 	{
 		return part[1..].ToString();
 	}
 
-	private string ParseValue(ReadOnlySpan<char> part, char wrapper)
+	private static string ParseValue(ReadOnlySpan<char> part, char wrapper)
 	{
 		return part[1..].ToString();
-	}
-
-	protected void Parse(string args)
-	{
-		NewParse(args);
-		return;
-
-		char[] parameterPostfixes = new[] { '\'', '"', ' ' };
-
-		bool inQuotes = false;
-		bool inDoubleQuotes = false;
-		bool preceedingBackslash = false;
-		string parameter = "";
-		char c;
-		StringBuilder sb = new();
-		_arguments.Clear();
-
-		for(int i = 0; i < args.Length; i++)
-		{
-			c = args[i];
-
-			// Check for quotes end
-			if(!preceedingBackslash)
-			{
-				if(inQuotes && c == '\'')
-				{
-					inQuotes = false;
-					continue;
-				}
-				if(inDoubleQuotes && c == '"')
-				{
-					inDoubleQuotes = false;
-					continue;
-				}
-			}
-
-			if(inQuotes || inDoubleQuotes)
-			{
-				if(preceedingBackslash)
-				{
-					// Escape character
-					sb.Append(c);
-					preceedingBackslash = false;
-					continue;
-				}
-				if(c == '\\')
-				{
-					// Escape the next character
-					preceedingBackslash = true;
-					continue;
-				}
-			}
-			else if(sb.ToString().Trim().Length == 0)
-			{
-				// Check for argument quoting start
-				if(c == '\'')
-				{
-					inQuotes = true;
-					continue;
-				}
-				if(c == '"')
-				{
-					inDoubleQuotes = true;
-					continue;
-				}
-			}
-
-			if(c == ParameterPrefix)
-			{
-				// Save current parameter
-				_arguments.TryAdd(parameter, sb.ToString().Trim());
-				parameter = "";
-				sb.Clear();
-				i++;
-				// Read the parameter (up until a space, " or ' character)
-				while(i < args.Length && !(parameterPostfixes.Contains(args[i])))
-				{
-					parameter += args[i];
-					i++;
-				}
-				continue;
-			}
-
-			sb.Append(c);
-		}
-
-		if(!string.IsNullOrEmpty(parameter))
-		{
-			_arguments.TryAdd(parameter, sb.ToString().Trim());
-		}
-		else if(sb.Length > 0)
-		{
-			_arguments.TryAdd("", sb.ToString().Trim());
-		}
 	}
 }

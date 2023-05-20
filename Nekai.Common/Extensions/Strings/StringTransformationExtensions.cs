@@ -43,4 +43,31 @@ public static class StringTransformationExtensions
 			? str.PadLeft(length, paddingChar)
 			: str.PadRight(length, paddingChar);
 	}
+
+	/// <summary>
+	/// Prepend <paramref name="tabCount"/> tabs to each line of the <see langword="string"/>.
+	/// </summary>
+	/// <param name="str"> The <see langword="string"/> to apply the tabbing to. </param>
+	/// <param name="tabCount"> The amount of tab characters to prepend to each line of the <see langword="string"/>. </param>
+	/// <returns> A new <see langword="string"/> that is a copy of <paramref name="str"/> with normalized newline characters 
+	/// for the current environment. If <paramref name="tabCount"/> is greater than 0, prepend each line with that amount of
+	/// <c>'\t'</c> characters. </returns>
+	/// <exception cref="ArgumentOutOfRangeException"> Thrown when <paramref name="tabCount"/> is less than 0. </exception>
+	public static string Tabbed(this string str, int tabCount = 1)
+	{
+		if(tabCount <= 0)
+		{
+			if(tabCount == 0)
+			{
+				// Use ReplaceLineEndings() to ensure consistency of the implementation.
+				return str.ReplaceLineEndings();
+			}
+			throw new ArgumentOutOfRangeException(nameof(tabCount), tabCount, "Tab count must be greater or equal to 0.");
+		}
+
+		string tabs = new('\t', tabCount);
+		str = tabs + str.ReplaceLineEndings(Environment.NewLine + tabs);
+
+		return str;
+	}
 }

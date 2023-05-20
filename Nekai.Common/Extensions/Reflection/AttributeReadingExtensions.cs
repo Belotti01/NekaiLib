@@ -56,14 +56,9 @@ public static class AttributeReadingExtensions
 
 	#region Values of specific attributes
 
+	/// <summary> Check whether the <paramref name="member"/> is annotated with the <see cref="RequiredAttribute"/>. </summary>
 	public static bool IsRequiredMember(this MemberInfo member)
 		=> member.GetCustomAttribute<RequiredAttribute>() is not null;
-
-	public static string? GetDisplayName(this MemberInfo member)
-		=> member.GetCustomAttribute<DisplayAttribute>()?.Name;
-
-	public static string? GetDescription(this MemberInfo member)
-		=> member.GetCustomAttribute<DisplayAttribute>()?.Description;
 
 	#endregion Values of specific attributes
 }

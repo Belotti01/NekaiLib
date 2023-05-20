@@ -13,7 +13,7 @@ public static partial class NekaiData
 		private static string _GlobalConfigurationDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Nekai");
 		private static string _GlobalConfigurationFilepath => Path.Combine(_GlobalConfigurationDirectory, "GlobalConfiguration.json");
 		private static string _DefaultLocalConfigurationDirectory => Path.Combine(_GlobalConfigurationDirectory, "Local");
-		
+
 		internal static string _Load()
 		{
 			string localDir = _GetLocalDirectoryPath();

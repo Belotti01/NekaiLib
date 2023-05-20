@@ -2,7 +2,8 @@
 
 namespace Nekai.Interactivity;
 
-public class MissingAttributeException : Exception {
+public class MissingAttributeException : Exception
+{
 	public Type AttributeType { get; protected set; }
 	public Type? ThrowingType { get; protected set; }
 	public MemberInfo? ThrowingMember { get; protected set; }
@@ -15,10 +16,9 @@ public class MissingAttributeException : Exception {
 	}
 
 	public MissingAttributeException(Type attributeType, MemberInfo throwingMember)
-		: base($"Member \"{throwingMember.Name}\" of Type \"{throwingMember.DeclaringType.Name}\" requires an attribute of type [{attributeType.Name}].")
+		: base($"Member \"{throwingMember.Name}\" of Type \"{throwingMember.DeclaringType?.Name ?? "<Unknown>"}\" requires an attribute of type [{attributeType.Name}].")
 	{
 		AttributeType = attributeType;
 		ThrowingMember = throwingMember;
 	}
-
 }

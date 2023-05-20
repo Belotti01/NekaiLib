@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serilog;
-using Serilog.Core;
+﻿using Serilog;
 using Serilog.Events;
 
 namespace Nekai.Common;
@@ -37,7 +31,7 @@ public static class SerilogLoggerExtensions
 		logger.Write(level, _FormatForLogging(ex));
 	}
 
-	private static string _FormatForLogging(Exception ex) 
+	private static string _FormatForLogging(Exception ex)
 	{
 		if(CurrentApp.HasDebugger)
 			return ex.ToString();
@@ -49,8 +43,9 @@ public static class SerilogLoggerExtensions
 		if(message is not null)
 		{
 			logger.Write(level, message, propertyValues);
-			Exceptor.ThrowIfDebug(string.Format(message, propertyValues), false);
-		}else
+			Exceptor.ThrowIfDebug(string.Format(message, propertyValues));
+		}
+		else
 		{
 			Exceptor.ThrowIfDebug("An unspecified DEBUG error occurred.");
 		}

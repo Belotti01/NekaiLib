@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Security;
-using Nekai.Common;
 
 namespace Nekai.Common;
 
@@ -19,8 +17,8 @@ public static class NekaiFile
 	{
 		Result result = CanReadFile(filePath);
 		if(!result.IsSuccess)
-			return Result<bool>.Failure(result.Message);
-		
+			return Result.Failure(result.Message);
+
 		var attr = File.GetAttributes(filePath);
 		bool isReadOnlyOrSystem = attr.HasFlag(FileAttributes.ReadOnly) || attr.HasFlag(FileAttributes.System);
 		return Result.Success(isReadOnlyOrSystem);
@@ -81,7 +79,7 @@ public static class NekaiFile
 		var fileInfoResult = TryGetFileInfo(filePath);
 		if(!fileInfoResult.IsSuccess)
 			return Result.Failure(fileInfoResult.Message);
-		
+
 		try
 		{
 			FileInfo file = fileInfoResult.Value;
@@ -130,7 +128,7 @@ public static class NekaiFile
 		Result result = NekaiPath.IsValidPath(filepath);
 		if(!result.IsSuccess)
 			return result;
-		
+
 		if(!File.Exists(filepath))
 			return Result.Failure("File does not exist.");
 
@@ -138,7 +136,8 @@ public static class NekaiFile
 		{
 			string text = File.ReadAllText(filepath);
 			return Result.Success(text);
-		}catch(Exception ex)
+		}
+		catch(Exception ex)
 		{
 			return Result.Failure(NekaiPath.GetMessageForException(ex, filepath));
 		}
@@ -163,22 +162,56 @@ public static class NekaiFile
 	{
 		var result = NekaiPath.ValidatePath(filepath);
 		if(!result.IsSuccess)
-			return Result<FileInfo>.Failure(result.Message);
+			return Result.Failure(result.Message);
 		filepath = result.Value;
 
 		try
 		{
 			FileInfo fileInfo = new(filepath);
-			return Result<FileInfo>.Success(fileInfo);
+			return Result.Success(fileInfo);
 		}
 		catch(Exception ex)
 		{
-			return Result<FileInfo>.Failure(NekaiPath.GetMessageForException(ex, filepath));
+			return Result.Failure(NekaiPath.GetMessageForException(ex, filepath));
 		}
 	}
 
 	public static Result CanReadFile([NotNullWhen(true)] string? filePath)
 		=> _CanReadFileInternal(filePath, true);
+
+	/// <summary>
+	/// Check whether the last access made to the file has been made within the specified <paramref name="time"/> (inclusive).
+	/// </summary>
+	/// <param name="filePath"> The path to the file to check. </param>
+	/// <param name="time"> The expected maximum time distance since the last access to the file (inclusive). </param>
+	/// <returns> <see langword="true"/> if the file was last accessed after <paramref name="time"/> amount of time before
+	/// the current time, or <see langword="false"/> otherwise. If the <paramref name="filePath"/> is not a valid path, the file
+	/// cannot be found or an error occurs, returns an unsuccessful <see cref="Result{TResult}"/> instead. </returns>
+	public static Result<bool> WasLastAccessedWithin(string filePath, TimeSpan time)
+	{
+		var result = NekaiPath.ValidatePath(filePath);
+		if(!result.IsSuccess)
+			return Result.Failure(result.Message);
+
+		if(!File.Exists(filePath))
+			return Result.Failure($"File does not exist.");
+
+		filePath = result.Value;
+
+		DateTime lastAccessUTC;
+		try
+		{
+			lastAccessUTC = File.GetLastAccessTimeUtc(filePath);
+		}
+		catch(Exception ex)
+		{
+			// Metadata access denied, or file was not accessible.
+			return Result.Failure(NekaiPath.GetMessageForException(ex, filePath));
+		}
+
+		bool wasLastAccessInRange = DateTime.UtcNow <= lastAccessUTC + time;
+		return Result.Success(wasLastAccessInRange);
+	}
 
 	/// <summary>
 	/// Internal alternative to <see cref="CanReadFile(string?)"/> that allows skipping over the path validation, to avoid
@@ -193,16 +226,17 @@ public static class NekaiFile
 		{
 			var validationResult = NekaiPath.ValidatePath(filePath);
 			if(!validationResult.IsSuccess)
-				return Result.FromResult(validationResult);
+				return validationResult;
 			filePath = validationResult.Value;
-		}else
+		}
+		else
 		{
 			Debug.Assert(NekaiPath.ValidatePath(filePath).IsSuccess, $"Misuse of internal method: validate the path before calling {nameof(_CanReadFileInternal)} with parameter {nameof(validatePath)} set to false.");
 		}
 
 		if(!File.Exists(filePath))
 			return Result.Failure($"File \"{filePath}\" does not exist.");
-		
+
 		try
 		{
 			using FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);

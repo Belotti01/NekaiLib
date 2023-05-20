@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Sockets;
 
 namespace Nekai.Common;
 
-public struct NekaiProcessNetworkInfo
+public class NekaiProcessNetworkInfo
 {
 	public string Name { get; }
 	public string Host { get; }
@@ -27,7 +21,7 @@ public struct NekaiProcessNetworkInfo
 
 	public static NekaiProcessNetworkInfo ForCurrentProcess(ProtocolType protocol, int port)
 	{
-		string hostIp = CurrentApp.HostIp.MapToIPv4().ToString();
+		string hostIp = CurrentApp.LocalHost.IPAddress.MapToIPv4().ToString();
 		return new(CurrentApp.Name, hostIp, port, Environment.ProcessId, protocol);
 	}
 }

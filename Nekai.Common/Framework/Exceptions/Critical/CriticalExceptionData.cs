@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 // Required for removing access to throwing CriticalExceptions, while still keeping access to the contained data.
 // Also includes an API for keeping additional information fed from event handlers.
@@ -27,7 +21,7 @@ public class CriticalExceptionData
 	public bool ExitApplication { get; set; } = true;
 
 	private readonly List<string> _additionalDumpInformation = new();
-	
+
 	internal CriticalExceptionData(Exceptor.CriticalException ex)
 	{
 		Message = ex.Message;
@@ -53,7 +47,7 @@ public class CriticalExceptionData
 		// ADDITIONAL DUMP INFORMATION
 		if(_additionalDumpInformation.Any())
 		{
-			sb.Append('-', 10) .AppendLine("ADDITIONAL DUMP INFORMATION:");
+			sb.Append('-', 10).AppendLine("ADDITIONAL DUMP INFORMATION:");
 			foreach(string info in _additionalDumpInformation)
 			{
 				sb.AppendLine(info);
@@ -65,7 +59,7 @@ public class CriticalExceptionData
 			sb.Append('-', 10).AppendLine("STACK TRACE:");
 			sb.AppendLine(StackTrace);
 		}
-		
+
 		return sb.ToString();
 	}
 }

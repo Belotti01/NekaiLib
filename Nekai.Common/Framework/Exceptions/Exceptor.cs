@@ -1,11 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 using Serilog.Events;
 
 namespace Nekai.Common;
 
-// Called Exceptor instead of Throw/ThrowHelper to avoid collision with other libraries.
+// Called Exceptor instead of Throw/ThrowHelper to avoid collision with other external libraries.
+/// <summary>
+/// Helper class that provides methods to throw and log exceptions, but also safely handle critical errors that require
+/// the program to exit.
+/// </summary>
 public static partial class Exceptor
 {
 
@@ -13,34 +16,29 @@ public static partial class Exceptor
 	/// <summary> Invoked upon throwing a <see cref="CriticalException"/>, before ending the Application's execution. </summary>
 	public static event CriticalExceptionHandler? OnCriticalException;
 
-	
-	[StackTraceHidden]
+
+	[StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowCritical(AppExitCode exitCode, Exception? innerException = null)
 		=> _ThrowCriticalException(new CriticalException(exitCode, innerException));
-		
-	[StackTraceHidden]
+
+	[StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowCritical(AppExitCode exitCode, string message, Exception? innerException = null)
 		=> _ThrowCriticalException(new CriticalException(exitCode, message, innerException));
 
-	[Conditional("DEBUG")]
-	[DoesNotReturn]
-	[StackTraceHidden]
-	public static void ThrowIfDebug(string msg, bool writeLog = true)
-	{
-		if(writeLog)
-			ThrowAndLog(new Exception(msg), LogEventLevel.Debug);
-		_Throw(new Exception(msg));
-	}
+	[Conditional("DEBUG"), DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
+	public static void ThrowIfDebug(string msg, Exception? innerException = null)
+		=> _Throw(new Exception(msg, innerException));
 
-	[Conditional("DEBUG")]
-	[DoesNotReturn]
-	[StackTraceHidden]
-	public static void ThrowIfDebug<TException>(TException ex, bool writeLog = true)
+	[Conditional("DEBUG"), DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
+	public static void ThrowAndLogIfDebug(string msg, Exception? internalException = null)
+		=> ThrowAndLog(new Exception(msg, internalException), LogEventLevel.Debug);
+
+	[Conditional("DEBUG"), DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
+	public static void ThrowAndLogIfDebug<TException>(TException ex)
 		where TException : Exception
 		=> ThrowAndLog(ex, LogEventLevel.Debug);
 
-	[DoesNotReturn]
-	[StackTraceHidden]
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowAndLogError<TException>(TException ex)
 		where TException : Exception
 	{
@@ -48,30 +46,25 @@ public static partial class Exceptor
 		throw ex;
 	}
 
-	[DoesNotReturn]
-	[StackTraceHidden]
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowAndLogError(string? msg)
 		=> ThrowAndLogError(new Exception(msg));
 
-	[DoesNotReturn]
-	[StackTraceHidden]
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowAndLogWarning(string msg)
 		=> ThrowAndLog(new Exception(msg), LogEventLevel.Warning);
 
-	[DoesNotReturn]
-	[StackTraceHidden]
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowAndLog<TException>(TException ex)
 		where TException : Exception
 		=> ThrowAndLog(ex, LogEventLevel.Warning);
 
-	[DoesNotReturn]
-	[StackTraceHidden]
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
 	private static void _Throw<TException>(TException ex)
 		where TException : Exception
 		=> throw ex;
 
-	[DoesNotReturn]
-	[StackTraceHidden]
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowAndLog<TException>(TException ex, LogEventLevel logType)
 		where TException : Exception
 	{
@@ -85,13 +78,13 @@ public static partial class Exceptor
 	{
 		// Assume that everything is now broken and you need to somehow:
 		// 1) Launch any attached handlers
-		// 2) Dump all the information we have
-		// 3) Exit the application
+		// 2) Dump all the information we have on the error
+		// 3) Safely exit the application
 
 		CriticalExceptionData data = new(ex);
 		// Exception handlers might pre-emptively halt execution.
 		// To keep as much information as possible, while minimizing the risk of skipping the exportation process,
-		// temporarily delegate the operation to when the process exits
+		// temporarily delegate the operation to when the process exits.
 		EventHandler infoDumpDelegate = (_, _) => _ = _TryDumpCriticalExceptionInfo(data);
 		CurrentApp.OnProcessExit += infoDumpDelegate;
 
@@ -103,18 +96,18 @@ public static partial class Exceptor
 		{
 			data.AddDumpInformation("Handler delegated to critical exception errored.", exception.ToString());
 		}
-		// It's still safer to not wait until the process is dying to infodump, so remove the delegate if
-		// it can be done now...
+		// It's still safer to not wait until the process is dying to infodump, so remove the delegate if it can be done now...
 		if(_TryDumpCriticalExceptionInfo(data))
 		{
 			CurrentApp.OnProcessExit -= infoDumpDelegate;
 		}
 		// ... otherwise let it retry once more on process exit.
-		
-		if(data.ExitApplication)    
+
+		if(data.ExitApplication)
 			Environment.Exit((int)data.ExitCode);
 	}
 
+	[StackTraceHidden]
 	private static bool _TryDumpCriticalExceptionInfo(CriticalExceptionData data)
 	{
 		try
@@ -131,13 +124,16 @@ public static partial class Exceptor
 				string dir = Directory.GetCurrentDirectory();
 				string dumpFile = Path.Combine(dir, $"CRITICAL_ERROR_DUMP-{DateTime.Now:yyyyMMdd_hhmmss}.txt");
 				Result creationResult = NekaiFile.TryCreateOrOverwrite(dumpFile);
-				if(!(creationResult.IsSuccess))
+				if(!creationResult.IsSuccess)
 					return false;
 
 				File.WriteAllText(dumpFile, data.ToString());
 				return true;
 			}
-			catch { }
+			catch(Exception ex)
+			{
+				ThrowAndLogIfDebug(ex);
+			}
 		}
 		return false;
 	}

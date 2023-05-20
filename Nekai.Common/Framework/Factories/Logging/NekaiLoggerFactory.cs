@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Serilog;
+﻿using Serilog;
 
 namespace Nekai.Common;
 
@@ -16,7 +12,7 @@ public class NekaiLoggerFactory
 
 		bool isAnyOutputEnabled = config.LogToConsole || config.LogToFile;
 		if(!isAnyOutputEnabled)
-			return Result<ILogger>.Failure("No output was specified for the logger.");
+			return Result.Failure("No output was specified for the logger.");
 
 		// Convert the simplified NekaiLoggerConfiguration to Serilog's Configuration type
 		LoggerConfiguration serilogConfig = new();
@@ -33,7 +29,7 @@ public class NekaiLoggerFactory
 		{
 			Result result = NekaiDirectory.TryEnsureExistsForFile(config.OutputFilePathTemplate);
 			if(!result.IsSuccess)
-				return Result<ILogger>.Failure(result.Message);
+				return Result.Failure(result.Message);
 
 			// One overload takes an ITextFormatter, the other takes a string defining the "output template".
 			// Pick one based on the configuration.
@@ -46,7 +42,7 @@ public class NekaiLoggerFactory
 					formatter: config.Formatter,
 					shared: true
 				);
-			} 
+			}
 			else
 			{
 				serilogConfig.WriteTo.File(
@@ -60,6 +56,6 @@ public class NekaiLoggerFactory
 		}
 
 		ILogger logger = serilogConfig.CreateLogger();
-		return Result<ILogger>.Success(logger);
+		return Result.Success(logger);
 	}
 }

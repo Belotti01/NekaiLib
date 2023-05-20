@@ -38,7 +38,7 @@ public class ThemeColorPalette : ColorPalette
 	public Color HighlightBackground { get; set; }
 
 
-	
+
 	public ThemeColorPalette(string name)
 		: base(NekaiData.Directories.Themes, name)
 	{

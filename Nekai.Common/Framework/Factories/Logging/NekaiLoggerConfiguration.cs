@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Serilog.Events;
+﻿using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Json;
@@ -15,7 +11,7 @@ public class NekaiLoggerConfiguration
 	public bool LogToConsole { get; set; } = false;
 	public bool LogToFile { get; set; } = false;
 	public bool UseFormatter { get; protected set; } = false;
-	public string StringFormat { get; protected set; } = "{Timestamp:HH:mm:ss} [{Level:u4}] {Message:lj}{NewLine}{Properties}{NewLine}{Exception}";
+	public string StringFormat { get; protected set; } = "{Timestamp:HH:mm:ss} [{Level:u4}] {Message:lj}{NewLine}{Exception}";
 	public ITextFormatter Formatter { get; protected set; } = new CompactJsonFormatter();
 	public LogEventLevel MinimumConsoleLogLevel { get; set; } = LogEventLevel.Information;
 	public LogEventLevel MinimumFileLogLevel { get; set; } = LogEventLevel.Information;

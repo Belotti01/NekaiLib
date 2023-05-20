@@ -12,7 +12,6 @@
     <Folder Include="Components\Graphics\" />
     <Folder Include="Framework\" />
     <Folder Include="MAUI\" />
-    <Folder Include="Animation\" />
     <Folder Include="Pages\PropertyPreviews\" />
     <Folder Include="Utils\" />
   </ItemGroup>

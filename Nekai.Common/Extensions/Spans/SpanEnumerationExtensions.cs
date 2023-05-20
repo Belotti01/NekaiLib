@@ -1,10 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 public static class SpanEnumerationExtensions
 {
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool Any<T>(this ReadOnlySpan<T> span, Func<T, bool> predicate)
 	{
 		for(int i = span.Length - 1; i >= 0; --i)
@@ -15,7 +12,6 @@ public static class SpanEnumerationExtensions
 		return false;
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool All<T>(this ReadOnlySpan<T> span, Func<T, bool> predicate)
 	{
 		for(int i = span.Length - 1; i >= 0; --i)
@@ -26,7 +22,6 @@ public static class SpanEnumerationExtensions
 		return true;
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool Contains<T>(this ReadOnlySpan<T> span, T value)
 		where T : struct
 	{
@@ -38,7 +33,6 @@ public static class SpanEnumerationExtensions
 		return false;
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool ContainsAny<T>(this ReadOnlySpan<T> span, ReadOnlySpan<T> values)
 		where T : struct
 	{

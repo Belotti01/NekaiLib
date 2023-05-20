@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Nekai.Common;
 
@@ -67,7 +60,7 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 	/// </returns>
 	public bool TryLoadOSLanguage()
 	{
-		if(_TryGetOSLanguage(out DisplayLanguage? osLanguage))
+		if(_TryGetOSLanguage(out DisplayLanguage osLanguage))
 		{
 			DefaultLanguage = osLanguage;
 			return true;
@@ -75,7 +68,7 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 		return false;
 	}
 
-	private static bool _TryGetOSLanguage([NotNullWhen(true)] out DisplayLanguage? osLanguage)
+	private static bool _TryGetOSLanguage(out DisplayLanguage osLanguage)
 	{
 		try
 		{
@@ -83,19 +76,20 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 			foreach(DisplayLanguage language in Enum.GetValues<DisplayLanguage>())
 			{
 				string isoLanguage = language.ToThreeLetterISOName();
-				if(isoOSLanguage.Equals(isoLanguage))
+				if(isoOSLanguage.EqualsIgnoreCase(isoLanguage))
 				{
 					osLanguage = language;
 					return true;
 				}
-					
+
 			}
-		}catch(Exception ex)
+		}
+		catch(Exception ex)
 		{
 			Debug.Fail($"Default language could not be loaded.", ex.Message);
 		}
 
-		osLanguage = DisplayLanguage.EnglishUsa;	// Might as well set to a fallback language.
+		osLanguage = DisplayLanguage.EnglishUsa;    // Use a default language to fall back to.
 		return false;
 	}
 }

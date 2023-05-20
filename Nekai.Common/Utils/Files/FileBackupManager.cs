@@ -3,6 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Nekai.Common;
 
+/// <summary>
+/// Manager class used to safely create and restore file backups.
+/// </summary>
 public class FileBackupManager : IDisposable
 {
 	public string FilePath { get; protected set; }
@@ -53,8 +56,9 @@ public class FileBackupManager : IDisposable
 
 		try
 		{
-			return Result<string>.Success(Backup());
-		}catch(Exception ex)
+			return Result.Success(Backup());
+		}
+		catch(Exception ex)
 		{
 			return Result.Failure(NekaiPath.GetMessageForException(ex, BackupFilePath, false));
 		}
@@ -64,16 +68,14 @@ public class FileBackupManager : IDisposable
 	{
 		if(!File.Exists(FilePath))
 			throw new FileNotFoundException();
-		
+
 		// If a backup file already exists, delete it, but only if the new backup file creation succeeds.
 		string? oldBackupFilePath = BackupFilePath;
 
 		BackupFilename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{Filename}.bak";
 		Result backupFileCreationResult = NekaiFile.TryEnsureExists(BackupFilePath);
-		if(!backupFileCreationResult.IsSuccess)
-		{
+		if(!backupFileCreationResult.IsSuccess || BackupFilePath is null)   // Null check is just to shut the compiler up.
 			throw new FileNotFoundException(backupFileCreationResult.Message, BackupFilePath);
-		}
 
 		File.Copy(FilePath, BackupFilePath, true);
 
@@ -82,8 +84,12 @@ public class FileBackupManager : IDisposable
 			// Delete the old backup file.
 			Result duplicateDeletionResult = NekaiFile.TryEnsureDoesNotExist(BackupFilePath);
 			if(!duplicateDeletionResult.IsSuccess)
+			{
+				Debug.Fail("Backup file could not be deleted: " + duplicateDeletionResult.Message);
 				// Write a log entry, it might be useful to identify permission errors and such.
 				NekaiLogs.Shared.Warning("Backup file could not be deleted: " + duplicateDeletionResult.Message);
+				// Non-blocking error, but might result in useless disk usage. Continue anyway.
+			}
 		}
 		return BackupFilePath;
 	}
@@ -100,12 +106,12 @@ public class FileBackupManager : IDisposable
 			Debug.Assert(NekaiFile.CanReadFile(FilePath).IsSuccess, "Could not access restored file.");
 			Debug.Assert(NekaiFile.TryReadText(FilePath).Value == NekaiFile.TryReadText(BackupFilePath).Value, "Content of source file differs from the restored one.");
 			return Result.Success();
-		} 
+		}
 		catch(Exception ex)
 		{
 			NekaiLogs.Shared.Error("Could not restore backup file:");
 			NekaiLogs.Shared.Error(ex);
-			
+
 			return Result.Failure("Backup file could not be restored.");
 		}
 	}

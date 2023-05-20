@@ -15,7 +15,7 @@ public abstract class NekaiStyleSet<TStyle> : ConfigurationFileManager<NekaiStyl
 		Result result = NekaiPath.IsValidPath(baseFilepath);
 		if(!result.IsSuccess)
 		{
-			Exceptor.ThrowIfDebug(new ArgumentException(result.Message, nameof(baseFilepath)));
+			Exceptor.ThrowAndLogIfDebug(new ArgumentException(result.Message, nameof(baseFilepath)));
 			return;
 		}
 

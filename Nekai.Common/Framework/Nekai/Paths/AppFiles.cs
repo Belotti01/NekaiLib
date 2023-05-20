@@ -2,6 +2,9 @@
 
 public static partial class NekaiData
 {
+	/// <summary>
+	/// Contains the absolute paths to the files used by the framework.
+	/// </summary>
 	public static class Files
 	{
 		public static string LogSettingsFile => Path.Combine(Directories.SharedLogs, "Logger_Settings.json");

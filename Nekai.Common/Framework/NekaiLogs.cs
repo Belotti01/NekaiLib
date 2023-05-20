@@ -1,10 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Serilog;
 using Serilog.Core;
-using Serilog.Events;
-using Serilog.Formatting;
-using Serilog.Formatting.Compact;
-using Serilog.Formatting.Json;
 
 namespace Nekai.Common;
 
@@ -32,14 +29,28 @@ public static class NekaiLogs
 		{
 			if(_sharedLogger is not null)
 				return _sharedLogger;
-			
-			string sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.SharedLogs, "Logs.json");
+
+			string? sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.SharedLogs, "Logs.json");
+			Result fileCreationResult = NekaiFile.TryEnsureExists(sharedLogFilesTemplate);
+			if(!fileCreationResult.IsSuccess)
+			{
+				// Don't export to file.
+				sharedLogFilesTemplate = null;
+			}
+
 			lock(_lock)
 			{
 				if(!_TryInstantiateGlobalLogger(ref _sharedLogger, sharedLogFilesTemplate))
 					// Logger creation failed. Return a void logger, and retry on the next call.
 					return Logger.None;
+
+				if(sharedLogFilesTemplate is null)
+				{
+					_sharedLogger.Warning($"Logs folder could not be accessed or created. Logs will not be exported. (Error: {fileCreationResult.Message})");
+					Debug.Assert(!fileCreationResult.IsSuccess, "Logical error: the file was found.");
+				}
 			}
+
 			return _sharedLogger;
 		}
 	}
@@ -54,7 +65,7 @@ public static class NekaiLogs
 		{
 			if(_currentProgramLogger is not null)
 				return _currentProgramLogger;
-			
+
 			string sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.CurrentProgramLogs, "Logs.json");
 			lock(_lock)
 			{
@@ -66,7 +77,7 @@ public static class NekaiLogs
 		}
 	}
 
-	private static bool _TryInstantiateGlobalLogger([NotNullWhen(true)] ref ILogger? logger, string logFilePathTemplate)
+	private static bool _TryInstantiateGlobalLogger([NotNullWhen(true)] ref ILogger? logger, string? logFilePathTemplate)
 	{
 		// Logger might have been created while this thread was stuck due to the lock
 		if(logger is not null)
@@ -77,24 +88,25 @@ public static class NekaiLogs
 		{
 			// TODO: Pick between the JSONFormatter and the outputTemplate for the Shared and Program loggers.
 			// - Using the Json format will require another way to view the logs properly, but is more software-friendly
-			// - ... otherwise just make the logs straightforward with a simple prefix
-			// Taking scalability into account, the Json format is a better option tho
+			// - ... otherwise just make the logs straightforward with a simple prefix, but losing information in the process
 			// fml idk keep it json for now
 			NekaiLoggerConfiguration config = new();
-			config
-				.WithConsoleOutput()
-				.WithCompactJsonFileOutput(logFilePathTemplate);
+			config.WithConsoleOutput();
+			if(logFilePathTemplate is not null)
+			{
+				config.WithCompactJsonFileOutput(logFilePathTemplate);
+			}
 			result = Factory.TryCreate(config);
 		}
 		catch(Exception ex)
 		{
-			Exceptor.ThrowIfDebug(ex);
+			Exceptor.ThrowAndLogIfDebug(ex);
 			return false;
 		}
-		
+
 		if(!result.IsSuccess)
 			return false;
-		
+
 		logger = result.Value;
 		return true;
 	}

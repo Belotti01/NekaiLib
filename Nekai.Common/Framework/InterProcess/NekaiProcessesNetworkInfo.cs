@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
+﻿using System.Net.Sockets;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Nekai.Common;
 
 public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcessesNetworkInfo>, IDisposable
 {
+	[JsonIgnore]
+	private const int _SERIALIZATION_MAX_ATTEMPTS = 10;
+	[JsonIgnore]
+	private const int _SERIALIZATION_ATTEMPT_DELAY_MS = 50;
+
 	[JsonInclude]
 	public NekaiProcessNetworkInfo[] Processes { get; set; } = Array.Empty<NekaiProcessNetworkInfo>();
 	[JsonIgnore]
 	private CancellationTokenSource _serializationCancellationTokenSource = new();
 	[JsonIgnore]
 	private Task? _serializationTask;
-	
+
 	public NekaiProcessesNetworkInfo(string filePath)
 		: base(filePath) { }
 
@@ -25,17 +25,17 @@ public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcesses
 		bool requiresUpdate = _UpdateCurrentProcessInfoInternal(protocol, port);
 		if(!requiresUpdate)
 			return;
-		
+
 		await _SerializeWithMultipleAttempts(_serializationCancellationTokenSource.Token);
 	}
-	
+
 	public void UpdateCurrentProcessInfo(ProtocolType protocol, int port)
 	{
 		// Avoid instantiating and managing a new Task if it's not necessary.
 		bool requiresUpdate = _UpdateCurrentProcessInfoInternal(protocol, port);
 		if(!requiresUpdate)
 			return;
-		
+
 		if(_serializationTask is not null)
 		{
 			// Need to cancel previously started tasks
@@ -50,9 +50,9 @@ public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcesses
 				_serializationCancellationTokenSource = new();
 			}
 		}
-		
+
 		CancellationToken token = _serializationCancellationTokenSource.Token;
-		_serializationTask = Task.Run(async() => await _SerializeWithMultipleAttempts(token), token);
+		_serializationTask = Task.Run(async () => await _SerializeWithMultipleAttempts(token), token);
 	}
 
 	protected bool _UpdateCurrentProcessInfoInternal(ProtocolType protocol, int port)
@@ -78,17 +78,18 @@ public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcesses
 		return true;
 	}
 
-	// Attempt multiple times, since there might be traffic on the file
+	// Attempt multiple times, since there might be traffic on the file.
 	protected async Task _SerializeWithMultipleAttempts(CancellationToken cancellationToken)
 	{
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < _SERIALIZATION_MAX_ATTEMPTS; i++)
 		{
 			if(cancellationToken.IsCancellationRequested)
 				return;
-			
+
 			if(TrySerialize().IsSuccess)
 				return;
-			await Task.Delay(100, cancellationToken);
+			// File might be locked, so wait a bit before trying again.
+			await Task.Delay(_SERIALIZATION_ATTEMPT_DELAY_MS, cancellationToken);
 		}
 	}
 
@@ -104,11 +105,11 @@ public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcesses
 			isTaskRunning = false;
 			Exceptor.ThrowIfDebug($"Generated a task for serialization of {nameof(NekaiProcessesNetworkInfo)}, but didn't execute it.");
 		}
-		
+
 		if(isTaskRunning && !_serializationCancellationTokenSource.IsCancellationRequested)
 		{
 			_serializationCancellationTokenSource.Cancel();
-			_serializationTask.Wait();	// Wait for the cancellation to take place
+			_serializationTask.Wait();  // Wait for the cancellation to take place
 		}
 		_serializationTask.Dispose();
 		_serializationTask = null;

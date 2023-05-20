@@ -1,22 +1,20 @@
-﻿using Nekai.Common;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 public static class NekaiDirectory
 {
 	public static Result<DirectoryInfo> TryGetInfo(string directory)
 	{
 		if(string.IsNullOrWhiteSpace(directory))
-			return Result<DirectoryInfo>.Failure("No directory was specified.");
+			return Result.Failure("No directory was specified.");
 
 		try
 		{
 			DirectoryInfo info = new(directory);
-			return Result<DirectoryInfo>.Success(info);
+			return Result.Success(info);
 		}
 		catch(Exception ex)
 		{
-			return Result<DirectoryInfo>.Failure($"Directory information could not be retrieved: {NekaiPath.GetMessageForException(ex, directory, true)}");
+			return Result.Failure($"Directory information could not be retrieved: {NekaiPath.GetMessageForException(ex, directory, true)}");
 		}
 	}
 
@@ -30,13 +28,14 @@ public static class NekaiDirectory
 	{
 		if(TryEnsureExists(directory).IsSuccess)
 			return;
-		
+
 		try
 		{
 			if(Directory.Exists(directory.ToString()))
 				Exceptor.ThrowCritical(AppExitCode.DirectoryAccessError, $"Directory \"{directory}\" could not be accessed.");
 			Exceptor.ThrowCritical(AppExitCode.DirectoryCreationError, $"Directory \"{directory}\" could not be created.");
-		}catch(Exception ex)
+		}
+		catch(Exception ex)
 		{
 			string msg = NekaiPath.GetMessageForException(ex, directory, true);
 			Exceptor.ThrowCritical(AppExitCode.DirectoryAccessError, msg, ex);
@@ -49,7 +48,7 @@ public static class NekaiDirectory
 		if(string.IsNullOrWhiteSpace(directory))
 			return Result.Failure("Directory path is empty.");
 
-		if(checkInvalidChars) 
+		if(checkInvalidChars)
 		{
 			Result result = NekaiPath.ContainsInvalidPathChars(directory);
 			if(!result.IsSuccess)
@@ -62,7 +61,8 @@ public static class NekaiDirectory
 		{
 			Directory.CreateDirectory(directory);
 			return Result.Success();
-		}catch(Exception ex)
+		}
+		catch(Exception ex)
 		{
 			return Result.Failure(NekaiPath.GetMessageForException(ex, directory, true));
 		}
@@ -72,7 +72,7 @@ public static class NekaiDirectory
 	internal static Result _TryEnsureExistsForFileInternal(ReadOnlySpan<char> filePath, bool checkInvalidChars)
 	{
 		ReadOnlySpan<char> directory;
-		
+
 		if(!NekaiPath.TryRemovePathStep(filePath, out directory))
 		{
 			// Path is relative, and the only information we have is the file name

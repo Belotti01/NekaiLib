@@ -10,7 +10,6 @@
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Title>Nekai.Common</Title>
 	  <Authors>Nekai</Authors>
-	  <Description>Extension methods and utilities for faster development.</Description>
 	  <AssemblyVersion>0.1.0</AssemblyVersion>
 	  <FileVersion>0.1.0</FileVersion>
 	  <OutputType>Exe</OutputType>
@@ -24,11 +23,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <Deterministic>True</Deterministic>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Utils\Async\" />
-    <Folder Include="Utils\Parsing\Interfaces\" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -48,6 +42,21 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="NekaiResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NekaiResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="NekaiResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NekaiResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

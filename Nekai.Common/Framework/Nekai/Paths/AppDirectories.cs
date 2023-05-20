@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 public static partial class NekaiData
 {
+	/// <summary>
+	/// Contains the absolute paths to the directories used by the framework.
+	/// </summary>
 	public static class Directories
 	{
 		private static readonly Lazy<string> _localConfiguration = new(_LocalNekaiDirectoryLoader._Load);
@@ -14,7 +15,7 @@ public static partial class NekaiData
 		/// <summary> Directory for UI personalization data. </summary>
 		public static string UI => _Local("UI");
 		/// <summary> Folder to store color palettes into. </summary>
-		public static string ColorPalettes { get; set; } = Path.Combine(UI, "Colors");
+		public static string ColorPalettes { get; private set; } = Path.Combine(UI, "Colors");
 		/// <summary> Folder to store themes into. </summary>
 		public static string Themes => Path.Combine(UI, "Themes");
 		/// <summary> Directory containing the log folders. </summary>

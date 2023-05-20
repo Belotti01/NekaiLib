@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
 
 public static partial class NekaiData
 {
+	/// <summary>
+	/// Provides methods to help with non-automated testing.
+	/// </summary>
 	public static class ManualTesting
 	{
 		/// <summary>

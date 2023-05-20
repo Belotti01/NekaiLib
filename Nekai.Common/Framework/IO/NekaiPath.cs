@@ -13,7 +13,7 @@ public static class NekaiPath
 			trimmedPath = "";
 			return false;
 		}
-		
+
 		path = Path.TrimEndingDirectorySeparator(path);
 		int dirSeparatorIndex = LastIndexOfDirectorySeparatorChar(path);
 
@@ -108,7 +108,8 @@ public static class NekaiPath
 		{
 			string fullPath = Path.GetFullPath(filePath);
 			return Result.Success(fullPath);
-		} catch(Exception ex)
+		}
+		catch(Exception ex)
 		{
 			return Result.Failure(GetMessageForException(ex, filePath));
 		}
@@ -119,7 +120,7 @@ public static class NekaiPath
 	/// </summary>
 	/// <param name="filePath"> The path to validate. </param>
 	public static Result IsValidPath([NotNullWhen(true)] string? filePath)
-		=> Result.FromResult(ValidatePath(filePath));
+		=> ValidatePath(filePath);
 
 	internal static void _WriteLogForExceptionInternal(Exception exception, string filepath)
 	{
@@ -155,7 +156,7 @@ public static class NekaiPath
 			_ => $"An unexpected error occurred while accessing the {subject}."
 		};
 #endif
-		
+
 		if(exception.InnerException is not null)
 		{
 			result += Environment.NewLine + GetMessageForException(exception.InnerException, filepath);

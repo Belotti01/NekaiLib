@@ -65,7 +65,7 @@ public static class NekaiParsing
 			return Enum.TryParse(type, value, out parsedValue);
 
 		if(!_TryGetTryParseMethod(type, out MethodInfo? method))
-			return false;	// No Parsing method found
+			return false;   // No Parsing method found
 
 		// args: { valueToParse, resultValue }
 		object?[] args = { value, null };

@@ -1,6 +1,7 @@
 ﻿namespace Nekai.Interactivity;
 
-public enum CliMessageType {
+public enum CliMessageType
+{
 	None,
 	Success,
 	Information,
