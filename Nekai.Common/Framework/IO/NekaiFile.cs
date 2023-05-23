@@ -29,7 +29,7 @@ public static class NekaiFile
 	{
 		Result<FileStream> result = _TryCreateOrOverwrite(filePath);
 		if(!result.IsSuccess)
-			return Result.Failure(result.Message);
+			return result;
 		result.Value.Dispose();
 		return Result.Success();
 	}
