@@ -38,11 +38,11 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 
 	private static NekaiGeneralConfiguration _CreateSingleton()
 	{
-		if(NekaiFile.CanReadFile(_FilePath).IsSuccess)
+		if(NekaiFile.CanReadFile(_FilePath).IsSuccess())
 		{
 			// File is accessible, deserialize it.
 			var deserializationResult = TryDeserialize(_FilePath);
-			if(deserializationResult.IsSuccess)
+			if(deserializationResult.IsSuccessful)
 				return deserializationResult.Value;
 
 			Debug.Fail("General configuration file exists, but deserialization failed. Creating a new instance...");

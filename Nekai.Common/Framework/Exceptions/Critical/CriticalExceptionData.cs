@@ -36,6 +36,9 @@ public class CriticalExceptionData
 	public void AddDumpInformation(params string[] info)
 		=> _additionalDumpInformation.AddRange(info);
 
+	/// <summary>
+	/// Format the information stored in this instance into a <see langword="string"/>.
+	/// </summary>
 	public override string ToString()
 	{
 		StringBuilder sb = new();

@@ -59,14 +59,7 @@ namespace Nekai.Common {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to      __     _         _ 
-        ///  /\ \ \___| | ____ _(_)
-        /// /  \/ / _ \ |/ / _` | |
-        //// /\  /  __/   &lt; (_| | |
-        ///\_\ \/ \___|_|\_\__,_|_|.
-        /// </summary>
+
         internal static string Signature {
             get {
                 return ResourceManager.GetString("Signature", resourceCulture);

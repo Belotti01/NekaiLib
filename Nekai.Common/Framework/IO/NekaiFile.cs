@@ -13,53 +13,53 @@ public static class NekaiFile
 	/// </summary>
 	/// <param name="filePath"> The path to the file. </param>
 	/// <returns></returns>
-	public static Result<bool> IsReadOnlyOrSystem(string filePath)
+	public static Result<bool, PathOperationResult> IsReadOnlyOrSystem(string filePath)
 	{
-		Result result = CanReadFile(filePath);
-		if(!result.IsSuccess)
-			return Result.Failure(result.Message);
+		var result = CanReadFile(filePath);
+		if(result.IsSuccess())
+			return new(result);
 
 		var attr = File.GetAttributes(filePath);
 		bool isReadOnlyOrSystem = attr.HasFlag(FileAttributes.ReadOnly) || attr.HasFlag(FileAttributes.System);
-		return Result.Success(isReadOnlyOrSystem);
+		return isReadOnlyOrSystem;
 	}
 
 	// Make sure that the FileStream.Dispose() is invoked before returning.
-	public static Result TryCreateOrOverwrite([NotNullWhen(true)] string? filePath)
+	public static PathOperationResult TryCreateOrOverwrite([NotNullWhen(true)] string? filePath)
 	{
-		Result<FileStream> result = _TryCreateOrOverwrite(filePath);
-		if(!result.IsSuccess)
-			return result;
+		var result = _TryCreateOrOverwrite(filePath);
+		if(!result.IsSuccessful)
+			return result.Error;
 		result.Value.Dispose();
-		return Result.Success();
+		return PathOperationResult.Success;
 	}
 
 	// The FileStreams should never be kept open for longer than required, so block off this method and wrap it instead.
 	// The caller can still open its own stream when needed, but let other processes and threads access it in the meantime.
-	private static Result<FileStream> _TryCreateOrOverwrite([NotNullWhen(true)] string? filePath, bool requireStream = false)
+	private static Result<FileStream, PathOperationResult> _TryCreateOrOverwrite([NotNullWhen(true)] string? filePath, bool requireStream = false)
 	{
 		var result = NekaiPath.ValidatePath(filePath);
-		if(!result.IsSuccess)
-			return Result.Failure(result.Message);
+		if(!result.IsSuccessful)
+			return new(result.Error);
 		filePath = result.Value;
 
 		try
 		{
 			var creationResult = NekaiDirectory._TryEnsureExistsForFileInternal(filePath, false);
-			if(creationResult.IsSuccess)
+			if(creationResult.IsSuccess())
 			{
 				return requireStream
-					? Result.Success(File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-					: Result.Success(File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite));
+					? File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
+					: File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite);
 			}
 			FileStream stream = File.Create(filePath);
 			Debug.Assert(File.Exists(filePath), "File creation didn't throw an exception, but the file doesn't exist.");
-			return Result.Success(stream);
+			return stream;
 		}
 		catch(Exception ex)
 		{
 			Debug.Assert(!File.Exists(filePath), $"File creation threw {ex.GetType().Name}, but the file exists.");
-			return Result.Failure(NekaiPath.GetMessageForException(ex, filePath));
+			return new(NekaiPath.GetResultFromException(ex));
 		}
 	}
 
@@ -69,114 +69,110 @@ public static class NekaiFile
 	/// <param name="filePath"> The path to the file to check or delete. </param>
 	/// <param name="tryIgnoreReadOnly"> When <see langword="true"/>, attempt to remove or bypass the ReadOnly flag of the file if it's enabled. </param>
 	/// <returns> <see langword="true"/> if the file does not exists or has been deleted; <see langword="false"/> otherwise. </returns>
-	public static Result TryEnsureDoesNotExist([NotNullWhen(true)] string? filePath, bool tryIgnoreReadOnly = false)
+	public static PathOperationResult TryEnsureDoesNotExist([NotNullWhen(true)] string? filePath, bool tryIgnoreReadOnly = false)
 	{
 		if(!File.Exists(filePath))
-			return Result.Success();
+			return PathOperationResult.Success;
 
 		// Too many checks to make - just try-catch and branch based on the Exception type
 		// after a simple file access permission check.
 		var fileInfoResult = TryGetFileInfo(filePath);
-		if(!fileInfoResult.IsSuccess)
-			return Result.Failure(fileInfoResult.Message);
+		if(!fileInfoResult.IsSuccessful)
+			return fileInfoResult.Error;
 
 		try
 		{
 			FileInfo file = fileInfoResult.Value;
 			if(file.Attributes.HasFlag(FileAttributes.System))
-				return Result.Failure($"Attempted to delete System file \"{file.FullName}\"");
+				return PathOperationResult.IsSystem;
 
 			if(file.IsReadOnly)
 			{
 				if(!tryIgnoreReadOnly)
-					return Result.Failure($"File \"{file.FullName}\" is read-only.");
+					return PathOperationResult.IsReadOnly;
 				file.IsReadOnly = false;
 			}
 
 			file.Delete();
 			Debug.Assert(!File.Exists(filePath), "File deletion didn't throw an exception, but the file still exists.");
-			return Result.Success();
+			return PathOperationResult.Success;
 		}
 		catch(Exception ex)
 		{
 			Debug.Assert(File.Exists(filePath), $"File deletion threw {ex.GetType().Name}, but the file seems to have been deleted.");
-			return Result.Failure(NekaiPath.GetMessageForException(ex, filePath));
+			return NekaiPath.GetResultFromException(ex);
 		}
 	}
 
-	public static Result<IEnumerable<string>> TryReadLines([NotNullWhen(true)] string filePath)
+	public static Result<IEnumerable<string>, PathOperationResult> TryReadLines([NotNullWhen(true)] string filePath)
 	{
-		Result result = NekaiPath.IsValidPath(filePath);
-		if(!result.IsSuccess)
-			return result;
+		var result = NekaiPath.IsValidPath(filePath);
+		if(!result.IsSuccess())
+			return new(result);
 
 		if(!File.Exists(filePath))
-			return Result.Failure($"File could not be found.");
+			return new(PathOperationResult.DoesNotExist);
 
 		try
 		{
-			return Result.Success(File.ReadLines(filePath));
+			return new(File.ReadLines(filePath));
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure(NekaiPath.GetMessageForException(ex, filePath));
+			return new(NekaiPath.GetResultFromException(ex));
 		}
 	}
 
-	public static Result<string> TryReadText([NotNullWhen(true)] string? filepath)
+	public static Result<string, PathOperationResult> TryReadText([NotNullWhen(true)] string? filePath)
 	{
-		Result result = NekaiPath.IsValidPath(filepath);
-		if(!result.IsSuccess)
-			return result;
+		var result = NekaiPath.IsValidPath(filePath);
+		if(!result.IsSuccess())
+			return new(result);
 
-		if(!File.Exists(filepath))
-			return Result.Failure("File does not exist.");
+		if(!File.Exists(filePath))
+			return new(PathOperationResult.DoesNotExist);
 
 		try
 		{
-			string text = File.ReadAllText(filepath);
-			return Result.Success(text);
+			return File.ReadAllText(filePath);
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure(NekaiPath.GetMessageForException(ex, filepath));
+			return new(NekaiPath.GetResultFromException(ex));
 		}
 	}
 
-	public static Result TryEnsureExists([NotNullWhen(true)] string? filepath)
+	public static PathOperationResult TryEnsureExists([NotNullWhen(true)] string? filepath)
 	{
-		Result result = NekaiPath.IsValidPath(filepath);
-		if(!result.IsSuccess)
+		var result = NekaiPath.IsValidPath(filepath);
+		if(!result.IsSuccess())
 			return result;
 
 		if(File.Exists(filepath))
-			return Result.Success();
+			return PathOperationResult.Success;
 
-		Result creationResult = TryCreateOrOverwrite(filepath);
-		return creationResult.IsSuccess
-			? Result.Success()
-			: Result.Failure(creationResult.Message);
+		return TryCreateOrOverwrite(filepath);
 	}
 
-	public static Result<FileInfo> TryGetFileInfo([NotNullWhen(true)] string? filepath)
+	public static Result<FileInfo, PathOperationResult> TryGetFileInfo([NotNullWhen(true)] string? filepath)
 	{
 		var result = NekaiPath.ValidatePath(filepath);
-		if(!result.IsSuccess)
-			return Result.Failure(result.Message);
+		if(!result.IsSuccessful)
+			return new(result.Error);
 		filepath = result.Value;
 
 		try
 		{
 			FileInfo fileInfo = new(filepath);
-			return Result.Success(fileInfo);
+			return fileInfo;
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure(NekaiPath.GetMessageForException(ex, filepath));
+			return new(NekaiPath.GetResultFromException(ex));
 		}
 	}
 
-	public static Result CanReadFile([NotNullWhen(true)] string? filePath)
+	public static PathOperationResult CanReadFile([NotNullWhen(true)] string? filePath)
 		=> _CanReadFileInternal(filePath, true);
 
 	/// <summary>
@@ -186,15 +182,15 @@ public static class NekaiFile
 	/// <param name="time"> The expected maximum time distance since the last access to the file (inclusive). </param>
 	/// <returns> <see langword="true"/> if the file was last accessed after <paramref name="time"/> amount of time before
 	/// the current time, or <see langword="false"/> otherwise. If the <paramref name="filePath"/> is not a valid path, the file
-	/// cannot be found or an error occurs, returns an unsuccessful <see cref="Result{TResult}"/> instead. </returns>
-	public static Result<bool> WasLastAccessedWithin(string filePath, TimeSpan time)
+	/// cannot be found or an error occurs, returns an unsuccesful <see cref="PathOperationResult"/> instead. </returns>
+	public static Result<bool, PathOperationResult> WasLastAccessedWithin(string filePath, TimeSpan time)
 	{
 		var result = NekaiPath.ValidatePath(filePath);
-		if(!result.IsSuccess)
-			return Result.Failure(result.Message);
+		if(!result.IsSuccessful)
+			return new(result.Error);
 
 		if(!File.Exists(filePath))
-			return Result.Failure($"File does not exist.");
+			return new(PathOperationResult.DoesNotExist);
 
 		filePath = result.Value;
 
@@ -206,11 +202,11 @@ public static class NekaiFile
 		catch(Exception ex)
 		{
 			// Metadata access denied, or file was not accessible.
-			return Result.Failure(NekaiPath.GetMessageForException(ex, filePath));
+			return new(NekaiPath.GetResultFromException(ex));
 		}
 
 		bool wasLastAccessInRange = DateTime.UtcNow <= lastAccessUTC + time;
-		return Result.Success(wasLastAccessInRange);
+		return wasLastAccessInRange;
 	}
 
 	/// <summary>
@@ -218,33 +214,31 @@ public static class NekaiFile
 	/// repeating the same checks twice.
 	/// </summary>
 	/// <remarks>
-	/// When running in DEBUG mode, the check will be asserted instead to alert misuses of this method during development.
+	/// When running in DEBUG mode, path validation errors will be asserted instead to alert of misuses of this method during development.
 	/// </remarks>
-	internal static Result _CanReadFileInternal([NotNullWhen(true)] string? filePath, bool validatePath)
+	internal static PathOperationResult _CanReadFileInternal([NotNullWhen(true)] string? filePath, bool validatePath)
 	{
 		if(validatePath)
 		{
-			var validationResult = NekaiPath.ValidatePath(filePath);
-			if(!validationResult.IsSuccess)
-				return validationResult;
-			filePath = validationResult.Value;
+			var validationResult = NekaiPath.IsValidPath(filePath);
+			return validationResult;
 		}
 		else
 		{
-			Debug.Assert(NekaiPath.ValidatePath(filePath).IsSuccess, $"Misuse of internal method: validate the path before calling {nameof(_CanReadFileInternal)} with parameter {nameof(validatePath)} set to false.");
+			Debug.Assert(NekaiPath.IsValidPath(filePath).IsSuccess(), $"Misuse of internal method: validate the path before calling {nameof(_CanReadFileInternal)} with parameter {nameof(validatePath)} set to false.");
 		}
 
 		if(!File.Exists(filePath))
-			return Result.Failure($"File \"{filePath}\" does not exist.");
+			return PathOperationResult.DoesNotExist;
 
 		try
 		{
 			using FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-			return Result.Success();
+			return PathOperationResult.Success;
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure(NekaiPath.GetMessageForException(ex, filePath));
+			return NekaiPath.GetResultFromException(ex);
 		}
 	}
 }

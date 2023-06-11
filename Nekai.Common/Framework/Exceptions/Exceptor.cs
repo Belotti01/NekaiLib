@@ -123,8 +123,8 @@ public static partial class Exceptor
 				// Improvise a dump file
 				string dir = Directory.GetCurrentDirectory();
 				string dumpFile = Path.Combine(dir, $"CRITICAL_ERROR_DUMP-{DateTime.Now:yyyyMMdd_hhmmss}.txt");
-				Result creationResult = NekaiFile.TryCreateOrOverwrite(dumpFile);
-				if(!creationResult.IsSuccess)
+				var creationResult = NekaiFile.TryCreateOrOverwrite(dumpFile);
+				if(!creationResult.IsSuccess())
 					return false;
 
 				File.WriteAllText(dumpFile, data.ToString());

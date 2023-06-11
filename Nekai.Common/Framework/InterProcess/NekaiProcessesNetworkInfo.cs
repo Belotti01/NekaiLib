@@ -86,7 +86,7 @@ public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcesses
 			if(cancellationToken.IsCancellationRequested)
 				return;
 
-			if(TrySerialize().IsSuccess)
+			if(TrySerialize().IsSuccess())
 				return;
 			// File might be locked, so wait a bit before trying again.
 			await Task.Delay(_SERIALIZATION_ATTEMPT_DELAY_MS, cancellationToken);

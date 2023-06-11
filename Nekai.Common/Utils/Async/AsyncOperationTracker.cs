@@ -10,10 +10,13 @@
 public class AsyncOperationTracker
 {
 	/// <summary> Downcasting of <see cref="Progress"/> that enables write operations. </summary>
-	private ExecutionProgress _editableProgress => (ExecutionProgress)Progress;
+	private ExecutionProgress _EditableProgress => (ExecutionProgress)Progress;
 
+	/// <summary> The execution progress of the tracked operation. </summary>
 	public ReadOnlyExecutionProgress Progress { get; }
+	/// <summary> Whether the tracked operation has completed its execution. </summary>
 	public bool ExecutionEnded { get; private set; } = false;
+	/// <summary> The <see cref="TaskStatus"/> of the tracked operation. </summary>
 	public TaskStatus Status => operation.Status;
 	protected Task operation;
 
@@ -81,7 +84,7 @@ public class AsyncOperationTracker
 			return;
 
 		operation.ContinueWith(_OnOperationEnded);
-		_editableProgress.ResetStartTime();
+		_EditableProgress.ResetStartTime();
 		operation.Start();
 	}
 
@@ -94,7 +97,7 @@ public class AsyncOperationTracker
 			return;
 
 		await operation.ContinueWith(_OnOperationEnded);
-		_editableProgress.ResetStartTime();
+		_EditableProgress.ResetStartTime();
 		await operation;
 	}
 
@@ -110,6 +113,6 @@ public class AsyncOperationTracker
 	{
 		ExecutionEnded = true;
 		// Update the Progress to the correct state to avoid deadlocks.
-		_editableProgress.Progress = 100f;
+		_EditableProgress.Progress = 100f;
 	}
 }

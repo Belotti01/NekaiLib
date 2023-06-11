@@ -2,74 +2,41 @@
 
 public static class NekaiDirectory
 {
-	public static Result<DirectoryInfo> TryGetInfo(string directory)
-	{
-		if(string.IsNullOrWhiteSpace(directory))
-			return Result.Failure("No directory was specified.");
 
-		try
-		{
-			DirectoryInfo info = new(directory);
-			return Result.Success(info);
-		}
-		catch(Exception ex)
-		{
-			return Result.Failure($"Directory information could not be retrieved: {NekaiPath.GetMessageForException(ex, directory, true)}");
-		}
-	}
-
-	public static Result TryEnsureExists(string directory)
+	public static PathOperationResult TryEnsureExists(string directory)
 		=> _TryEnsureExistsInternal(directory, true);
 
-	public static Result TryEnsureExistsForFile(ReadOnlySpan<char> filePath)
+	public static PathOperationResult TryEnsureExistsForFile(ReadOnlySpan<char> filePath)
 		=> _TryEnsureExistsForFileInternal(filePath, true);
 
-	internal static void _EnsureExistsOrExitApplication(string directory)
-	{
-		if(TryEnsureExists(directory).IsSuccess)
-			return;
-
-		try
-		{
-			if(Directory.Exists(directory.ToString()))
-				Exceptor.ThrowCritical(AppExitCode.DirectoryAccessError, $"Directory \"{directory}\" could not be accessed.");
-			Exceptor.ThrowCritical(AppExitCode.DirectoryCreationError, $"Directory \"{directory}\" could not be created.");
-		}
-		catch(Exception ex)
-		{
-			string msg = NekaiPath.GetMessageForException(ex, directory, true);
-			Exceptor.ThrowCritical(AppExitCode.DirectoryAccessError, msg, ex);
-		}
-	}
-
 	// Overload used internally for when the path has already been validated
-	internal static Result _TryEnsureExistsInternal(string directory, bool checkInvalidChars)
+	internal static PathOperationResult _TryEnsureExistsInternal(string directory, bool checkInvalidChars)
 	{
 		if(string.IsNullOrWhiteSpace(directory))
-			return Result.Failure("Directory path is empty.");
+			return PathOperationResult.PathIsEmpty;
 
 		if(checkInvalidChars)
 		{
-			Result result = NekaiPath.ContainsInvalidPathChars(directory);
-			if(!result.IsSuccess)
-				return result;
+			if(NekaiPath.ContainsInvalidPathChars(directory))
+				return PathOperationResult.ContainsInvalidPathChars;
 		}
 
-		if(Directory.Exists(directory.ToString()))
-			return Result.Success();
+		if(Directory.Exists(directory))
+			return PathOperationResult.Success;
+
 		try
 		{
 			Directory.CreateDirectory(directory);
-			return Result.Success();
+			return PathOperationResult.Success;
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure(NekaiPath.GetMessageForException(ex, directory, true));
+			return NekaiPath.GetResultFromException(ex);
 		}
 	}
 
 	// Overload used internally for when the path has already been validated
-	internal static Result _TryEnsureExistsForFileInternal(ReadOnlySpan<char> filePath, bool checkInvalidChars)
+	internal static PathOperationResult _TryEnsureExistsForFileInternal(ReadOnlySpan<char> filePath, bool checkInvalidChars)
 	{
 		ReadOnlySpan<char> directory;
 
@@ -80,11 +47,11 @@ public static class NekaiDirectory
 			{
 				string absolutePath = Path.GetFullPath(filePath.ToString());
 				if(!NekaiPath.TryRemovePathStep(filePath, out directory))
-					return Result.Success();    // At this point the path must be the root directory, so it must exist
+					return PathOperationResult.Success;    // At this point the path must be the root directory, so it must exist
 			}
 			catch(Exception ex)
 			{
-				return Result.Failure(NekaiPath.GetMessageForException(ex, directory, true));
+				return NekaiPath.GetResultFromException(ex);
 			}
 		}
 

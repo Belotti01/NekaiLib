@@ -43,11 +43,11 @@ public static partial class NekaiData
 
 			foreach(string path in paths)
 			{
-				Result result = NekaiDirectory.TryEnsureExists(path);
-				if(!result.IsSuccess)
+				var result = NekaiDirectory.TryEnsureExists(path);
+				if(!result.IsSuccess())
 				{
 					// Directory could not be found or created
-					Exceptor.ThrowIfDebug(result.Message);
+					Exceptor.ThrowIfDebug(result.GetMessage());
 					// In release, attempt to continue execution.
 					// Directories should always be checked for availability before access, since they can be deleted,
 					// moved, renamed or locked at any time; so this is not to be treated as a critical error.

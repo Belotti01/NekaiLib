@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Nekai.Common.Utils.Network;
 
 namespace Nekai.Common;
 
@@ -69,7 +68,6 @@ public static class CurrentApp
 		}
 		catch(Exception ex)
 		{
-			// Don't throw
 			Exceptor.ThrowIfDebug($"An unhandled Exception was caught while closing the application: {ex.Message}", ex);
 		}
 		_OnProcessExitHandledInternal = null;

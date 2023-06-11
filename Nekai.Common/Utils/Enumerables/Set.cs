@@ -100,6 +100,9 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 		return $"{{ {string.Join(", ", this)} }}";
 	}
 
+	public override int GetHashCode() => base.GetHashCode();
+	public override bool Equals(object? obj) => base.Equals(obj);
+
 	public bool Equals(IEnumerable<T>? other)
 		=> other is not null
 		&& this == other;

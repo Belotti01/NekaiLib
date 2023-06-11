@@ -1,7 +1,8 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 
-namespace Nekai.Common.Utils.Network;
+namespace Nekai.Common;
 
 /// <summary>
 /// Object that can be used to query the DNS for network information about the host on which the application is running.
@@ -54,48 +55,50 @@ public class ProcessHostInformationLoader
 	{
 		if(preloadInfo)
 		{
-			_ = TryUpdate().IsSuccess;
+			var result = TryUpdate();
+			Debug.Assert(result is NetworkOperationResult.Success or NetworkOperationResult.NoInternet, "Failed to query DNS for inter-network localhost information.");
 		}
 	}
 
-	public Result TryUpdate()
+	public NetworkOperationResult TryUpdate()
 	{
 		// The HostName is used by the IP address retrieval method, so load it first.
 		var nameResult = _TryGetLocalHostName();
-		if(!nameResult.IsSuccess)
+		if(!nameResult.IsSuccessful)
 		{
 			// Don't overwrite previously loaded value.
 			_hostName ??= DEFAULT_HOSTNAME;
 			_ipAddress ??= DefaultIpAddress;
-			return nameResult;
+			return nameResult.Error;
 		}
 		_hostName = nameResult.Value;
 
 		var ipResult = _TryRetrieveLocalHostIpAddress();
-		if(!ipResult.IsSuccess)
+		if(!ipResult.IsSuccessful)
 		{
 			_ipAddress ??= DefaultIpAddress;
-			return ipResult;
+			return ipResult.Error;
 		}
 
 		_ipAddress = ipResult.Value;
-		return Result.Success();
+		return NetworkOperationResult.Success;
 	}
 
-	private static Result<string> _TryGetLocalHostName()
+	private static Result<string, NetworkOperationResult> _TryGetLocalHostName()
 	{
 		try
 		{
 			string localHostname = Dns.GetHostName();
-			return Result.Success(localHostname);
+			return localHostname;
 		}
 		catch(SocketException ex)
 		{
-			return Result.Failure("Could not retrieve localhost's hostname: " + ex.Message);
+			NekaiLogs.Shared.Error($"DNS request failed: {ex.Message}.");
+			return new(NetworkOperationResult.DnsError);
 		}
 	}
 
-	private Result<IPAddress> _TryRetrieveLocalHostIpAddress()
+	private Result<IPAddress, NetworkOperationResult> _TryRetrieveLocalHostIpAddress()
 	{
 		// Random tip: most DNS issues can be fixed by:
 		// - Setting a public DNS (f.e. Google's 8.8.8.8/8.8.4.4 or Cloudflare's 1.1.1.1)
@@ -111,12 +114,19 @@ public class ProcessHostInformationLoader
 
 			if(localHostIp is null)
 				// The DNS responded, but no Inter-Network IP was found.
-				return Result.Failure("Localhost Inter-Network IP Address not found.");
-			return Result.Success(localHostIp);
+				return new(NetworkOperationResult.DnsError);
+			return localHostIp;
+		}
+		catch(SocketException ex)
+		{
+			NekaiLogs.Shared.Error($"DNS request failed: {ex.Message}.");
+			return new(NetworkOperationResult.DnsError);
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure("Localhost Inter-Network IP Address could not be loaded: " + ex.Message);
+			Debug.Fail("Check arguments for null or invalid values.");
+			NekaiLogs.Shared.Error($"DNS request failed: {ex.Message}.");
+			return new(NetworkOperationResult.UnknownError);
 		}
 	}
 

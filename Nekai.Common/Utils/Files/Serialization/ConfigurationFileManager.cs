@@ -49,32 +49,32 @@ where TSelf : ConfigurationFileManager<TSelf>
 		_TrySetFilePath(filePath);
 	}
 
-	private Result _TrySetFilePath(string? filePath)
+	private PathOperationResult _TrySetFilePath(string? filePath)
 	{
 		if(string.IsNullOrWhiteSpace(filePath))
-			return Result.Failure("No filepath was specified.");
+			return PathOperationResult.PathIsEmpty;
 
 		// Don't append an extension to the path to avoid confusion when trying to access the file with the same string.
 
-		Result result = NekaiFile.TryEnsureExists(filePath);
-		if(!result.IsSuccess)
-			return Result.Failure($"Configuration file could not be created or accessed. Serialization will be disabled: {result.Message}");
+		var result = NekaiFile.TryEnsureExists(filePath);
+		if(!result.IsSuccess())
+			return result;
 
 		result = NekaiFile.CanReadFile(filePath);
-		if(!result.IsSuccess)
-			return Result.Failure($"Configuration file cannot be accessed. Serialization will be disabled: {result.Message}");
+		if(!result.IsSuccess())
+			return result;
 
 		FilePath = filePath;
-		return Result.Success();
+		return PathOperationResult.Success;
 	}
 
 
 
-	public static Result<TSelf> Deserialize(string filePath)
+	private static Result<TSelf, PathOperationResult> _DeserializeInternal(string filePath)
 	{
 		var result = NekaiFile.TryReadText(filePath);
-		if(!result.IsSuccess)
-			return Result.Failure(result.Message);
+		if(!result.IsSuccessful)
+			return new(result.Error);
 
 		TSelf? obj;
 		try
@@ -87,55 +87,55 @@ where TSelf : ConfigurationFileManager<TSelf>
 		{
 			// Log a meaningful message, but return a more user-friendly one.
 			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} \"{filePath}\" failed: {ex.Message}");
-			return Result.Failure($"Could not load the requested data.");
+			return new(PathOperationResult.NotAllowed);
 		}
 
 		if(obj is null)
-			return Result.Failure($"The requested data could not be parsed.");
+			return new(PathOperationResult.BadFormat);
 
 		obj.FilePath = filePath;
-		return Result.Success(obj);
-
+		return obj;
 	}
 
-	public static Result<TSelf> TryDeserialize(string filePath)
+	public static Result<TSelf, PathOperationResult> TryDeserialize(string filePath)
 	{
 		try
 		{
-			Result<TSelf> result = Deserialize(filePath);
-			if(!result.IsSuccess)
-				return Result.Failure(result.Message);
+			var result = _DeserializeInternal(filePath);
+			if(!result.IsSuccessful)
+				return result;
+
 			result.Value.FilePath = filePath;
 			return result;
 		}
 		catch(Exception ex)
 		{
 			NekaiLogs.Program.Error(ex);
-			return Result.Failure($"An error occurred and the data could not be loaded.");
+			return new(PathOperationResult.UnknownFailure);
 		}
 	}
 
 
 
-	public Result TrySerialize()
+	public PathOperationResult TrySerialize()
 	{
-		Result<string> result = NekaiPath.ValidatePath(FilePath);
-		if(!result.IsSuccess)
-			return Result.Failure(result.Message);
+		var result = NekaiPath.ValidatePath(FilePath);
+		if(!result.IsSuccessful)
+			return result.Error;
 
 		FilePath = result.Value;
 		using FileBackupManager backupManager = new(FilePath);
 		if(File.Exists(FilePath))
 		{
-			Result<string> backupResult = backupManager.TryBackup();
-			if(!result.IsSuccess)
-				return Result.Failure($"{result.Message} Current instance will not be saved.");
+			var backupResult = backupManager.TryBackup();
+			if(!result.IsSuccessful)
+				return backupResult.Error;
 		}
 		else
 		{
-			result = NekaiDirectory.TryEnsureExistsForFile(FilePath);
-			if(!result.IsSuccess)
-				return Result.Failure($"Could not find or create a required directory. Current instance will not be saved.");
+			var fileCreationResult = NekaiDirectory.TryEnsureExistsForFile(FilePath);
+			if(!fileCreationResult.IsSuccess())
+				return fileCreationResult;
 		}
 
 		try
@@ -145,15 +145,15 @@ where TSelf : ConfigurationFileManager<TSelf>
 		}
 		catch(Exception ex)
 		{
-			Result restoreResult = backupManager.TryRestore();
-			if(!restoreResult.IsSuccess)
+			var restoreResult = backupManager.TryRestore();
+			if(!restoreResult.IsSuccess())
 			{
 				Exceptor.ThrowIfDebug($"Bruh everything went wrong here ({ex.Message})");
-				return Result.Failure($"{restoreResult.Message} Some data may be lost.");
+				return restoreResult;
 			}
 		}
 
-		return Result.Success();
+		return PathOperationResult.Success;
 	}
 
 	/// <summary>

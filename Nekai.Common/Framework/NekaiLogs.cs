@@ -31,8 +31,8 @@ public static class NekaiLogs
 				return _sharedLogger;
 
 			string? sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.SharedLogs, "Logs.json");
-			Result fileCreationResult = NekaiFile.TryEnsureExists(sharedLogFilesTemplate);
-			if(!fileCreationResult.IsSuccess)
+			var fileCreationResult = NekaiFile.TryEnsureExists(sharedLogFilesTemplate);
+			if(!fileCreationResult.IsSuccess())
 			{
 				// Don't export to file.
 				sharedLogFilesTemplate = null;
@@ -46,8 +46,8 @@ public static class NekaiLogs
 
 				if(sharedLogFilesTemplate is null)
 				{
-					_sharedLogger.Warning($"Logs folder could not be accessed or created. Logs will not be exported. (Error: {fileCreationResult.Message})");
-					Debug.Assert(!fileCreationResult.IsSuccess, "Logical error: the file was found.");
+					_sharedLogger.Warning($"Logs folder could not be accessed or created. Logs will not be exported. (Error: {fileCreationResult.GetMessage()})");
+					Debug.Assert(!fileCreationResult.IsSuccess(), "Logical error: the file was found.");
 				}
 			}
 
@@ -83,7 +83,6 @@ public static class NekaiLogs
 		if(logger is not null)
 			return true;
 
-		Result<ILogger> result;
 		try
 		{
 			// TODO: Pick between the JSONFormatter and the outputTemplate for the Shared and Program loggers.
@@ -96,18 +95,17 @@ public static class NekaiLogs
 			{
 				config.WithCompactJsonFileOutput(logFilePathTemplate);
 			}
-			result = Factory.TryCreate(config);
+			var result = Factory.TryCreate(config);
+			if(result.IsSuccessful)
+			{
+				logger = result.Value;
+				return true;
+			}
 		}
 		catch(Exception ex)
 		{
 			Exceptor.ThrowAndLogIfDebug(ex);
-			return false;
 		}
-
-		if(!result.IsSuccess)
-			return false;
-
-		logger = result.Value;
-		return true;
+		return false;
 	}
 }

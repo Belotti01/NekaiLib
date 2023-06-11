@@ -23,7 +23,7 @@ public class Program
 		})
 		.ToArray();
 
-	public static async Task Main(string[] args)
+	public static void Main(string[] args)
 	{
 		// Do checks to ensure that the tests work
 #if DEBUG
@@ -36,15 +36,7 @@ public class Program
 
 	public static void RunTests()
 	{
-		string s = "\n\nabc\ncde\rfgh\r\nijk\n\n";
-		int lines = s.AsSpan().CountLines();
-		Console.WriteLine($"[Lines = {lines}]");
-		Console.WriteLine($"[Expected]\n{s}");
-		Console.WriteLine("[Actual]");
-		for(int i = 0; i < lines; i++)
-		{
-			Console.WriteLine(s.AsSpan().SliceLine(i).ToString());
-		}
+		
 	}
 
 	public static void RunBenchmarks()

@@ -17,9 +17,9 @@ public static partial class NekaiData
 		internal static string _Load()
 		{
 			string localDir = _GetLocalDirectoryPath();
-			Result result = NekaiDirectory.TryEnsureExists(localDir);
-			if(!result.IsSuccess)
-				Exceptor.ThrowCritical(AppExitCode.DirectoryCreationError, result.Message);
+			var result = NekaiDirectory.TryEnsureExists(localDir);
+			if(!result.IsSuccess())
+				Exceptor.ThrowCritical(AppExitCode.DirectoryCreationError, result.GetMessage());
 			return localDir;
 		}
 
@@ -30,11 +30,11 @@ public static partial class NekaiData
 
 			string? localDir = null;
 			var fileReadResult = NekaiFile.TryReadText(_GlobalConfigurationFilepath);
-			if(fileReadResult.IsSuccess)
+			if(fileReadResult.IsSuccessful)
 			{
 				// Fetched from global config file - validate it
 				localDir = fileReadResult.Value.Trim();
-				if(!NekaiPath.IsValidPath(localDir).IsSuccess)
+				if(!NekaiPath.IsValidPath(localDir).IsSuccess())
 				{
 					localDir = null;
 				}
@@ -42,13 +42,13 @@ public static partial class NekaiData
 			else
 			{
 				// Create file, and exit the app in case of file access errors (such as permission errors)
-				Result result = NekaiFile.TryEnsureExists(_GlobalConfigurationFilepath);
-				if(!result.IsSuccess)
+				var result = NekaiFile.TryEnsureExists(_GlobalConfigurationFilepath);
+				if(!result.IsSuccess())
 				{
 					AppExitCode exitCode = File.Exists(_GlobalConfigurationFilepath)
 						? AppExitCode.FileAccessError
 						: AppExitCode.FileCreationError;
-					Exceptor.ThrowCritical(exitCode, "Configuration could not be loaded. " + result.Message);
+					Exceptor.ThrowCritical(exitCode, "Configuration could not be loaded. " + result.GetMessage());
 				}
 			}
 

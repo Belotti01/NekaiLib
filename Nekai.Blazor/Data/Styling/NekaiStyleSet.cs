@@ -12,10 +12,10 @@ public abstract class NekaiStyleSet<TStyle> : ConfigurationFileManager<NekaiStyl
 	public NekaiStyleSet(string baseFilepath)
 		: base(baseFilepath)
 	{
-		Result result = NekaiPath.IsValidPath(baseFilepath);
-		if(!result.IsSuccess)
+		var result = NekaiPath.IsValidPath(baseFilepath);
+		if(!result.IsSuccess())
 		{
-			Exceptor.ThrowAndLogIfDebug(new ArgumentException(result.Message, nameof(baseFilepath)));
+			Exceptor.ThrowAndLogIfDebug(new ArgumentException(result.GetMessage(), nameof(baseFilepath)));
 			return;
 		}
 

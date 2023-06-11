@@ -37,21 +37,15 @@ public static class NekaiPath
 		return -1;
 	}
 
-	public static Result ContainsInvalidPathChars(ReadOnlySpan<char> path)
+	public static bool ContainsInvalidPathChars(ReadOnlySpan<char> path)
 	{
 		ReadOnlySpan<char> invalidChars = Path.GetInvalidPathChars();
-		Set<char>? foundInvalidChars = null;
 		foreach(char c in path)
 		{
 			if(!char.IsLetter(c) && invalidChars.Contains(c))
-			{
-				foundInvalidChars ??= new();
-				foundInvalidChars.Add(c);
-			}
+				return true;
 		}
-		return foundInvalidChars is null
-			? Result.Success()
-			: Result.Failure($"Path contains invalid characters: {string.Join(' ', foundInvalidChars)}");
+		return false;
 	}
 
 	public static string RemoveInvalidPathChars(string path)
@@ -95,23 +89,21 @@ public static class NekaiPath
 	///		<item>The returned path's nullability actually works (unlike the [NotNullWhenAttribute], since the return value is not a raw <see langword="bool"/>)</item>
 	/// </list>
 	/// </remarks>
-	public static Result<string> ValidatePath([NotNullWhen(true)] string? filePath)
+	public static Result<string, PathOperationResult> ValidatePath([NotNullWhen(true)] string? filePath)
 	{
 		if(string.IsNullOrWhiteSpace(filePath))
-			return Result.Failure("No filepath was specified.");
+			return new(PathOperationResult.PathIsEmpty);
 
-		Result result = ContainsInvalidPathChars(filePath);
-		if(!result.IsSuccess)
-			return result;
+		if(ContainsInvalidPathChars(filePath))
+			return new(PathOperationResult.ContainsInvalidPathChars);
 
 		try
 		{
-			string fullPath = Path.GetFullPath(filePath);
-			return Result.Success(fullPath);
+			return Path.GetFullPath(filePath);
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure(GetMessageForException(ex, filePath));
+			return new(GetResultFromException(ex));
 		}
 	}
 
@@ -119,48 +111,20 @@ public static class NekaiPath
 	/// Check the validity of the <paramref name="filePath"/>.
 	/// </summary>
 	/// <param name="filePath"> The path to validate. </param>
-	public static Result IsValidPath([NotNullWhen(true)] string? filePath)
-		=> ValidatePath(filePath);
+	public static PathOperationResult IsValidPath([NotNullWhen(true)] string? filePath)
+		=> ValidatePath(filePath).Error;
 
-	internal static void _WriteLogForExceptionInternal(Exception exception, string filepath)
+
+	public static PathOperationResult GetResultFromException(Exception exception)
 	{
-		string message = GetMessageForException(exception, filepath);
-		NekaiLogs.Shared.Error(message);
-		NekaiLogs.Shared.Error(exception);
-	}
-
-
-	public static string GetMessageForException(Exception exception, ReadOnlySpan<char> filepath, bool isDirectory = false)
-	{
-		string result;
-		string subject = isDirectory ? "directory" : "file";
-		// To avoid privacy issues in case the string ends up being displayed, avoid including the full path to the file outside testing.
-#if DEBUG
-		result = exception switch
+		return exception switch
 		{
-			SecurityException => $"Access to {subject} \"{filepath}\" has been denied for security reasons.",
-			UnauthorizedAccessException => $"Interrupted unauthorized operation attempt on {subject} \"{filepath}\".",
-			PathTooLongException => $"Full path length of {subject} \"{filepath}\" exceeds OS limit.",
-			ArgumentException => $"\"{filepath}\" is not a valid {subject} path.",
-			DirectoryNotFoundException => $"A part of the directory path \"{filepath}\" does not exist.",
-			_ => $"An unexpected error occurred while accessing {subject} \"{filepath}\": {exception.Message}"
+			SecurityException => PathOperationResult.NotAllowed,
+			UnauthorizedAccessException => PathOperationResult.NotAllowed,
+			PathTooLongException => PathOperationResult.PathTooLong,
+			ArgumentException => PathOperationResult.InvalidPath,
+			DirectoryNotFoundException => PathOperationResult.DoesNotExist,
+			_ => PathOperationResult.UnknownFailure
 		};
-#else
-		result = exception switch
-		{
-			SecurityException => $"Access to {subject} has been denied for security reasons.",
-			UnauthorizedAccessException => $"Unauthorized operation attempt on {subject} was blocked.",
-			PathTooLongException => $"Full path length of {subject} exceeds OS limit.",
-			ArgumentException => $"Invalid {subject} path.",
-			DirectoryNotFoundException => $"A directory in the path is missing.",
-			_ => $"An unexpected error occurred while accessing the {subject}."
-		};
-#endif
-
-		if(exception.InnerException is not null)
-		{
-			result += Environment.NewLine + GetMessageForException(exception.InnerException, filepath);
-		}
-		return result;
 	}
 }

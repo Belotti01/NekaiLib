@@ -42,25 +42,25 @@ public class FileBackupManager : IDisposable
 		FilePath = filepath;
 	}
 
-	public Result<string> TryBackup()
+	public Result<string, PathOperationResult> TryBackup()
 	{
 		if(!File.Exists(FilePath))
-			return Result.Failure("File to backup does not exist.");
+			return new(PathOperationResult.DoesNotExist);
 
 		if(BackupExists)
 		{
-			Result result = NekaiFile.CanReadFile(BackupFilePath);
-			if(!result.IsSuccess)
-				return result;
+			var result = NekaiFile.CanReadFile(BackupFilePath);
+			if(!result.IsSuccess())
+				return new(result);
 		}
 
 		try
 		{
-			return Result.Success(Backup());
+			return Backup();
 		}
 		catch(Exception ex)
 		{
-			return Result.Failure(NekaiPath.GetMessageForException(ex, BackupFilePath, false));
+			return new(NekaiPath.GetResultFromException(ex));
 		}
 	}
 
@@ -73,46 +73,46 @@ public class FileBackupManager : IDisposable
 		string? oldBackupFilePath = BackupFilePath;
 
 		BackupFilename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{Filename}.bak";
-		Result backupFileCreationResult = NekaiFile.TryEnsureExists(BackupFilePath);
-		if(!backupFileCreationResult.IsSuccess || BackupFilePath is null)   // Null check is just to shut the compiler up.
-			throw new FileNotFoundException(backupFileCreationResult.Message, BackupFilePath);
+		var backupFileCreationResult = NekaiFile.TryEnsureExists(BackupFilePath);
+		if(!backupFileCreationResult.IsSuccess() || BackupFilePath is null)   // Null check is just to shut the compiler up.
+			throw new FileNotFoundException(backupFileCreationResult.GetMessage(), BackupFilePath);
 
 		File.Copy(FilePath, BackupFilePath, true);
 
 		if(oldBackupFilePath is not null)
 		{
 			// Delete the old backup file.
-			Result duplicateDeletionResult = NekaiFile.TryEnsureDoesNotExist(BackupFilePath);
-			if(!duplicateDeletionResult.IsSuccess)
+			var duplicateDeletionResult = NekaiFile.TryEnsureDoesNotExist(BackupFilePath);
+			if(!duplicateDeletionResult.IsSuccess())
 			{
-				Debug.Fail("Backup file could not be deleted: " + duplicateDeletionResult.Message);
+				Debug.Fail("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
 				// Write a log entry, it might be useful to identify permission errors and such.
-				NekaiLogs.Shared.Warning("Backup file could not be deleted: " + duplicateDeletionResult.Message);
+				NekaiLogs.Shared.Warning("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
 				// Non-blocking error, but might result in useless disk usage. Continue anyway.
 			}
 		}
 		return BackupFilePath;
 	}
 
-	public Result TryRestore()
+	public PathOperationResult TryRestore()
 	{
 		if(!File.Exists(BackupFilePath))
-			return Result.Failure("Backup file does not exist.");
+			return PathOperationResult.DoesNotExist;
 
 		try
 		{
 			File.Copy(BackupFilePath, FilePath, true);
-			// Assertion used to ensure that both files can be found (hence the <?? "weird string"> thing) and contain the same content.
-			Debug.Assert(NekaiFile.CanReadFile(FilePath).IsSuccess, "Could not access restored file.");
+			// Assertion used to ensure that both files can be found and contain the same content.
+			Debug.Assert(NekaiFile.CanReadFile(FilePath).IsSuccess(), "Could not access restored file.");
 			Debug.Assert(NekaiFile.TryReadText(FilePath).Value == NekaiFile.TryReadText(BackupFilePath).Value, "Content of source file differs from the restored one.");
-			return Result.Success();
+			return PathOperationResult.Success;
 		}
 		catch(Exception ex)
 		{
 			NekaiLogs.Shared.Error("Could not restore backup file:");
 			NekaiLogs.Shared.Error(ex);
 
-			return Result.Failure("Backup file could not be restored.");
+			return NekaiPath.GetResultFromException(ex);
 		}
 	}
 
@@ -121,9 +121,13 @@ public class FileBackupManager : IDisposable
 		if(BackupFilePath is null || !File.Exists(BackupFilePath))
 			return;
 
-		if(!KeepPersistentBackup)
+		if(!KeepPersistentBackup && File.Exists(BackupFilePath))
 		{
-			File.Delete(BackupFilePath);
+			var result = NekaiFile.TryEnsureDoesNotExist(BackupFilePath);
+			if(!result.IsSuccess())
+			{
+				NekaiLogs.Program.Warning($"Backup file could not be deleted upon disposal of object of type {GetType().Name}; {result.GetMessage()}");
+			}
 		}
 		BackupFilename = null;
 		GC.SuppressFinalize(this);
