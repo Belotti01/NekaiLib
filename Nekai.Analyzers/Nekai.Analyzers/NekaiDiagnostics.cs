@@ -21,14 +21,14 @@ namespace Nekai.Analyzers
 		static NekaiDiagnostics()
 		{
 			ById = typeof(NekaiDiagnostics)
-				.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
-				.Where(x => x.FieldType == typeof(NekaiDiagnostic))
+				.GetProperties(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
+				.Where(x => x.PropertyType == typeof(NekaiDiagnostic))
 				.Select(d => (NekaiDiagnostic)d.GetValue(null))
 				.ToImmutableDictionary(x => x.Code);
 		}
 
-		public static readonly NekaiDiagnostic OperationResultWithoutAttribute = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Warning, nameof(OperationResultWithoutAttribute));
-		public static readonly NekaiDiagnostic OperationResultBaseType = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Error, nameof(OperationResultBaseType));
+		public static NekaiDiagnostic OperationResultWithoutAttribute { get; } = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Warning, nameof(OperationResultWithoutAttribute));
+		public static NekaiDiagnostic OperationResultBaseType { get; } = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Error, nameof(OperationResultBaseType));
 	}
 
 	public class NekaiDiagnostic
@@ -114,7 +114,7 @@ namespace Nekai.Analyzers
 			return this;
 		}
 
-		public Diagnostic ToDiagnostic(Location targetLocation, params string[] messageArgs)
+		public Diagnostic AsDiagnostic(Location targetLocation, params string[] messageArgs)
 		{
 			_DebugThrowIfMissingMessageArguments(messageArgs.Length);
 			return Diagnostic.Create(AsRule, targetLocation, messageArgs);

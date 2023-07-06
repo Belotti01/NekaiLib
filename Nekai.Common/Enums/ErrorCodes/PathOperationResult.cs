@@ -31,6 +31,8 @@ public enum PathOperationResult
 	BadFormat,
 	/// <summary> The operation is not allowed by the OS. </summary>
 	NotAllowed,
+	/// <summary> The read operation failed. </summary>
+	FailedRead,
 	/// <summary> An unknown error occurred. </summary>
 	UnknownFailure,
 }

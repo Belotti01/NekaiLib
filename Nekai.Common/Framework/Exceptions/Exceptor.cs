@@ -4,7 +4,9 @@ using Serilog.Events;
 
 namespace Nekai.Common;
 
+// The class is split into multiple files: this contains the logic for CriticalExceptions.
 // Called Exceptor instead of Throw/ThrowHelper to avoid collision with other external libraries.
+
 /// <summary>
 /// Helper class that provides methods to throw and log exceptions, but also safely handle critical errors that require
 /// the program to exit.
@@ -13,17 +15,18 @@ public static partial class Exceptor
 {
 
 	public delegate void CriticalExceptionHandler(CriticalExceptionData exception);
-	/// <summary> Invoked upon throwing a <see cref="CriticalException"/>, before ending the Application's execution. </summary>
+	/// <summary> Invoked upon throwing a <see cref="_CriticalException"/>, before ending the Application's execution. </summary>
+	/// <remarks> Does not replace <see cref="CurrentApp.OnProcessExit"/> when throwing a critical exception; this will be fired first. </remarks>
 	public static event CriticalExceptionHandler? OnCriticalException;
 
 
 	[StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowCritical(AppExitCode exitCode, Exception? innerException = null)
-		=> _ThrowCriticalException(new CriticalException(exitCode, innerException));
+		=> _ThrowCriticalException(new _CriticalException(exitCode, innerException));
 
 	[StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowCritical(AppExitCode exitCode, string message, Exception? innerException = null)
-		=> _ThrowCriticalException(new CriticalException(exitCode, message, innerException));
+		=> _ThrowCriticalException(new _CriticalException(exitCode, message, innerException));
 
 	[Conditional("DEBUG"), DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowIfDebug(string msg, Exception? innerException = null)
@@ -74,7 +77,7 @@ public static partial class Exceptor
 
 
 	[StackTraceHidden]
-	private static void _ThrowCriticalException(CriticalException ex)
+	private static void _ThrowCriticalException(_CriticalException ex)
 	{
 		// Assume that everything is now broken and you need to somehow:
 		// 1) Launch any attached handlers

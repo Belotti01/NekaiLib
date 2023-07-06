@@ -25,9 +25,9 @@ public abstract class ObservableObject<T> : IObservable<T>
 	}
 
 	/// <summary>
-	/// Notify all subscribed <see cref="Observers"/> with the given <paramref name="value"/>.
+	/// Notify all subscribed observers with the given <paramref name="value"/>.
 	/// </summary>
-	/// <param name="value"> Data to forward to the <see cref="Observers"/> during notification handling. </param>
+	/// <param name="value"> Data to forward to the observers during notification handling. </param>
 	protected virtual void Notify(T value)
 	{
 		foreach(var observer in Observers)
@@ -37,9 +37,9 @@ public abstract class ObservableObject<T> : IObservable<T>
 	}
 
 	/// <summary>
-	/// Notify all subscribed <see cref="Observers"/> with the given <paramref name="error"/> information.
+	/// Notify all subscribed observers with the given <paramref name="error"/> information.
 	/// </summary>
-	/// <param name="error"> Exception to forward to the <see cref="Observers"/> during notification handling. </param>
+	/// <param name="error"> Exception to forward to the observers during notification handling. </param>
 	protected virtual void NotifyError(Exception error)
 	{
 		foreach(var observer in Observers)
@@ -50,10 +50,10 @@ public abstract class ObservableObject<T> : IObservable<T>
 
 
 	/// <summary>
-	/// Notify all subscribed <see cref="Observers"/> of the completion of an operation.
+	/// Notify all subscribed observers of the completion of an operation.
 	/// </summary>
 	/// <remarks>
-	/// Does not automatically unsubscribe the <see cref="Observers"/> from this object.
+	/// Does not automatically unsubscribe the observers from this object.
 	/// </remarks>
 	protected virtual void NotifyCompleted()
 	{

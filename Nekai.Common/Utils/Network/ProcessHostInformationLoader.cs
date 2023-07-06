@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 
 namespace Nekai.Common;
 
@@ -13,6 +15,7 @@ public class ProcessHostInformationLoader
 	public const string DEFAULT_HOSTNAME = "localhost";
 	/// <summary> The fallback <see cref="IPAddress"/> value used when an Inter-Network ip address cannot be retrieved. </summary>
 	public static IPAddress DefaultIpAddress { get; } = new(new byte[] { 127, 0, 0, 1 });
+	public ImmutableArray<IPAddress> IpAddresses { get; set; }
 
 	/// <summary>
 	/// Whether the <see cref="IPAddress"/> and <see cref="HostName"/> properties have been successfully set to
@@ -108,9 +111,13 @@ public class ProcessHostInformationLoader
 		try
 		{
 			// Query the DNS and extract the Inter-Network IP address (so avoid 127.0.0.1)
-			localHostIp = Dns.GetHostEntry(HostName)
+			IpAddresses = Dns.GetHostEntry(HostName)
 				.AddressList
-				.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+				.ToImmutableArray();
+
+			localHostIp = IpAddresses
+				.Where(x => x.AddressFamily == AddressFamily.InterNetwork)
+				.FirstOrDefault();
 
 			if(localHostIp is null)
 				// The DNS responded, but no Inter-Network IP was found.
@@ -136,6 +143,25 @@ public class ProcessHostInformationLoader
 	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>. </returns>
 	public override string ToString()
 	{
-		return $$"""{{HostName}} ({{IPAddress}})""";
+		var ipv4Addresses = IpAddresses
+			.Select(x => x.MapToIPv4());
+		return _ToStringInternal(ipv4Addresses, HostName);
+	}
+
+	public string ToIPv6String()
+	{
+		var ipv6Addresses = IpAddresses
+			.Select(x => x.MapToIPv6());
+		return _ToStringInternal(ipv6Addresses, HostName);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static string _ToStringInternal(IEnumerable<IPAddress> addresses, string hostName)
+	{
+		if(addresses is null)
+			return $"[{hostName}]";
+
+		string list = string.Join("; ", addresses);
+		return $"[{hostName}] {list}";
 	}
 }

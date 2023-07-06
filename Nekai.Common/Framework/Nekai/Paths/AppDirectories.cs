@@ -26,6 +26,12 @@ public static partial class NekaiData
 		public static string ProgramsLogs => Path.Combine(Logs, "Programs");
 		/// <summary> Folder for log files scoped to the current program. </summary>
 		public static string CurrentProgramLogs => Path.Combine(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(CurrentApp.Name));
+		/// <summary> View information of the currently active program. </summary>
+		public static string CurrentProgramViews => _Program("Views");
+		/// <summary> Storage for data specific to the currently active program. </summary>
+		public static string CurrentProgramData => _Program("Data");
+		/// <summary> Configurations folder of the current program. </summary>
+		public static string CurrentProgramConfiguration => _Program("Configuration");
 
 		// Help avoid errors at runtime due to missing folders
 		static Directories()
@@ -64,6 +70,12 @@ public static partial class NekaiData
 		{
 			string pathStart = _localConfiguration.Value;
 			string path = Path.Combine(relativePath.Prepend(pathStart).ToArray());
+			return path;
+		}
+
+		private static string _Program(params string[] relativePath)
+		{
+			string path = Path.Combine(relativePath.Prepend(_Local("ProgramData", CurrentApp.Name)).ToArray());
 			return path;
 		}
 	}

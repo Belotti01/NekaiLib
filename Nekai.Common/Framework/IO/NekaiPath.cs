@@ -27,6 +27,27 @@ public static class NekaiPath
 		return !trimmedPath.IsEmpty;
 	}
 
+	public static bool TryRemovePathStep(string path, out string trimmedPath)
+	{
+		if(string.IsNullOrWhiteSpace(path))
+		{
+			trimmedPath = "";
+			return false;
+		}
+
+		path = Path.TrimEndingDirectorySeparator(path);
+		int dirSeparatorIndex = LastIndexOfDirectorySeparatorChar(path);
+
+		if(dirSeparatorIndex <= 0)
+		{
+			trimmedPath = "";
+			return false;
+		}
+
+		trimmedPath = path[..dirSeparatorIndex];
+		return trimmedPath.Length != 0;
+	}
+
 	public static int LastIndexOfDirectorySeparatorChar(ReadOnlySpan<char> path)
 	{
 		for(int i = path.Length - 1; i >= 0; i--)

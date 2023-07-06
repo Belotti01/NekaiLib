@@ -5,6 +5,7 @@
 
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Nekai.Analyzers.CodeFixes\Nekai.Analyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\Nekai.Analyzers\Nekai.Analyzers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <Using Include="Nekai.Analyzers.Test.CSharpCodeFixVerifier&lt;Nekai.Analyzers.NekaiAnalyzer, Nekai.Analyzers.NekaiAnalyzersCodeFixProvider&gt;">
+      <Alias>VerifyCS</Alias>
+    </Using>
   </ItemGroup>
 
 </Project>

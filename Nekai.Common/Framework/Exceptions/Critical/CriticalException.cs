@@ -5,16 +5,16 @@
 // Hence why the class is scoped to internal.
 public static partial class Exceptor
 {
-	internal class CriticalException : Exception
+	internal class _CriticalException : Exception
 	{
 		public AppExitCode ExitCode { get; }
 
-		internal CriticalException(AppExitCode exitCode, Exception? innerException = null)
+		internal _CriticalException(AppExitCode exitCode, Exception? innerException = null)
 			: this(exitCode, "", innerException)
 		{
 		}
 
-		internal CriticalException(AppExitCode exitCode, string message, Exception? innerException = null)
+		internal _CriticalException(AppExitCode exitCode, string message, Exception? innerException = null)
 			: base(_ExpandMessage(message, exitCode), innerException)
 		{
 			ExitCode = exitCode;

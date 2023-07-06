@@ -19,5 +19,6 @@ public enum NetworkOperationResult
 	InvalidRequest,
 	InvalidResponse,
 	InvalidOperation,
+	BadFormat,
 	UnknownError
 }

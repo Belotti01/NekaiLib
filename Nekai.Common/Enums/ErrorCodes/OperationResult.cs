@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace Nekai.Common;
 
+
+/// <summary>
+/// General-purpose operation results.
+/// </summary>
+/// <remarks>
+/// Prefer using your own more specific OperationResult enum with the <see cref="OperationResultAttribute"/> attribute, 
+/// while mapping values to the ones that are defined here when possible. This ensures easier handling of errors while
+/// keeping scalability.
+/// </remarks>
 [OperationResult]
 public enum OperationResult
 {

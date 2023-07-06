@@ -61,29 +61,11 @@ namespace Nekai.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type names should be all uppercase..
+        ///   Looks up a localized string similar to Remove base type..
         /// </summary>
-        internal static string AnalyzerDescription {
+        internal static string OperationResultBaseTypeCodeFix {
             get {
-                return ResourceManager.GetString("AnalyzerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Type name &apos;{0}&apos; contains lowercase letters.
-        /// </summary>
-        internal static string AnalyzerMessageFormat {
-            get {
-                return ResourceManager.GetString("AnalyzerMessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Type name contains lowercase letters.
-        /// </summary>
-        internal static string AnalyzerTitle {
-            get {
-                return ResourceManager.GetString("AnalyzerTitle", resourceCulture);
+                return ResourceManager.GetString("OperationResultBaseTypeCodeFix", resourceCulture);
             }
         }
         
@@ -97,7 +79,7 @@ namespace Nekai.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enum &apos;{0}&apos;&apos;s base type is &apos;{1}&apos;, but &apos;{2}&apos; was expected..
+        ///   Looks up a localized string similar to Enum &apos;{0}&apos;&apos;s base type is &apos;{1}&apos;, but &apos;int&apos; was expected..
         /// </summary>
         internal static string OperationResultBaseTypeMessageFormat {
             get {

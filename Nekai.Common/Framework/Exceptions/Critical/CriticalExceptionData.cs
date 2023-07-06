@@ -4,7 +4,7 @@
 // Also includes an API for keeping additional information fed from event handlers.
 
 /// <summary>
-/// Information regarding an instance of <see cref="Exceptor.CriticalException"/>.
+/// Information regarding an instance of <see cref="Exceptor._CriticalException"/>.
 /// </summary>
 public class CriticalExceptionData
 {
@@ -12,7 +12,7 @@ public class CriticalExceptionData
 	public string Message { get; }
 	/// <inheritdoc cref="Exception.StackTrace"/>
 	public string? StackTrace { get; }
-	/// <inheritdoc cref="Exceptor.CriticalException.ExitCode"/>
+	/// <inheritdoc cref="Exceptor._CriticalException.ExitCode"/>
 	public AppExitCode ExitCode { get; }
 	/// <inheritdoc cref="Exception.InnerException"/>
 	public Exception? InnerException { get; }
@@ -22,7 +22,7 @@ public class CriticalExceptionData
 
 	private readonly List<string> _additionalDumpInformation = new();
 
-	internal CriticalExceptionData(Exceptor.CriticalException ex)
+	internal CriticalExceptionData(Exceptor._CriticalException ex)
 	{
 		Message = ex.Message;
 		StackTrace = ex.StackTrace;

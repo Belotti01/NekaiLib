@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -35,9 +37,23 @@ namespace Nekai.Analyzers
 
 		public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
+			if(Debugger.IsAttached)
+			{
+				Debugger.Launch();
+			} 
+
 			var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-			
+
 			// Register code fixes manually here.
+			context.AddCodeFix<EnumDeclarationSyntax>(root, NekaiDiagnostics.OperationResultBaseType, _OperationResultEnumsFixes.SetIntegerBaseType);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ImmutableArray<Diagnostic> GetDiagnostics(CodeFixContext context, NekaiDiagnostic ofType)
+		{
+			return context.Diagnostics
+				.Where(x => x.Id == ofType.Code)
+				.ToImmutableArray();
 		}
 	}
 }
