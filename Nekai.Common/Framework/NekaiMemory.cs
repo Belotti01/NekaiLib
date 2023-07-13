@@ -37,7 +37,7 @@ public static class NekaiMemory
 	/// <param name="typeSize"> Use <c>sizeof(T)</c> on the type of the array elements. </param>
 	public static bool IsStackallocSafe(int length, [ConstantExpected(Min = 1)] int typeSize)
 	{
-		// To avoid overflow errors, store the result in a bigger container
+		// To avoid overflow errors, store the result in a bigger container type.
 		ulong bitLength = (ulong)length * (ulong)typeSize;
 		return bitLength <= _MAX_STACKALLOC_SIZE;
 	}

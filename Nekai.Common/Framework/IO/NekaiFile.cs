@@ -24,9 +24,14 @@ public static class NekaiFile
 		return isReadOnlyOrSystem;
 	}
 
-	// Make sure that the FileStream.Dispose() is invoked before returning.
+	/// <summary>
+	/// Check whether the file <paramref name="filePath"/> exists, and create it if it doesn't.
+	/// </summary>
+	/// <param name="filePath"> The path to the file to find or create. </param>
+	/// <returns> <see cref="PathOperationResult.Success"/> if the file exists or is created, or a value defining the error if not. </returns>
 	public static PathOperationResult TryCreateOrOverwrite([NotNullWhen(true)] string? filePath)
 	{
+		// Make sure that FileStream.Dispose() is invoked before returning.
 		var result = _TryCreateOrOverwrite(filePath);
 		if(!result.IsSuccessful)
 			return result.Error;
@@ -34,8 +39,8 @@ public static class NekaiFile
 		return PathOperationResult.Success;
 	}
 
-	// The FileStreams should never be kept open for longer than required, so block off this method and wrap it instead.
-	// The caller can still open its own stream when needed, but let other processes and threads access it in the meantime.
+	// The FileStreams should never be kept open for longer than required, so internalize this method and wrap it instead.
+	// The caller can still open its own stream to the file when needed, but let other processes and threads access it in the meantime.
 	private static Result<FileStream, PathOperationResult> _TryCreateOrOverwrite([NotNullWhen(true)] string? filePath, bool requireStream = false)
 	{
 		var result = NekaiPath.ValidatePath(filePath);
@@ -104,6 +109,12 @@ public static class NekaiFile
 		}
 	}
 
+	/// <summary>
+	/// Attempt to read the file at <paramref name="filePath"/> and return its contents as an array of <see langword="string"/>s.
+	/// </summary>
+	/// <param name="filePath"> The path to the file to read. </param>
+	/// <returns> An <see cref="IEnumerable{T}"/> of the lines of the file if it exists and can be read, or a value defining the error
+	/// if not. </returns>
 	public static Result<IEnumerable<string>, PathOperationResult> TryReadLines([NotNullWhen(true)] string filePath)
 	{
 		var result = NekaiPath.IsValidPath(filePath);

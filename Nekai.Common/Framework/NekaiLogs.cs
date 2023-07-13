@@ -14,7 +14,7 @@ public static class NekaiLogs
 	private static ILogger? _sharedLogger;
 	private static ILogger? _currentProgramLogger;
 	/// <summary>
-	/// Factory used to generate the <see cref="NekaiLogs"/> <see cref="ILogger"/> instances.
+	/// Factory used to generate the <see cref="NekaiLogs"/>' <see cref="ILogger"/> instances.
 	/// </summary>
 	public static NekaiLoggerFactory Factory { get; } = new();
 
@@ -79,7 +79,7 @@ public static class NekaiLogs
 
 	private static bool _TryInstantiateGlobalLogger([NotNullWhen(true)] ref ILogger? logger, string? logFilePathTemplate)
 	{
-		// Logger might have been created while this thread was stuck due to the lock
+		// Logger might have been created while this thread was stuck due to the lock, so check beforehand.
 		if(logger is not null)
 			return true;
 
@@ -89,8 +89,11 @@ public static class NekaiLogs
 			// - Using the Json format will require another way to view the logs properly, but is more software-friendly
 			// - ... otherwise just make the logs straightforward with a simple prefix, but losing information in the process
 			// fml idk keep it json for now
-			NekaiLoggerConfiguration config = new();
-			config.WithConsoleOutput();
+			NekaiLoggerConfiguration config = new()
+			{
+				LogToConsole = true
+			};
+
 			if(logFilePathTemplate is not null)
 			{
 				config.WithCompactJsonFileOutput(logFilePathTemplate);

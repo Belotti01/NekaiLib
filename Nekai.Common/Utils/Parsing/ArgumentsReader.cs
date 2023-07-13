@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Nekai.Common;
 
@@ -107,7 +108,7 @@ public class ArgumentsReader
 				if(lastKey is not null && lastValue is null)
 					parameters.Add(lastKey, "");
 
-				lastKey = ParseKey(span[i..endIndex]);
+				lastKey = _ParseKey(span[i..endIndex]);
 				i = endIndex + 1;
 
 				if(i >= span.Length)
@@ -128,7 +129,7 @@ public class ArgumentsReader
 				{
 					++endIndex;
 				} while(endIndex < span.Length && span[endIndex] != wrapper.Value || span[endIndex - 1] == '\\');
-				lastValue = ParseValue(span[i..endIndex], wrapper.Value);
+				lastValue = _ParseValue(span[i..endIndex], wrapper.Value);
 
 				if(parameters.ContainsKey(lastKey))
 					parameters[lastKey] = lastValue;
@@ -153,12 +154,15 @@ public class ArgumentsReader
 		_arguments = parameters;
 	}
 
-	private static string ParseKey(ReadOnlySpan<char> part)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static string _ParseKey(ReadOnlySpan<char> part)
 	{
 		return part[1..].ToString();
 	}
 
-	private static string ParseValue(ReadOnlySpan<char> part, char wrapper)
+	// Keep the wrapper character in case it's needed in future updates.
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static string _ParseValue(ReadOnlySpan<char> part, char wrapper = '"')
 	{
 		return part[1..].ToString();
 	}

@@ -69,32 +69,38 @@ public static class NekaiPath
 		return false;
 	}
 
-	public static string RemoveInvalidPathChars(string path)
+	/// <summary>
+	/// Remove all invalid path characters from the <paramref name="str"/>.
+	/// </summary>
+	/// <param name="str"> The <see langword="string"/> to check and modify. </param>
+	/// <returns> The original <paramref name="str"/> if no invalid path characters are found, or a new <see langword="string"/> derived from it
+	/// with all invalid path characters removed otherwise. </returns>
+	public static string RemoveInvalidPathChars(string str)
 	{
-		int[] errorIndexes = path.IndexesOfAny(Path.GetInvalidPathChars());
+		int[] errorIndexes = str.IndexesOfAny(Path.GetInvalidPathChars());
 		switch(errorIndexes.Length)
 		{
 			case 0:
-				return path;
+				return str;
 
 			case 1:
-				return path.Remove(errorIndexes[0], 1);
+				return str.Remove(errorIndexes[0], 1);
 
 			default:
-				string str = string.Create(path.Length - errorIndexes.Length, (path, errorIndexes), (span, state) =>
+				string validPathString = string.Create(str.Length - errorIndexes.Length, (str, errorIndexes), (span, state) =>
 				{
 					int errorIndex = 0;
-					for(int i = 0; i < state.path.Length; i++)
+					for(int i = 0; i < state.str.Length; i++)
 					{
 						if(errorIndex < state.errorIndexes.Length && i == state.errorIndexes[errorIndex])
 						{
 							errorIndex++;
 							continue;
 						}
-						span[i - errorIndex] = state.path[i];
+						span[i - errorIndex] = state.str[i];
 					}
 				});
-				return str;
+				return validPathString;
 		}
 	}
 
@@ -135,7 +141,12 @@ public static class NekaiPath
 	public static PathOperationResult IsValidPath([NotNullWhen(true)] string? filePath)
 		=> ValidatePath(filePath).Error;
 
-
+	/// <summary>
+	/// Return the <see cref="PathOperationResult"/> corresponding to the type of <paramref name="exception"/> thrown.
+	/// </summary>
+	/// <param name="exception"> The exception type to convert. </param>
+	/// <returns> A <see cref="PathOperationResult"/> representing the thrown <paramref name="exception"/>. If a specific value can't be derived,
+	/// this defaults to <see cref="PathOperationResult.UnknownFailure"/>. </returns>
 	public static PathOperationResult GetResultFromException(Exception exception)
 	{
 		return exception switch

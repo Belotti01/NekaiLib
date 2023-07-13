@@ -10,7 +10,7 @@ namespace Nekai.Common;
 public class UniqueValueGenerator<TValue>
 	where TValue : IEquatable<TValue>
 {
-	private const int _TEST_ITERATIONS = 500;
+	private const int _DEAULT_TEST_ITERATIONS = 500;
 
 	/// <summary>
 	/// Functions defining the generation of each ID, based on the last generated value (taken as parameter)
@@ -30,7 +30,7 @@ public class UniqueValueGenerator<TValue>
 	{
 		_generator = generator;
 		_lastValue = startIdValue;
-		_TestIdGenerator(generator, startIdValue);
+		_DebugTestIdGenerator(generator, _DEAULT_TEST_ITERATIONS, startIdValue);
 	}
 
 	public UniqueValueGenerator(Func<TValue> generator, TValue? startIdValue = default)
@@ -41,7 +41,8 @@ public class UniqueValueGenerator<TValue>
 	/// <summary>
 	/// Generate a new ID but don't update the state of the generator.
 	/// </summary>
-	/// <returns>An ID value that can be generated at the next call of <see cref="Next"/>.</returns>
+	/// <returns> An ID value that can be generated at the next call of <see cref="Next"/>. </returns>
+	/// <remarks> Does not ensure that the next generated value will be the same as the one returned by this method. </remarks>
 	public TValue Peek() => _generator(_lastValue);
 
 	/// <summary>
@@ -57,27 +58,27 @@ public class UniqueValueGenerator<TValue>
 	}
 
 	/// <summary>
-	/// In DEBUG mode, runs the <paramref name="generator"/> for <see cref="_TEST_ITERATIONS"/> times, and asserts that none of the values
+	/// In DEBUG mode, runs the <paramref name="generator"/> for <see cref="_DEAULT_TEST_ITERATIONS"/> times, and asserts that none of the values
 	/// is a duplicate of another.
 	/// </summary>
 	/// <param name="generator"> The generator function to test. </param>
-	/// <param name="previousValue"> A value that has already been generated using the <paramref name="generator"/>, or 
-	/// <see langword="null"/>. </param>
+	/// <param name="iterations"> The amount of elements to generate for testing. </param>
+	/// <param name="previousValue"> A value that has already been generated using the <paramref name="generator"/>, or <see langword="null"/>. </param>
 	[Conditional("DEBUG")]
-	private static void _TestIdGenerator(Func<TValue?, TValue> generator, TValue? previousValue = default)
+	internal static void _DebugTestIdGenerator(Func<TValue?, TValue> generator, int iterations = _DEAULT_TEST_ITERATIONS, TValue? previousValue = default)
 	{
-		HashSet<TValue> ids = new(_TEST_ITERATIONS);
+		HashSet<TValue> ids = new(_DEAULT_TEST_ITERATIONS);
 
 		if(previousValue is not null)
 		{
 			ids.Add(previousValue);
 		}
 
-		for(int i = 0; i < _TEST_ITERATIONS; ++i)
+		for(int i = 0; i < iterations; ++i)
 		{
 			previousValue = generator(previousValue);
 			Debug.Assert(previousValue is not null, $"{nameof(UniqueValueGenerator<TValue>)} generated a null value.");
-			Debug.Assert(ids.Add(previousValue), $"{nameof(UniqueValueGenerator<TValue>)} does not consistently generate unique ids.");
+			Debug.Assert(ids.Add(previousValue), $"{nameof(UniqueValueGenerator<TValue>)} does not consistently generate unique ids: value \"{previousValue}\" has been generated twice.");
 		}
 	}
 }
