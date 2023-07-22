@@ -24,6 +24,9 @@ public static class NekaiDirectory
 		if(Directory.Exists(directory))
 			return PathOperationResult.Success;
 
+		if(File.Exists(directory))
+			return PathOperationResult.PathIsFile;
+
 		try
 		{
 			Directory.CreateDirectory(directory);

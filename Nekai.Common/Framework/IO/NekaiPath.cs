@@ -27,11 +27,11 @@ public static class NekaiPath
 		return !trimmedPath.IsEmpty;
 	}
 
-	public static bool TryRemovePathStep(string path, out string trimmedPath)
+	public static bool TryRemovePathStep(string path, [NotNullWhen(true)] out string? trimmedPath)
 	{
 		if(string.IsNullOrWhiteSpace(path))
 		{
-			trimmedPath = "";
+			trimmedPath = null;
 			return false;
 		}
 
@@ -40,7 +40,7 @@ public static class NekaiPath
 
 		if(dirSeparatorIndex <= 0)
 		{
-			trimmedPath = "";
+			trimmedPath = null;
 			return false;
 		}
 
@@ -118,10 +118,11 @@ public static class NekaiPath
 	/// </remarks>
 	public static Result<string, PathOperationResult> ValidatePath([NotNullWhen(true)] string? filePath)
 	{
+		// Make simple checks to avoid some unnecessary exception throws and report the proper error.
 		if(string.IsNullOrWhiteSpace(filePath))
 			return new(PathOperationResult.PathIsEmpty);
 
-		if(ContainsInvalidPathChars(filePath))
+		if(ContainsInvalidPathChars(filePath) || !filePath.IsNormalized())
 			return new(PathOperationResult.ContainsInvalidPathChars);
 
 		try
@@ -138,8 +139,10 @@ public static class NekaiPath
 	/// Check the validity of the <paramref name="filePath"/>.
 	/// </summary>
 	/// <param name="filePath"> The path to validate. </param>
-	public static PathOperationResult IsValidPath([NotNullWhen(true)] string? filePath)
-		=> ValidatePath(filePath).Error;
+	public static PathOperationResult IsValidPath([NotNullWhen(true)] string filePath)
+	{
+		return ValidatePath(filePath).Error;
+	}
 
 	/// <summary>
 	/// Return the <see cref="PathOperationResult"/> corresponding to the type of <paramref name="exception"/> thrown.

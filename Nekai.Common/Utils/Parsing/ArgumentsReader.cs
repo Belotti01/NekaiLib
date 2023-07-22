@@ -117,7 +117,7 @@ public class ArgumentsReader
 
 			if(lastKey is not null)
 			{
-				// Make sure to skip eventual additional spaces
+				// Makes sure to skip eventual additional spaces
 				while(i < span.Length && span[i] == ' ' && span[i + 1] is ' ' or '"' or '\'')
 				{
 					i++;

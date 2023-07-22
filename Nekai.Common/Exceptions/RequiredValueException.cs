@@ -33,7 +33,7 @@ public class RequiredValueException
 
 	public static void ThrowIfRequired(MemberInfo member)
 	{
-		if(member.IsRequiredMember())
+		if(member.HasRequiredAttribute())
 			throw new RequiredValueException(member.Name);
 	}
 

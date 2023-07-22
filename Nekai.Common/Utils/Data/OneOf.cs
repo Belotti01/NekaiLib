@@ -42,4 +42,37 @@ public class OneOf<T, T2>
 		AltValue = value;
 		IsValue = false;
 	}
+
+	/// <summary>
+	/// Continue execution with the contained value based on its type.
+	/// </summary>
+	/// <param name="valueAction"> The action invoked when the value is of type <typeparamref name="T"/>. </param>
+	/// <param name="altValueAction"> The action invoked when the value is of type <typeparamref name="T2"/>. </param>
+	public void Fork(Action<T> valueAction, Action<T2> altValueAction)
+	{
+		if (IsValue)
+		{
+			valueAction(Value);
+		}
+		else
+		{
+			altValueAction(AltValue);
+		}
+	}
+
+	/// <summary>
+	/// Continue execution with the contained value based on its type.
+	/// </summary>
+	/// <param name="valueFunc"> The function invoked when the value is of type <typeparamref name="T"/>. </param>
+	/// <param name="altValueFunc"> The function invoked when the value is of type <typeparamref name="T2"/>. </param>
+	/// <returns>
+	/// The result of <paramref name="valueFunc"/> if the value is of type <typeparamref name="T"/>, or the result of 
+	/// <paramref name="altValueFunc"/> if the value is of type <typeparamref name="T2"/>.
+	/// </returns>
+	public TResult Fork<TResult>(Func<T, TResult> valueFunc, Func<T2, TResult> altValueFunc)
+	{
+		return IsValue 
+			? valueFunc(Value) 
+			: altValueFunc(AltValue);
+	}
 }

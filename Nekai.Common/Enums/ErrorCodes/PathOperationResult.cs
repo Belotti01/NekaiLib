@@ -23,6 +23,10 @@ public enum PathOperationResult
 	DoesNotExist,
 	/// <summary> The file or directory already exists. </summary>
 	AlreadyExists,
+	/// <summary> The path points to a file, but a directory was expected. </summary>
+	PathIsFile,
+	/// <summary> The path points to a directory, but a file was expected. </summary>
+	PathIsDirectory,
 	/// <summary> The file is read-only. </summary>
 	IsReadOnly,
 	/// <summary> The file is a system file. </summary>
@@ -57,6 +61,10 @@ public static class PathOperationResultExtensions
 			PathOperationResult.IsSystem => "The file is a system file.",
 			PathOperationResult.NotAllowed => "The operation is not allowed by the OS.",
 			PathOperationResult.UnknownFailure => "An unknown error occurred.",
+			PathOperationResult.PathIsFile => "The path points to a file, but a directory was expected.",
+			PathOperationResult.PathIsDirectory => "The path points to a directory, but a file was expected.",
+			PathOperationResult.BadFormat => "The path or the contents of the file are not in the expected format.",
+			PathOperationResult.FailedRead => "The read operation failed.",
 			_ => throw new NotImplementedException(),
 		};
 }

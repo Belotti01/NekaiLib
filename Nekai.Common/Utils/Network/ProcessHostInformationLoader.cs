@@ -15,7 +15,10 @@ public class ProcessHostInformationLoader
 	public const string DEFAULT_HOSTNAME = "localhost";
 	/// <summary> The fallback <see cref="IPAddress"/> value used when an Inter-Network ip address cannot be retrieved. </summary>
 	public static IPAddress DefaultIpAddress { get; } = new(new byte[] { 127, 0, 0, 1 });
-	public ImmutableArray<IPAddress> IpAddresses { get; set; }
+	/// <summary> Array of all the IP addresses associated with the current process' host. </summary>
+	public ImmutableArray<IPAddress> IpAddresses { get; protected set; }
+	/// <summary> The result of the last attempt to load the host information. </summary>
+	public NetworkOperationResult LastLoadingOperationResult { get; protected set; }
 
 	/// <summary>
 	/// Whether the <see cref="IPAddress"/> and <see cref="HostName"/> properties have been successfully set to
@@ -72,7 +75,8 @@ public class ProcessHostInformationLoader
 			// Don't overwrite previously loaded value.
 			_hostName ??= DEFAULT_HOSTNAME;
 			_ipAddress ??= DefaultIpAddress;
-			return nameResult.Error;
+			LastLoadingOperationResult = nameResult.Error;
+			return LastLoadingOperationResult;
 		}
 		_hostName = nameResult.Value;
 
@@ -80,11 +84,13 @@ public class ProcessHostInformationLoader
 		if(!ipResult.IsSuccessful)
 		{
 			_ipAddress ??= DefaultIpAddress;
-			return ipResult.Error;
+			LastLoadingOperationResult = ipResult.Error;
+			return LastLoadingOperationResult;
 		}
 
 		_ipAddress = ipResult.Value;
-		return NetworkOperationResult.Success;
+		LastLoadingOperationResult = NetworkOperationResult.Success;
+		return LastLoadingOperationResult;
 	}
 
 	private static Result<string, NetworkOperationResult> _TryGetLocalHostName()
@@ -104,8 +110,8 @@ public class ProcessHostInformationLoader
 	private Result<IPAddress, NetworkOperationResult> _TryRetrieveLocalHostIpAddress()
 	{
 		// Random tip: most DNS issues can be fixed by:
-		// - Setting a public DNS (f.e. Google's 8.8.8.8/8.8.4.4 or Cloudflare's 1.1.1.1)
-		// - Flushing the local DNS cache
+		// - Setting a public DNS in the machine's network settings (f.e. Google's 8.8.8.8/8.8.4.4 or Cloudflare's 1.1.1.1)
+		// - Flushing the machine's DNS cache
 		IPAddress? localHostIp;
 
 		try
@@ -140,19 +146,31 @@ public class ProcessHostInformationLoader
 	/// <summary>
 	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>.
 	/// </summary>
-	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>. </returns>
+	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>  in IPv4 format. </returns>
 	public override string ToString()
-	{
-		var ipv4Addresses = IpAddresses
-			.Select(x => x.MapToIPv4());
-		return _ToStringInternal(ipv4Addresses, HostName);
-	}
+		=> ToIPv4String();	// Just use the conventional format (IPv4) for the default string representation.
 
+
+	/// <summary>
+	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>, using IPv6 addresses.
+	/// </summary>
+	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/> in IPv6 format. </returns>
 	public string ToIPv6String()
 	{
 		var ipv6Addresses = IpAddresses
 			.Select(x => x.MapToIPv6());
 		return _ToStringInternal(ipv6Addresses, HostName);
+	}
+
+	/// <summary>
+	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>, using IPv4 addresses.
+	/// </summary>
+	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>. </returns>
+	public string ToIPv4String()
+	{
+		var ipv4Addresses = IpAddresses
+			.Select(x => x.MapToIPv4());
+		return _ToStringInternal(ipv4Addresses, HostName);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

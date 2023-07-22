@@ -41,25 +41,40 @@ public class CriticalExceptionData
 	/// </summary>
 	public override string ToString()
 	{
-		StringBuilder sb = new();
+		const int DIV_LENGTH = 10;
+		const string DUMP_INFO_STRING = "ADDITIONAL DUMP INFORMATION:";
+		const string STACK_TRACE_STRING = "STACK TRACE:";
+
+		// Calculate the length of the string to avoid reallocating the string multiple times.
+		int stringLength = Message.Length
+			+ (
+				_additionalDumpInformation.Count == 0
+				? 0
+				: DIV_LENGTH + DUMP_INFO_STRING.Length + _additionalDumpInformation.Sum(s => s.Length + 2)
+			) + (
+				string.IsNullOrWhiteSpace(StackTrace)
+				? 0
+				: DIV_LENGTH + STACK_TRACE_STRING.Length + StackTrace.Length + 2
+			);
+
+		StringBuilder sb = new(stringLength);
 		// MESSAGE
-		if(!string.IsNullOrWhiteSpace(Message))
-		{
-			sb.AppendLine(Message);
-		}
+		sb.AppendLine(Message);
+
 		// ADDITIONAL DUMP INFORMATION
 		if(_additionalDumpInformation.Any())
 		{
-			sb.Append('-', 10).AppendLine("ADDITIONAL DUMP INFORMATION:");
+			sb.Append('-', DIV_LENGTH).AppendLine(DUMP_INFO_STRING);
 			foreach(string info in _additionalDumpInformation)
 			{
 				sb.AppendLine(info);
 			}
 		}
+
 		// STACK TRACE
 		if(!string.IsNullOrWhiteSpace(StackTrace))
 		{
-			sb.Append('-', 10).AppendLine("STACK TRACE:");
+			sb.Append('-', DIV_LENGTH).AppendLine(STACK_TRACE_STRING);
 			sb.AppendLine(StackTrace);
 		}
 

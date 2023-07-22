@@ -97,7 +97,7 @@ public static partial class Exceptor
 		}
 		catch(Exception exception)
 		{
-			data.AddDumpInformation("Handler delegated to critical exception errored.", exception.ToString());
+			data.AddDumpInformation("An operation delegated to handle critical exceptions errored.", exception.ToString());
 		}
 		// It's still safer to not wait until the process is dying to infodump, so remove the delegate if it can be done now...
 		if(_TryDumpCriticalExceptionInfo(data))
