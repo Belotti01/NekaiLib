@@ -1,6 +1,6 @@
 ﻿namespace Nekai.Common;
 
-public class ExecutionProgress : ReadOnlyExecutionProgress
+public sealed class ExecutionProgress : ReadOnlyExecutionProgress
 {
 	// Adds a public setter to the ReadOnlyExecutionProgress properties.
 

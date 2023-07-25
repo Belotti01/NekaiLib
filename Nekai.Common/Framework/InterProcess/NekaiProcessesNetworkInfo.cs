@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Nekai.Common;
 
-public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcessesNetworkInfo>, IDisposable
+public sealed class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcessesNetworkInfo>, IDisposable
 {
 	[JsonIgnore]
 	private const int _SERIALIZATION_MAX_ATTEMPTS = 10;
@@ -55,7 +55,7 @@ public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcesses
 		_serializationTask = Task.Run(async () => await _SerializeWithMultipleAttempts(token), token);
 	}
 
-	protected bool _UpdateCurrentProcessInfoInternal(ProtocolType protocol, int port)
+	private bool _UpdateCurrentProcessInfoInternal(ProtocolType protocol, int port)
 	{
 		int currentProcessInfoIndex = Array.FindIndex(Processes, p => p.ProcessId == Environment.ProcessId);
 		if(currentProcessInfoIndex < 0)
@@ -79,7 +79,7 @@ public class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcesses
 	}
 
 	// Attempt multiple times, since there might be traffic on the file.
-	protected async Task _SerializeWithMultipleAttempts(CancellationToken cancellationToken)
+	private async Task _SerializeWithMultipleAttempts(CancellationToken cancellationToken)
 	{
 		for(int i = 0; i < _SERIALIZATION_MAX_ATTEMPTS; i++)
 		{

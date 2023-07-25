@@ -2,7 +2,7 @@
 
 namespace Nekai.Common;
 
-public class NekaiProcessNetworkInfo
+public sealed class NekaiProcessNetworkInfo
 {
 	public string Name { get; }
 	public string Host { get; }

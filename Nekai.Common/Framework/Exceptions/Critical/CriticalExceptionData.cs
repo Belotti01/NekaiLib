@@ -6,7 +6,7 @@
 /// <summary>
 /// Information regarding an instance of <see cref="Exceptor._CriticalException"/>.
 /// </summary>
-public class CriticalExceptionData
+public sealed class CriticalExceptionData
 {
 	/// <inheritdoc cref="Exception.Message"/>
 	public string Message { get; }

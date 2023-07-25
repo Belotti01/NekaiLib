@@ -7,10 +7,10 @@ namespace Nekai.Common;
 /// Define that a Field or Property can be associated with a configuration element.
 /// </summary>
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-public class ConfigurationAttribute : Attribute, IConfigurationAttribute
+public sealed class ConfigurationAttribute : Attribute, IConfigurationAttribute
 {
 	/// <inheritdoc cref="IConfigurationAttribute.Names"/>
-	public string[] Names { get; protected set; }
+	public string[] Names { get; private set; }
 
 	/// <inheritdoc cref="IConfigurationAttribute.DefaultValue"/>
 	public string DefaultValue { get; set; } = "";

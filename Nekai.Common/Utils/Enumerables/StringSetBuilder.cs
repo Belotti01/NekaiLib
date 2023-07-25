@@ -5,9 +5,9 @@
 /// avoids double values for classes of the same type with <see cref="AppendIfUnique"/>.
 /// "Append" methods are made to return <see langword="this"/> for more readable usage.
 /// </summary>
-public class StringSetBuilder
+public sealed class StringSetBuilder
 {
-	protected ISet<string> Set { get; } = new HashSet<string>();
+	private ISet<string> _Set { get; } = new HashSet<string>();
 
 	/// <summary>
 	/// Appends a string to the result if it is not already present.
@@ -20,7 +20,7 @@ public class StringSetBuilder
 
 		lock(this)
 		{
-			Set.Add(value);
+			_Set.Add(value);
 		}
 		return this;
 	}
@@ -39,7 +39,7 @@ public class StringSetBuilder
 				value = values[i];
 				if(!string.IsNullOrEmpty(value))
 				{
-					Set.Add(value);
+					_Set.Add(value);
 				}
 			}
 		}
@@ -56,13 +56,13 @@ public class StringSetBuilder
 	{
 		lock(this)
 		{
-			foreach(ReadOnlySpan<char> current in Set)
+			foreach(ReadOnlySpan<char> current in _Set)
 			{
 				if(current.StartsWith(uniqueStart))
 					return this;
 			}
 
-			Set.Add(value);
+			_Set.Add(value);
 		}
 
 		return this;
@@ -75,7 +75,7 @@ public class StringSetBuilder
 	{
 		lock(this)
 		{
-			Set.Clear();
+			_Set.Clear();
 		}
 	}
 
@@ -84,7 +84,7 @@ public class StringSetBuilder
 		string result;
 		lock(this)
 		{
-			result = string.Join(" ", Set);
+			result = string.Join(" ", _Set);
 		}
 		return result;
 	}

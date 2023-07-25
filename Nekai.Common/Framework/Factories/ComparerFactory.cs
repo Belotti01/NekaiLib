@@ -1,6 +1,6 @@
 ﻿namespace Nekai.Common;
 
-public class ComparerFactory
+public sealed class ComparerFactory
 {
 	/// <summary>
 	/// Creates an <see cref="IComparer{T}"/> that compares two objects by a single member using its pre-implemented

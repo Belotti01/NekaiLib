@@ -9,7 +9,7 @@ namespace Nekai.Common;
 /// <typeparam name="T"> The type of the <see cref="Value"/> property. </typeparam>
 /// <typeparam name="T2"> The type of the <see cref="AltValue"/> property. </typeparam>
 /// <remarks> Use sparingly with value types to avoid boxing. When possible, prefer using <see cref="Result"/> over this. </remarks>
-public class OneOf<T, T2>
+public sealed class OneOf<T, T2>
 {
 	/// <summary> Creates a new <see cref="OneOf{T, T2}"/> with the specified value. </summary>
 	/// <param name="value"> The contained value. </param>

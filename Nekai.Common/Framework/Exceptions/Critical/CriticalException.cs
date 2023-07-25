@@ -5,7 +5,7 @@
 // Hence why the class is scoped to internal.
 public static partial class Exceptor
 {
-	internal class _CriticalException : Exception
+	internal sealed class _CriticalException : Exception
 	{
 		public AppExitCode ExitCode { get; }
 

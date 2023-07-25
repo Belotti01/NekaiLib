@@ -7,7 +7,7 @@
 /// <summary>
 /// Wrapper class for <see cref="Task"/> that allows tracking the progress of the <see cref="Task"/>.
 /// </summary>
-public class AsyncOperationTracker
+public sealed class AsyncOperationTracker
 {
 	/// <summary> Downcasting of <see cref="Progress"/> that enables write operations. </summary>
 	private ExecutionProgress _EditableProgress => (ExecutionProgress)Progress;

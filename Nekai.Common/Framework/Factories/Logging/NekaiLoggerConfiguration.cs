@@ -5,14 +5,14 @@ using Serilog.Formatting.Json;
 
 namespace Nekai.Common;
 
-public class NekaiLoggerConfiguration
+public sealed class NekaiLoggerConfiguration
 {
-	public string OutputFilePathTemplate { get; protected set; } = Path.Combine("Logs", "Logs.json");
+	public string OutputFilePathTemplate { get; private set; } = Path.Combine("Logs", "Logs.json");
 	public bool LogToConsole { get; set; } = false;
 	public bool LogToFile { get; set; } = false;
-	public bool UseFormatter { get; protected set; } = false;
-	public string StringFormat { get; protected set; } = "{Timestamp:HH:mm:ss} [{Level:u4}] {Message:lj}{NewLine}{Exception}";
-	public ITextFormatter Formatter { get; protected set; } = new CompactJsonFormatter();
+	public bool UseFormatter { get; private set; } = false;
+	public string StringFormat { get; private set; } = "{Timestamp:HH:mm:ss} [{Level:u4}] {Message:lj}{NewLine}{Exception}";
+	public ITextFormatter Formatter { get; private set; } = new CompactJsonFormatter();
 	public LogEventLevel MinimumConsoleLogLevel { get; set; } = LogEventLevel.Information;
 	public LogEventLevel MinimumFileLogLevel { get; set; } = LogEventLevel.Information;
 

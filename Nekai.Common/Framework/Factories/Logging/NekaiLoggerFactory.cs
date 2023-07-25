@@ -2,7 +2,7 @@
 
 namespace Nekai.Common;
 
-public class NekaiLoggerFactory
+public sealed class NekaiLoggerFactory
 {
 	// More simplified methods can ba added (TryCreateConsoleLogger, TryCreateFileLogger, etc)
 
