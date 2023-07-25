@@ -61,6 +61,33 @@ namespace Nekai.Analyzers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Throwing Exceptions inside constructors can result in unwanted behaviour..
+        /// </summary>
+        internal static string DontThrowInConstructorsDescription {
+            get {
+                return ResourceManager.GetString("DontThrowInConstructorsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constructor &apos;{0}&apos; might throw an Exception..
+        /// </summary>
+        internal static string DontThrowInConstructorsMessageFormat {
+            get {
+                return ResourceManager.GetString("DontThrowInConstructorsMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constructors should not throw Exceptions..
+        /// </summary>
+        internal static string DontThrowInConstructorsTitle {
+            get {
+                return ResourceManager.GetString("DontThrowInConstructorsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove base type..
         /// </summary>
         internal static string OperationResultBaseTypeCodeFix {

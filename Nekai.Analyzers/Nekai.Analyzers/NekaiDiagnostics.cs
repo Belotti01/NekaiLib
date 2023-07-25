@@ -2,16 +2,15 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nekai.Analyzers.Helpers;
 
 namespace Nekai.Analyzers
 {
 
-	/// <summary>
-	/// 
-	/// </summary>
 	public static class NekaiDiagnostics
 	{
 		public static ImmutableDictionary<string, NekaiDiagnostic> ById { get; }
@@ -21,7 +20,7 @@ namespace Nekai.Analyzers
 		static NekaiDiagnostics()
 		{
 			ById = typeof(NekaiDiagnostics)
-				.GetProperties(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
+				.GetProperties(BindingFlags.Static | BindingFlags.Public)
 				.Where(x => x.PropertyType == typeof(NekaiDiagnostic))
 				.Select(d => (NekaiDiagnostic)d.GetValue(null))
 				.ToImmutableDictionary(x => x.Code);
@@ -29,6 +28,7 @@ namespace Nekai.Analyzers
 
 		public static NekaiDiagnostic OperationResultWithoutAttribute { get; } = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Warning, nameof(OperationResultWithoutAttribute));
 		public static NekaiDiagnostic OperationResultBaseType { get; } = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Error, nameof(OperationResultBaseType));
+		public static NekaiDiagnostic DontThrowInConstructors { get; } = new NekaiDiagnostic(SyntaxKind.ThrowKeyword, DiagnosticCategory.Security, DiagnosticSeverity.Warning, nameof(DontThrowInConstructors));
 	}
 
 	public class NekaiDiagnostic
@@ -43,7 +43,8 @@ namespace Nekai.Analyzers
 		public LocalizableString MessageFormat { get; }
 		public LocalizableString CodeFixDescription { get; private set; }
 
-		public TypeKind TargetType { get; }
+		public TypeKind? TargetType { get; }
+		public SyntaxKind? TargetSyntax { get; }
 		public DiagnosticSeverity Severity { get; }
 		public DiagnosticCategory Category { get; }
 
@@ -53,11 +54,24 @@ namespace Nekai.Analyzers
 		public DiagnosticDescriptor AsRule { get; }
 
 
+		internal NekaiDiagnostic(SyntaxKind forType, DiagnosticCategory category, DiagnosticSeverity severity, string resourcePrefix)
+			: this(forType, null, category, severity, resourcePrefix)
+		{ }
+
 		internal NekaiDiagnostic(TypeKind forType, DiagnosticCategory category, DiagnosticSeverity severity, string resourcePrefix)
+		 : this(null, forType, category, severity, resourcePrefix) 
+		{ }
+
+		private NekaiDiagnostic(SyntaxKind? forSyntax, TypeKind? forType, DiagnosticCategory category, DiagnosticSeverity severity, string resourcePrefix)
 		{
-			// The same resource can be used multiple times, so no need to check for duplicate 'resourcePrefix'es.
-			Code = _codeGenerator.Next(forType, category);
+			Debug.Assert(forSyntax.HasValue || forType.HasValue, "Either 'forSyntax' or 'forType' must be specified.");
 			
+			// The same resource can be used multiple times, so no need to check for duplicate 'resourcePrefix'es.
+			Code = forType.HasValue 
+				? _codeGenerator.Next(forType.Value, category) 
+				: _codeGenerator.Next(forSyntax.Value, category);
+
+			TargetSyntax = forSyntax;
 			TargetType = forType;
 			Severity = severity;
 			Category = category;
@@ -76,7 +90,7 @@ namespace Nekai.Analyzers
 			// Test for missing resources.
 			Debug.Assert(!string.IsNullOrWhiteSpace(Title.ToString()), $"Missing required resource '{resourcePrefix}Title'.");
 			Debug.Assert(!string.IsNullOrWhiteSpace(MessageFormat.ToString()), $"Missing required resource '{resourcePrefix}MessageFormat'.");
-			
+
 			AsRule = new DiagnosticDescriptor(
 				Code,
 				Title,
