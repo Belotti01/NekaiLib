@@ -231,12 +231,12 @@ public static class NekaiFile
 	{
 		if(validatePath)
 		{
-			var validationResult = NekaiPath.IsValidPath(filePath);
+			var validationResult = NekaiPath.IsValidPath(filePath!);
 			return validationResult;
 		}
 		else
 		{
-			Debug.Assert(NekaiPath.IsValidPath(filePath).IsSuccess(), $"Misuse of internal method: validate the path before calling {nameof(_CanReadFileInternal)} with parameter {nameof(validatePath)} set to false.");
+			Debug.Assert(NekaiPath.IsValidPath(filePath!).IsSuccess(), $"Misuse of internal method: validate the path before calling {nameof(_CanReadFileInternal)} with parameter {nameof(validatePath)} set to false.");
 		}
 
 		if(!File.Exists(filePath))

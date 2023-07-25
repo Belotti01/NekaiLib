@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Numerics;
 
 namespace Nekai.Common;
@@ -10,6 +8,7 @@ namespace Nekai.Common;
 // the logic wouldn't change anyway - it should just check the _path member).
 // - Implements IParsable to more easily allow deserialization of this type. Using this type over a string allows the prevention of 
 // invalid paths in the middle of the program's main logic, as any error is caught during parsing.
+// - Does not implement ISpanParsable since the span would have to be converted to a string object anyway.
 
 public class PathString 
 	: IParsable<PathString>, IComparable<string>, IEquatable<string>, IEqualityOperators<PathString, string, bool>
@@ -34,12 +33,18 @@ public class PathString
 	private readonly string _path;
 
 	public static bool operator ==(PathString? left, string? right)
-		=> left is null
-			? right is null
-			: left._path.Equals(right);
+		=> string.Equals(left?._path, right);
 
 	public static bool operator !=(PathString? left, string? right)
-		=> !(left == right);
+		=> !string.Equals(left?._path, right);
+
+	public static bool operator ==(PathString? left, ReadOnlySpan<char> right)
+		=> left is not null 
+		&& left.Equals(right);
+
+	public static bool operator !=(PathString? left, ReadOnlySpan<char> right)
+		=> left is null
+		|| !left.Equals(right);
 
 	/// <summary> Gets the length of the contained path <see langword="string"/>. </summary>
 	public int Length => _path.Length;
@@ -223,4 +228,12 @@ public class PathString
 	/// </summary>
 	public override string ToString()
 		=> _path;
+
+	/// <inheritdoc cref="Equals(string?)"/>
+	public bool Equals(ReadOnlySpan<char> other)
+		=> _path.AsSpan() == other;		// TODO: Check OS for case-sensitivity and use the proper comparer.
+	
+	/// <inheritdoc cref="System.MemoryExtensions.SequenceCompareTo{T}(ReadOnlySpan{T}, ReadOnlySpan{T})"/>
+	public int CompareTo(ReadOnlySpan<char> other) 
+		=> _path.AsSpan().CompareTo(other, StringComparison.Ordinal);   // TODO: Check OS for case-sensitivity and use the proper comparer.
 }

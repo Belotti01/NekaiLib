@@ -19,7 +19,16 @@ public readonly struct SocketTransmissionInfo
 	/// <summary> The total size of the data to be transmitted. </summary>
 	public int TotalSize { get; }
 	/// <summary> The implied size of the last fragment. </summary>
-	public int LastPacketSize { get; }
+	public int LastPacketSize
+	{
+		get
+		{
+			int size = TotalSize % BufferSize;
+			if(size == 0)
+				return BufferSize;	// Packets are all the same size:	[-----][-----][-----]
+			return size;	// One extra packet is present:				[-----][-----][-----][--]
+		}
+	}
 	/// <summary> The number of fragments that will be sent. </summary>
 	public int PacketsCount => (int)Math.Ceiling((double)TotalSize / BufferSize);
 
@@ -38,12 +47,6 @@ public readonly struct SocketTransmissionInfo
 			throw new ArgumentOutOfRangeException(nameof(totalSize), "Total size must be greater than 0.");
 		BufferSize = bufferSize;
 		TotalSize = totalSize;
-		
-		LastPacketSize = TotalSize % BufferSize;
-		if(LastPacketSize == 0)
-		{
-			LastPacketSize = BufferSize;
-		}
 	}
 
 	/// <summary> Generates a new instance of <see cref="SocketTransmissionInfo"/> from the <paramref name="bytes"/> array.
