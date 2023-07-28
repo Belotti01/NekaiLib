@@ -14,7 +14,7 @@ public enum DisplayLanguage
 public static class DisplayLanguageExtensions
 {
 	/// <summary>
-	/// Get the ISO 639-2 three-letter code for the <paramref name="language"/>.
+	/// Get the ISO 639-2 lower-case three-letter code for the <paramref name="language"/>.
 	/// </summary>
 	/// <param name="language"> The language to convert. </param>
 	/// <exception cref="ArgumentOutOfRangeException"> Language is not supported. </exception>
