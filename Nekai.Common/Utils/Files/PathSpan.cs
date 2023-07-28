@@ -34,6 +34,11 @@ public readonly ref struct PathSpan
 	private PathSpan(ReadOnlySpan<char> path)
 		=> Path = path;
 
+	/// <summary>
+	/// Get the containing directory of this path.
+	/// </summary>
+	/// <returns> A new instance identifying the containing directory if present, or the current instance if it's already the root directory or 
+	/// no higher directory is identifiable. </returns>
 	public PathSpan ContainingFolder()
 	{
 		int lastSeparator = Path.LastIndexOfAny('/', '\\');
@@ -43,6 +48,10 @@ public readonly ref struct PathSpan
 		return new PathSpan(Path[..lastSeparator]);
 	}
 
+	/// <summary>
+	/// Generate a new <see cref="PathString"/> object from this instance.
+	/// </summary>
+	/// <returns> A new <see cref="PathString"/> instance where <see cref="PathString.Path"/> is exactly <see cref="Path"/>. </returns>
 	public PathString ToPathString()
 		=> new(this);
 
