@@ -48,11 +48,16 @@ public static class NekaiPath
 		return trimmedPath.Length != 0;
 	}
 
+	public static bool IsDirectorySeparatorChar(char c)
+	{
+		return c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
+	}
+
 	public static int LastIndexOfDirectorySeparatorChar(ReadOnlySpan<char> path)
 	{
 		for(int i = path.Length - 1; i >= 0; i--)
 		{
-			if(path[i] == Path.DirectorySeparatorChar || path[i] == Path.AltDirectorySeparatorChar)
+			if(IsDirectorySeparatorChar(path[i]))
 				return i;
 		}
 		return -1;
@@ -139,7 +144,7 @@ public static class NekaiPath
 	/// Check the validity of the <paramref name="filePath"/>.
 	/// </summary>
 	/// <param name="filePath"> The path to validate. </param>
-	public static PathOperationResult IsValidPath([NotNullWhen(true)] string filePath)
+	public static PathOperationResult IsValidPath([NotNullWhen(true)] string? filePath)
 	{
 		return ValidatePath(filePath).Error;
 	}

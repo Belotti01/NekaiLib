@@ -132,28 +132,47 @@ public static class NekaiFile
 		{
 			return new(NekaiPath.GetResultFromException(ex));
 		}
-	}
+    }
 
-	public static Result<string, PathOperationResult> TryReadText([NotNullWhen(true)] string? filePath)
-	{
-		var result = NekaiPath.IsValidPath(filePath);
-		if(!result.IsSuccess())
-			return new(result);
+    public static Result<string, PathOperationResult> TryReadText([NotNullWhen(true)] string? filePath)
+    {
+        var result = NekaiPath.IsValidPath(filePath);
+        if(!result.IsSuccess())
+            return new(result);
 
-		if(!File.Exists(filePath))
-			return new(PathOperationResult.DoesNotExist);
+        if(!File.Exists(filePath))
+            return new(PathOperationResult.DoesNotExist);
 
-		try
-		{
-			return File.ReadAllText(filePath);
-		}
-		catch(Exception ex)
-		{
-			return new(NekaiPath.GetResultFromException(ex));
-		}
-	}
+        try
+        {
+            return File.ReadAllText(filePath);
+        }
+        catch(Exception ex)
+        {
+            return new(NekaiPath.GetResultFromException(ex));
+        }
+    }
 
-	public static PathOperationResult TryEnsureExists([NotNullWhen(true)] string? filepath)
+    public static Result<Memory<byte>, PathOperationResult> TryReadBytes([NotNullWhen(true)] string? filePath)
+    {
+        var result = NekaiPath.IsValidPath(filePath);
+        if(!result.IsSuccess())
+            return new(result);
+
+        if(!File.Exists(filePath))
+            return new(PathOperationResult.DoesNotExist);
+
+        try
+        {
+            return File.ReadAllBytes(filePath).AsMemory();
+        }
+        catch(Exception ex)
+        {
+            return new(NekaiPath.GetResultFromException(ex));
+        }
+    }
+
+    public static PathOperationResult TryEnsureExists([NotNullWhen(true)] string? filepath)
 	{
 		var result = NekaiPath.IsValidPath(filepath);
 		if(!result.IsSuccess())

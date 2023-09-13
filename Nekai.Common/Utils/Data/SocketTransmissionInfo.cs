@@ -25,8 +25,8 @@ public readonly struct SocketTransmissionInfo
 		{
 			int size = TotalSize % BufferSize;
 			if(size == 0)
-				return BufferSize;	// Packets are all the same size:	[-----][-----][-----]
-			return size;	// One extra packet is present:				[-----][-----][-----][--]
+				return BufferSize;	// Packets are all of the same size:	[-----][-----][-----]
+			return size;	// One extra packet is present:					[-----][-----][-----][--]
 		}
 	}
 	/// <summary> The number of fragments that will be sent. </summary>

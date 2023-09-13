@@ -18,7 +18,7 @@ public readonly struct AutoGuid : IParsable<AutoGuid>, ISpanParsable<AutoGuid>
 	private static readonly UniqueValueGenerator<Guid> _generator = new(Guid.NewGuid);
 
 	/// <summary>
-	/// The generated GUID value.
+	/// The generated <see cref="Guid"/> value.
 	/// </summary>
 	public Guid Value { get; }
 

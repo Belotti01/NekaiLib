@@ -69,7 +69,6 @@ public class PathString
 	/// <remarks> Make sure that the <paramref name="path"/> has been validated BEFORE invoking this constructor. </remarks>
 	private PathString(string path)
 	{
-		Debug.Assert(NekaiPath.ValidatePath(path).IsSuccessful);
 		Path = path;
 	}
 
@@ -160,6 +159,25 @@ public class PathString
 			Debug.Assert(!File.Exists(Path), $"File creation threw \"{ex.GetType().Name}\", but the file exists: {ex.Message}");
 			return NekaiPath.GetResultFromException(ex);
 		}
+	}
+
+	public Result<PathString, PathOperationResult> TryAppend(string? relativePath)
+	{
+		if(string.IsNullOrWhiteSpace(relativePath))
+			return new(PathOperationResult.PathIsEmpty);
+
+		string newPath = System.IO.Path.Combine(Path, relativePath);
+        // Don't use the constructor here, since the length and characters of the new path need to be validated.
+		return TryParse(newPath);
+	}
+
+	public Result<PathString, PathOperationResult> TryAppend(params string[] pathSteps)
+    {
+        if(pathSteps.Length == 0)
+			return new(PathOperationResult.PathIsEmpty);
+		
+        string relativePath = System.IO.Path.Combine(pathSteps);
+        return TryAppend(relativePath);
 	}
 
 	/// <summary>

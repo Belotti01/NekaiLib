@@ -23,4 +23,9 @@ public sealed class ExecutionProgress : ReadOnlyExecutionProgress
 	{
 		UTCStartTime = DateTime.UtcNow;
 	}
+
+	/// <summary> Get a read-only reference to this instance. </summary>
+	/// <returns> This object casted to a <see cref="ReadOnlyExecutionProgress"/>. </returns>
+	public ReadOnlyExecutionProgress AsReadOnly()
+		=> this;
 }

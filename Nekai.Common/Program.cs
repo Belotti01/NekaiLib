@@ -30,9 +30,9 @@ public class Program
 
 	public static async Task Main(string[] args)
 	{
-		// Do checks to ensure that the tests work
+        // Do checks to ensure that the tests work
 #if DEBUG
-		await RunManualTestsAsync();
+        await RunManualTestsAsync();
 #else
 		// Run the benchmarks
 		RunBenchmarks();
