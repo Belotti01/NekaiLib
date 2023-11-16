@@ -13,13 +13,16 @@ namespace Nekai.Common;
 [MemoryDiagnoser]
 public class Program
 {
-	public static string[] _testStrings = Enumerable.Range(1, 300)
+	private static string[] _testStrings = Enumerable.Range(1, 300)
 		.Select(x =>
 		{
 			return string.Create(50, (object?)null, (span, state) =>
 			{
 				for(int i = 0; i < span.Length; i++)
 				{
+
+
+
 					span[i] = Random.Shared.NextSingle() <= 0.5f
 						? Random.Shared.NextChar() 
 						: '\n';

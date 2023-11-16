@@ -32,8 +32,8 @@ public class ProcessHostInformationLoader
 	/// <remarks> If the DNS failed to retrieve the required information, this will return <see cref="DefaultIpAddress"/> instead. </remarks>
 	public IPAddress IPAddress
 	{
-		get
-		{
+        get
+        {
 			if(_ipAddress is not null)
 				return _ipAddress;
 
@@ -93,8 +93,9 @@ public class ProcessHostInformationLoader
 		return LastLoadingOperationResult;
 	}
 
+	[Pure]
 	private static Result<string, NetworkOperationResult> _TryGetLocalHostName()
-	{
+    {
 		try
 		{
 			string localHostname = Dns.GetHostName();
@@ -143,19 +144,21 @@ public class ProcessHostInformationLoader
 		}
 	}
 
-	/// <summary>
-	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>.
-	/// </summary>
-	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>  in IPv4 format. </returns>
-	public override string ToString()
-		=> ToIPv4String();	// Just use the conventional format (IPv4) for the default string representation.
+    /// <summary>
+    /// Return the string representation of this <see cref="ProcessHostInformationLoader"/>.
+    /// </summary>
+    /// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>  in IPv4 format. </returns>
+    [Pure]
+    public override string ToString()
+		=> ToIPv4String();  // Just use the conventional format (IPv4) for the default string representation.
 
 
-	/// <summary>
-	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>, using IPv6 addresses.
-	/// </summary>
-	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/> in IPv6 format. </returns>
-	public string ToIPv6String()
+    /// <summary>
+    /// Return the string representation of this <see cref="ProcessHostInformationLoader"/>, using IPv6 addresses.
+    /// </summary>
+    /// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/> in IPv6 format. </returns>
+    [Pure]
+    public string ToIPv6String()
 	{
 		var ipv6Addresses = IpAddresses
 			.Select(x => x.MapToIPv6());
@@ -166,6 +169,7 @@ public class ProcessHostInformationLoader
 	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>, using IPv4 addresses.
 	/// </summary>
 	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>. </returns>
+	[Pure]
 	public string ToIPv4String()
 	{
 		var ipv4Addresses = IpAddresses

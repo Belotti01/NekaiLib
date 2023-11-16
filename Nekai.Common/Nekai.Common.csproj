@@ -65,6 +65,7 @@
 
   <ItemGroup>
     <Using Include="DotNext" />
+    <Using Include="System.Diagnostics.Contracts" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace Nekai.Common;
@@ -47,17 +48,20 @@ public class ArgumentsReader
 		Parse(args);
 	}
 
-	public bool TryRead(string parameter, [NotNullWhen(true)] out string? value)
+	[Pure]
+    public bool TryRead(string parameter, [NotNullWhen(true)] out string? value)
 	{
 		value = this[parameter];
 		return value is not null;
 	}
 
+	[Pure]
 	public string? Read(string? parameter)
 	{
 		return _arguments.GetValueOrDefault(parameter ?? "");
 	}
 
+	[Pure]
 	public string Read(string? parameter, string defaultValue)
 	{
 		parameter ??= "";
@@ -66,9 +70,11 @@ public class ArgumentsReader
 			: defaultValue;
 	}
 
+	[Pure]
 	public string? ReadAny(params string?[] parameters)
 		=> ReadAny(parameters.AsEnumerable());
 
+	[Pure]
 	public string? ReadAny(IEnumerable<string?> parameters, string? defaultValue = null)
 	{
 		foreach(var parameter in parameters)
@@ -80,6 +86,7 @@ public class ArgumentsReader
 		return defaultValue;
 	}
 
+	[Pure]
 	public bool TryReadAny(IEnumerable<string?> parameters, [NotNullWhen(true)] out string? value)
 	{
 		value = ReadAny(parameters);
@@ -129,7 +136,7 @@ public class ArgumentsReader
 				{
 					++endIndex;
 				} while(endIndex < span.Length && span[endIndex] != wrapper.Value || span[endIndex - 1] == '\\');
-				lastValue = _ParseValue(span[i..endIndex], wrapper.Value);
+				lastValue = _ParseValue(span[i..endIndex]);
 
 				if(parameters.ContainsKey(lastKey))
 					parameters[lastKey] = lastValue;
@@ -162,7 +169,7 @@ public class ArgumentsReader
 
 	// Keep the wrapper character in case it's needed in future updates.
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static string _ParseValue(ReadOnlySpan<char> part, char wrapper = '"')
+	private static string _ParseValue(ReadOnlySpan<char> part)
 	{
 		return part[1..].ToString();
 	}

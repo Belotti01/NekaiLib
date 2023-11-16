@@ -22,7 +22,7 @@ public enum OperationResult
 	Success = 0,
 
 	InvalidParameter,
-	
+
 	UnknownError
 }
 
