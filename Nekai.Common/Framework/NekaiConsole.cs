@@ -1,4 +1,6 @@
-﻿namespace Nekai.Common;
+﻿using System;
+
+namespace Nekai.Common;
 
 /// <summary>
 /// Thread-safe Console output and input methods.
@@ -52,5 +54,26 @@ public static class NekaiConsole
 		{
 			Console.WriteLine();
 		}
-	}
+    }
+
+    public static void WriteAtPosition(object? obj, int left, int top, ConsoleColor textColor = ConsoleColor.White)
+    {
+        lock(_lock)
+        {
+            // Move cursor to the next loading character.
+            var lastPosition = Console.GetCursorPosition();
+            Console.SetCursorPosition(left, top);
+
+			var oldColor = Console.ForegroundColor;
+			Console.ForegroundColor = textColor;
+            Console.Write(obj);
+			Console.ForegroundColor = oldColor;
+
+            // Move cursor back to its original position.
+            Console.SetCursorPosition(lastPosition.Left, lastPosition.Top);
+        }
+    }
+
+	public static DotLoadingBuilder CreateDotLoader()
+		=> new();
 }

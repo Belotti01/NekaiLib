@@ -43,21 +43,26 @@ public class Program
 	}
 
 	public static async Task RunManualTestsAsync()
-	{
-		TcpListener listener = new(CurrentApp.LocalHost.IPAddress, 7142);
-		Socket toServer = new(SocketType.Stream, ProtocolType.Tcp);
+    {
+        NekaiConsole.WriteLine("TEST");
+		NekaiConsole.Write("Loading ", ConsoleColor.Red);
 
-		listener.Start();
-		await toServer.ConnectAsync(CurrentApp.LocalHost.IPAddress, 7142);
-		Socket toClient = listener.AcceptSocket();
+		CancellationTokenSource source = new();
+		var task = NekaiConsole
+			.CreateDotLoader()
+			.WithCharacter('.')
+			.WithColor(ConsoleColor.Yellow)
+			.WithMaxCharacters(10)
+			.RunAsync(source.Token);
 
-		_Test toSend = new(42, "Test Message");
-		string json = JsonSerializer.Serialize(toSend);
-		await toServer.SendJsonAsync(json, maxBufferSize: 4);
-		
-		_Test received = toClient.ReceiveJsonAsync<_Test>().Result.Value;
-		Console.WriteLine($"Received:\n{received}");
-	}
+		NekaiConsole.WriteLine();
+		for(int i = 0; i < 30; i++)
+		{
+			await Task.Delay(TimeSpan.FromSeconds(1));
+			NekaiConsole.Write($"{i} ");
+		}
+		source.Cancel();
+    }
 
 	[JsonSerializable(typeof(_Test))]
 	public record _Test(int Value, string Message);
