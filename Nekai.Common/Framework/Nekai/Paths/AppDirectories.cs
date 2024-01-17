@@ -47,21 +47,26 @@ public static partial class NekaiData
 				CurrentProgramLogs
 			}.AsSpan();
 
-			foreach(string path in paths)
+			foreach(string rawPath in paths)
 			{
-				var result = NekaiDirectory.TryEnsureExists(path);
-				if(!result.IsSuccess())
-				{
-					// Directory could not be found or created
-					Exceptor.ThrowIfDebug(result.GetMessage());
-					// In release, attempt to continue execution.
-					// Directories should always be checked for availability before access, since they can be deleted,
-					// moved, renamed or locked at any time; so this is not to be treated as a critical error.
+				var result = PathString.TryParse(rawPath);
+				if(!result.IsSuccessful)
+					Exceptor.ThrowIfDebug($"{result.Error}: \"{rawPath}\" is not a valid directory path.");
+					
+				result.Value.EnsureExistsAsDirectory();
 
-					// Note: Using the NekaiFile and NekaiDirectory wrapper classes instead of the .NET File and Directory when possible
-					// helps minimize errors, while also enforcing proper error handling and standardize log formats for easier
-					// bug report analisys.
-				}
+				if(!result.IsSuccessful)
+				{
+                    // Directory could not be found or created
+                    Exceptor.ThrowIfDebug($"{result.Error}: the directory \"{rawPath}\" could not be generated.");
+                    // In release, attempt to continue execution anyways.
+                    // Directories should always be checked for availability before access, since they can be deleted,
+                    // moved, renamed or locked at any time; so this is not to be treated as a critical error.
+
+                    // Note: Using the NekaiFile and NekaiDirectory wrapper classes instead of the .NET File and Directory when possible
+                    // helps minimize errors, while also enforcing proper error handling and standardize log formats for easier
+                    // bug report analysis.
+                }
 			}
 		}
 

@@ -31,7 +31,8 @@ public static class NekaiLogs
 				return _sharedLogger;
 
 			string? sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.SharedLogs, "Logs.json");
-			var fileCreationResult = NekaiFile.TryEnsureExists(sharedLogFilesTemplate);
+			var sharedLogPath = PathString.Parse(sharedLogFilesTemplate);
+			var fileCreationResult = sharedLogPath.EnsureExistsAsFile();
 			if(!fileCreationResult.IsSuccess())
 			{
 				// Don't export to file.

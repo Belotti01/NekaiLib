@@ -16,6 +16,7 @@ public class FileBackupManager : IDisposable
 	public string BackupDirectory { get; protected set; }
 	public string? BackupFilename { get; protected set; }
 
+	[NotNullIfNotNull(nameof(BackupFilename))]
 	public string? BackupFilePath => BackupFilename is null
 		? null
 		: Path.Combine(BackupDirectory, BackupFilename);
@@ -66,20 +67,23 @@ public class FileBackupManager : IDisposable
 
 	public string Backup()
 	{
-		if(!File.Exists(FilePath))
-			throw new FileNotFoundException();
+		var originalFileResult = PathString.TryParse(FilePath);
+		if(!originalFileResult.IsSuccessful)
+			throw new FormatException("File path is not a valid path.");
+		if(!originalFileResult.Value.IsExistingFile())
+			throw new FileNotFoundException("The file to backup does not exist.");
 
 		// If a backup file already exists, delete it, but only if the new backup file creation succeeds.
 		string? oldBackupFilePath = BackupFilePath;
-
+		
 		BackupFilename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{Filename}.bak";
-		var backupFileCreationResult = NekaiFile.TryEnsureExists(BackupFilePath);
-		if(!backupFileCreationResult.IsSuccess() || BackupFilePath is null)   // Null check is just to shut the compiler up.
-			throw new FileNotFoundException(backupFileCreationResult.GetMessage(), BackupFilePath);
+		var backupFileResult = PathString.TryParse(BackupFilePath);
+		if(!backupFileResult.IsSuccessful)
+			throw new FormatException("Invalid backup file name.");
 
 		File.Copy(FilePath, BackupFilePath, true);
 
-		if(oldBackupFilePath is not null)
+        if(oldBackupFilePath is not null)
 		{
 			// Delete the old backup file.
 			var duplicateDeletionResult = NekaiFile.TryEnsureDoesNotExist(BackupFilePath);

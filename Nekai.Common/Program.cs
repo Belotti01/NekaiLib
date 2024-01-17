@@ -13,23 +13,6 @@ namespace Nekai.Common;
 [MemoryDiagnoser]
 public class Program
 {
-	private static string[] _testStrings = Enumerable.Range(1, 300)
-		.Select(x =>
-		{
-			return string.Create(50, (object?)null, (span, state) =>
-			{
-				for(int i = 0; i < span.Length; i++)
-				{
-
-
-
-					span[i] = Random.Shared.NextSingle() <= 0.5f
-						? Random.Shared.NextChar() 
-						: '\n';
-				}
-			});
-		})
-		.ToArray();
 
 	public static async Task Main(string[] args)
 	{
@@ -44,7 +27,7 @@ public class Program
 
 	public static async Task RunManualTestsAsync()
     {
-        NekaiConsole.WriteLine("TEST");
+		NekaiConsole.PrintSignature();
 		NekaiConsole.Write("Loading ", ConsoleColor.Red);
 
 		CancellationTokenSource source = new();
@@ -52,11 +35,11 @@ public class Program
 			.CreateDotLoader()
 			.WithCharacter('.')
 			.WithColor(ConsoleColor.Yellow)
-			.WithMaxCharacters(10)
+			.WithMaxCharacters(5)
 			.RunAsync(source.Token);
 
 		NekaiConsole.WriteLine();
-		for(int i = 0; i < 30; i++)
+		for(int i = 0; i < 10; i++)
 		{
 			await Task.Delay(TimeSpan.FromSeconds(1));
 			NekaiConsole.Write($"{i} ");
@@ -76,7 +59,7 @@ public class Program
 			Console.ResetColor();
 			return;
 		}
-
+		
 		BenchmarkRunner.Run<Program>();
 	}
 

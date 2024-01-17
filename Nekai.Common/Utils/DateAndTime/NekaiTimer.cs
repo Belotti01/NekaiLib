@@ -8,7 +8,8 @@ using Timer = System.Timers.Timer;
 
 namespace Nekai.Common;
 
-public class NekaiTimer : Timer
+public class NekaiTimer 
+    : Timer
 {
     /// <summary>
     /// Indicates whether the <see cref="Timer.Elapsed"/> event has been raised.
@@ -25,7 +26,7 @@ public class NekaiTimer : Timer
         : base(milliseconds <= 0 ? 1 : milliseconds)
     {
         // Do not set TimedOut to true even if milliseconds is <= 0; wait for the timer to be started.
-        Elapsed += (sender, args) => TimedOut = true;
+        Elapsed += _TimeOut;
     }
 
     /// <summary>
@@ -57,4 +58,9 @@ public class NekaiTimer : Timer
     /// <inheritdoc cref="NekaiTimer(TimeSpan)"/>
     public static NekaiTimer Start(TimeSpan timeout)
         => Start(timeout.TotalMilliseconds);
+
+    private void _TimeOut(object? sender, ElapsedEventArgs args)
+    {
+        TimedOut = true;
+    }
 }

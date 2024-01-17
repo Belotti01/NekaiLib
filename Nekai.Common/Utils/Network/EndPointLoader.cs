@@ -13,7 +13,7 @@ public class EndPointLoader
 	private IPHostEntry? _hostEntry;
 	public IPHostEntry HostEntry => _hostEntry ??= Dns.GetHostEntry(Address);
 
-	protected EndPointLoader(in string hostnameOrIp, in AddressFamily addressFamily = AddressFamily.Unspecified)
+	protected EndPointLoader(string hostnameOrIp, AddressFamily addressFamily = AddressFamily.Unspecified)
 	{
 		ReadOnlySpan<char> ipSpan = hostnameOrIp.AsSpan();
 		if(TryExtractPort(ipSpan, out string hostnameOrIpWithoutPort, out int port))
@@ -29,7 +29,7 @@ public class EndPointLoader
 		}
 	}
 
-	protected EndPointLoader(in string hostnameOrIp, in int port, in AddressFamily addressFamily = AddressFamily.Unspecified)
+	protected EndPointLoader(string hostnameOrIp, int port, AddressFamily addressFamily = AddressFamily.Unspecified)
 	{
 		Port = port;
 		ThrowIfInvalidPort(nameof(hostnameOrIp));
@@ -39,7 +39,7 @@ public class EndPointLoader
 	public static EndPointLoader Parse(string hostnameOrIp, AddressFamily addressFamily = AddressFamily.Unspecified)
 		=> new(hostnameOrIp);
 
-	public static EndPointLoader Parse(string hostnameOrIp, in int port, AddressFamily addressFamily = AddressFamily.Unspecified)
+	public static EndPointLoader Parse(string hostnameOrIp, int port, AddressFamily addressFamily = AddressFamily.Unspecified)
 		=> new(hostnameOrIp, port);
 
 	public static bool TryParse(string hostnameOrIp, [NotNullWhen(true)] out EndPointLoader? endPointLoader)
@@ -92,7 +92,7 @@ public class EndPointLoader
 				return true;
 			}
 
-			// Port is at most 5 digits long, and cannot contain non-numeric characters
+			// Port is at most 5 digits long, and cannot contanon-numeric characters
 			if(!ipOrHostnameView[i].IsNumber() || i < ipOrHostnameView.Length - maxPortLength)
 				break;
 		}

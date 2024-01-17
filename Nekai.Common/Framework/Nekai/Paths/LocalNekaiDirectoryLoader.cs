@@ -1,4 +1,6 @@
-﻿namespace Nekai.Common;
+﻿using System.IO;
+
+namespace Nekai.Common;
 
 // - Made standalone to avoid circular dependency, while keeping access to App.Directories and App.Files as simple
 // as possible.
@@ -16,49 +18,69 @@ public static partial class NekaiData
 
 		internal static string _Load()
 		{
-			string localDir = _GetLocalDirectoryPath();
-			var result = NekaiDirectory.TryEnsureExists(localDir);
-			if(!result.IsSuccess())
-				Exceptor.ThrowCritical(AppExitCode.DirectoryCreationError, result.GetMessage());
-			return localDir;
+			var localDir = _GetLocalDirectoryPath();
+			bool exists = localDir?.EnsureExistsAsDirectory() == PathOperationResult.Success;
+			if(!exists)
+				Exceptor.ThrowCritical(AppExitCode.DirectoryCreationError);
+
+			return localDir!;
 		}
 
-		private static string _GetLocalDirectoryPath()
+		private static PathOperationResult _CheckAndCreateDir(string dir, out PathString path)
+		{
+			path = null!;
+
+			var parseResult = PathString.TryParse(dir);
+			if(!parseResult.IsSuccessful)
+				return parseResult.Error;
+            path = parseResult.Value;
+
+            var creationResult = path.EnsureExistsAsDirectory();
+			return creationResult;
+		}
+
+		private static PathString? _GetLocalDirectoryPath()
 		{
 			// It may be beneficial in the future to add checks of the last modified date of the files in <path> and
 			// <_DefaultLocalConfigurationDirectory>, and overwrite the first if the second is newer.
 
-			string? localDir = null;
+			PathOperationResult result;
+			PathString path;
 			var fileReadResult = NekaiFile.TryReadText(_GlobalConfigurationFilepath);
 			if(fileReadResult.IsSuccessful)
 			{
 				// Fetched from global config file - validate it
-				localDir = fileReadResult.Value.Trim();
-				if(!NekaiPath.IsValidPath(localDir).IsSuccess())
-				{
-					localDir = null;
-				}
+				var localDir = fileReadResult.Value.Trim();
+				result = _CheckAndCreateDir(localDir, out path);
+				if(result != PathOperationResult.Success)
+					return path;
 			}
-			else
+
+			// Create file, and exit the app in case of file access errors (such as permission errors)
+			result = _CheckAndCreateDir(_GlobalConfigurationFilepath, out path);
+			if(result == PathOperationResult.Success)
+				return path;
+			
+			AppExitCode exitCode = File.Exists(_GlobalConfigurationFilepath)
+				? AppExitCode.FileAccessError
+				: AppExitCode.FileCreationError;
+			Exceptor.ThrowCritical(exitCode, "Configuration could not be loaded. " + result.GetMessage());
+			
+			result = _CheckAndCreateDir(_DefaultLocalConfigurationDirectory, out path);
+			if(result == PathOperationResult.Success)
+				return path;
 			{
-				// Create file, and exit the app in case of file access errors (such as permission errors)
-				var result = NekaiFile.TryEnsureExists(_GlobalConfigurationFilepath);
-				if(!result.IsSuccess())
+				try
 				{
-					AppExitCode exitCode = File.Exists(_GlobalConfigurationFilepath)
-						? AppExitCode.FileAccessError
-						: AppExitCode.FileCreationError;
-					Exceptor.ThrowCritical(exitCode, "Configuration could not be loaded. " + result.GetMessage());
+					File.WriteAllText(_GlobalConfigurationFilepath, _DefaultLocalConfigurationDirectory);
+				}
+				catch
+				{
+					// TODO: ... well sh1t
 				}
 			}
 
-			if(localDir is null)
-			{
-				localDir = _DefaultLocalConfigurationDirectory;
-				File.WriteAllText(_GlobalConfigurationFilepath, _DefaultLocalConfigurationDirectory);
-			}
-
-			return localDir;
+			return path;
 		}
 	}
 }

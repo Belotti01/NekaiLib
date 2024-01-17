@@ -56,7 +56,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 
 		// Don't append an extension to the path to avoid confusion when trying to access the file with the same string.
 
-		var result = NekaiFile.TryEnsureExists(filePath);
+		var result = PathString.Parse(filePath).EnsureExistsAsFile();
 		if(!result.IsSuccess())
 			return result;
 
@@ -119,13 +119,13 @@ where TSelf : ConfigurationFileManager<TSelf>
 
 	public PathOperationResult TrySerialize()
 	{
-		var result = NekaiPath.ValidatePath(FilePath);
+		var result = PathString.TryParse(FilePath);
 		if(!result.IsSuccessful)
 			return result.Error;
 
 		FilePath = result.Value;
 		using FileBackupManager backupManager = new(FilePath);
-		if(File.Exists(FilePath))
+		if(result.Value.IsExistingFile())
 		{
 			var backupResult = backupManager.TryBackup();
 			if(!result.IsSuccessful)
@@ -133,7 +133,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 		}
 		else
 		{
-			var fileCreationResult = NekaiDirectory.TryEnsureExistsForFile(FilePath);
+			var fileCreationResult = result.Value.EnsureExistsAsFile();
 			if(!fileCreationResult.IsSuccess())
 				return fileCreationResult;
 		}

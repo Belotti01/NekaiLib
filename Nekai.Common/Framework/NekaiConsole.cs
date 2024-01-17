@@ -74,6 +74,6 @@ public static class NekaiConsole
         }
     }
 
-	public static DotLoadingBuilder CreateDotLoader()
+	public static ConsoleLoadingBuilder CreateDotLoader()
 		=> new();
 }

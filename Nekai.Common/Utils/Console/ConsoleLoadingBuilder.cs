@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nekai.Common;
 
-public class DotLoadingBuilder
+public class ConsoleLoadingBuilder
 {
     public char Character { get; private set; } = '.';
     public TimeSpan Interval { get; private set; } = TimeSpan.FromSeconds(1);
@@ -14,16 +14,16 @@ public class DotLoadingBuilder
     public ConsoleColor Color { get; private set; } = ConsoleColor.White;
 
 
-    internal DotLoadingBuilder() { }
+    internal ConsoleLoadingBuilder() { }
 
 
-    public DotLoadingBuilder WithCharacter(char character)
+    public ConsoleLoadingBuilder WithCharacter(char character)
     {
         Character = character;
         return this;
     }
 
-    public DotLoadingBuilder WithInterval(TimeSpan interval)
+    public ConsoleLoadingBuilder WithInterval(TimeSpan interval)
     {
         if(interval == default)
             interval = TimeSpan.FromSeconds(1);
@@ -31,13 +31,13 @@ public class DotLoadingBuilder
         return this;
     }
 
-    public DotLoadingBuilder WithMaxCharacters(int maxCharacters)
+    public ConsoleLoadingBuilder WithMaxCharacters(int maxCharacters)
     {
         MaxCharacters = int.Max(maxCharacters, 0);
         return this;
     }
 
-    public DotLoadingBuilder WithColor(ConsoleColor color)
+    public ConsoleLoadingBuilder WithColor(ConsoleColor color)
     {
         Color = color;
         return this;

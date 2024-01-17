@@ -48,20 +48,17 @@ public class ArgumentsReader
 		Parse(args);
 	}
 
-	[Pure]
     public bool TryRead(string parameter, [NotNullWhen(true)] out string? value)
 	{
 		value = this[parameter];
 		return value is not null;
 	}
 
-	[Pure]
 	public string? Read(string? parameter)
 	{
 		return _arguments.GetValueOrDefault(parameter ?? "");
 	}
 
-	[Pure]
 	public string Read(string? parameter, string defaultValue)
 	{
 		parameter ??= "";
@@ -70,11 +67,9 @@ public class ArgumentsReader
 			: defaultValue;
 	}
 
-	[Pure]
 	public string? ReadAny(params string?[] parameters)
 		=> ReadAny(parameters.AsEnumerable());
 
-	[Pure]
 	public string? ReadAny(IEnumerable<string?> parameters, string? defaultValue = null)
 	{
 		foreach(var parameter in parameters)
@@ -86,7 +81,6 @@ public class ArgumentsReader
 		return defaultValue;
 	}
 
-	[Pure]
 	public bool TryReadAny(IEnumerable<string?> parameters, [NotNullWhen(true)] out string? value)
 	{
 		value = ReadAny(parameters);

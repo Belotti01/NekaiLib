@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 
 namespace Nekai.Common;
 
@@ -22,50 +23,6 @@ public static class NekaiFile
 		var attr = File.GetAttributes(filePath);
 		bool isReadOnlyOrSystem = attr.HasFlag(FileAttributes.ReadOnly) || attr.HasFlag(FileAttributes.System);
 		return isReadOnlyOrSystem;
-	}
-
-	/// <summary>
-	/// Check whether the file <paramref name="filePath"/> exists, and create it if it doesn't.
-	/// </summary>
-	/// <param name="filePath"> The path to the file to find or create. </param>
-	/// <returns> <see cref="PathOperationResult.Success"/> if the file exists or is created, or a value defining the error if not. </returns>
-	public static PathOperationResult TryCreateOrOverwrite([NotNullWhen(true)] string? filePath)
-	{
-		// Make sure that FileStream.Dispose() is invoked before returning.
-		var result = _TryCreateOrOverwrite(filePath);
-		if(!result.IsSuccessful)
-			return result.Error;
-		result.Value.Dispose();
-		return PathOperationResult.Success;
-	}
-
-	// The FileStreams should never be kept open for longer than required, so internalize this method and wrap it instead.
-	// The caller can still open its own stream to the file when needed, but let other processes and threads access it in the meantime.
-	private static Result<FileStream, PathOperationResult> _TryCreateOrOverwrite([NotNullWhen(true)] string? filePath, bool requireStream = false)
-	{
-		var result = NekaiPath.ValidatePath(filePath);
-		if(!result.IsSuccessful)
-			return new(result.Error);
-		filePath = result.Value;
-
-		try
-		{
-			var creationResult = NekaiDirectory._TryEnsureExistsForFileInternal(filePath, false);
-			if(creationResult.IsSuccess())
-			{
-				return requireStream
-					? File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
-					: File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite);
-			}
-			FileStream stream = File.Create(filePath);
-			Debug.Assert(File.Exists(filePath), "File creation didn't throw an exception, but the file doesn't exist.");
-			return stream;
-		}
-		catch(Exception ex)
-		{
-			Debug.Assert(!File.Exists(filePath), $"File creation threw {ex.GetType().Name}, but the file exists.");
-			return new(NekaiPath.GetResultFromException(ex));
-		}
 	}
 
 	/// <summary>
@@ -174,14 +131,12 @@ public static class NekaiFile
 
     public static PathOperationResult TryEnsureExists([NotNullWhen(true)] string? filepath)
 	{
-		var result = NekaiPath.IsValidPath(filepath);
-		if(!result.IsSuccess())
-			return result;
+		var result = PathString.TryParse(filepath);
+		if(!result.IsSuccessful)
+			return result.Error;
 
-		if(File.Exists(filepath))
-			return PathOperationResult.Success;
-
-		return TryCreateOrOverwrite(filepath);
+		return result.Value.EnsureExistsAsFile();
+		return PathOperationResult.Success;
 	}
 
 	public static Result<FileInfo, PathOperationResult> TryGetFileInfo([NotNullWhen(true)] string? filepath)
@@ -215,11 +170,12 @@ public static class NekaiFile
 	/// cannot be found or an error occurs, returns an unsuccesful <see cref="PathOperationResult"/> instead. </returns>
 	public static Result<bool, PathOperationResult> WasLastAccessedWithin(string filePath, TimeSpan time)
 	{
-		var result = NekaiPath.ValidatePath(filePath);
+
+		var result= PathString.TryParse(filePath);
 		if(!result.IsSuccessful)
 			return new(result.Error);
 
-		if(!File.Exists(filePath))
+		if(!result.Value.IsExistingFile())
 			return new(PathOperationResult.DoesNotExist);
 
 		filePath = result.Value;

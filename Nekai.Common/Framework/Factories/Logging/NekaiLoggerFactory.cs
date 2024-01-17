@@ -27,8 +27,9 @@ public sealed class NekaiLoggerFactory
 
 		if(config.LogToFile)
 		{
-			var result = NekaiDirectory.TryEnsureExistsForFile(config.OutputFilePathTemplate);
-			if(!result.IsSuccess())
+			PathString path = PathString.Parse(config.OutputFilePathTemplate);
+			var result = path.GetContainingDirectory().EnsureExistsAsDirectory();
+			if(result != PathOperationResult.Success)
 				return new(OperationResult.InvalidParameter);
 
 			// One overload takes an ITextFormatter, the other takes a string defining the "output template".

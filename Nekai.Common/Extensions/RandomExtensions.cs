@@ -18,7 +18,7 @@ public static class RandomExtensions
 	/// <param name="max"> The inclusive upper bound of the generated <see cref="char"/>. </param>
 	/// <returns>A random <see cref="char"/> within the <paramref name="min"/> to <paramref name="max"/> range (inclusive). </returns>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>, or either parameter is not a valid <see cref="char"/> value.</exception>
-	public static char NextChar(this Random random, char min = char.MinValue, char max = char.MaxValue)
+	public static char NextChar(this Random random, char min = 'A', char max = 'z')
 	{
 		if(min < char.MinValue)
 			throw new ArgumentOutOfRangeException(nameof(min), "Argument must be a valid char value.");

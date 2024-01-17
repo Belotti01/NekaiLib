@@ -124,13 +124,13 @@ public static partial class Exceptor
 			try
 			{
 				// Improvise a dump file
-				string dir = Directory.GetCurrentDirectory();
-				string dumpFile = Path.Combine(dir, $"CRITICAL_ERROR_DUMP-{DateTime.Now:yyyyMMdd_hhmmss}.txt");
-				var creationResult = NekaiFile.TryCreateOrOverwrite(dumpFile);
-				if(!creationResult.IsSuccess())
+				string rawPath = Path.Combine(Directory.GetCurrentDirectory(), $"CRITICAL_ERROR_DUMP-{DateTime.Now:yyyyMMdd_hhmmss}.txt");
+				var path = PathString.Parse(rawPath);
+				var creationResult = path.EnsureExistsAsFile();
+				if(creationResult != PathOperationResult.Success)
 					return false;
 
-				File.WriteAllText(dumpFile, data.ToString());
+				File.WriteAllText(path, data.ToString());
 				return true;
 			}
 			catch(Exception ex)

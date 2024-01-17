@@ -11,7 +11,7 @@ namespace Nekai.Common;
 public static class NekaiTask
 {
     /// <summary> The default value of the delay between each condition check during waiting operations. </summary>
-    private const int _DEFAULT_EVALUATION_DELAY_MS = 25;
+    private const int _DEFAULT_EVALUATION_DELAY_MS = 5;
 
     /// <summary>
     /// Asynchronously wait for the <paramref name="condition"/> to evaluate to <see langword="true"/>.
