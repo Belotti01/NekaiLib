@@ -21,7 +21,7 @@ public sealed class NekaiProcessNetworkInfo
 
 	public static NekaiProcessNetworkInfo ForCurrentProcess(ProtocolType protocol, int port)
 	{
-		string hostIp = CurrentApp.LocalHost.IPAddress.MapToIPv4().ToString();
-		return new(CurrentApp.Name, hostIp, port, Environment.ProcessId, protocol);
+		string hostIp = NekaiApp.LocalHost.IPAddress.MapToIPv4().ToString();
+		return new(NekaiApp.Name, hostIp, port, Environment.ProcessId, protocol);
 	}
 }

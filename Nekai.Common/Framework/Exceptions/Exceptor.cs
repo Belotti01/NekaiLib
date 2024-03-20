@@ -16,7 +16,7 @@ public static partial class Exceptor
 
 	public delegate void CriticalExceptionHandler(CriticalExceptionData exception);
 	/// <summary> Invoked upon throwing a <see cref="_CriticalException"/>, before ending the Application's execution. </summary>
-	/// <remarks> Does not replace <see cref="CurrentApp.OnProcessExit"/> when throwing a critical exception; this will be fired first. </remarks>
+	/// <remarks> Does not replace <see cref="NekaiApp.OnProcessExit"/> when throwing a critical exception; this will be fired first. </remarks>
 	public static event CriticalExceptionHandler? OnCriticalException;
 
 
@@ -89,7 +89,7 @@ public static partial class Exceptor
 		// To keep as much information as possible, while minimizing the risk of skipping the exportation process,
 		// temporarily delegate the operation to when the process exits.
 		EventHandler infoDumpDelegate = (_, _) => _ = _TryDumpCriticalExceptionInfo(data);
-		CurrentApp.OnProcessExit += infoDumpDelegate;
+		NekaiApp.OnProcessExit += infoDumpDelegate;
 
 		try
 		{
@@ -102,7 +102,7 @@ public static partial class Exceptor
 		// It's still safer to not wait until the process is dying to infodump, so remove the delegate if it can be done now...
 		if(_TryDumpCriticalExceptionInfo(data))
 		{
-			CurrentApp.OnProcessExit -= infoDumpDelegate;
+			NekaiApp.OnProcessExit -= infoDumpDelegate;
 		}
 		// ... otherwise let it retry once more on process exit.
 

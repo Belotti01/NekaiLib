@@ -5,7 +5,7 @@ namespace Nekai.Common;
 /// <summary>
 /// Contains information regarding the executing application and the host it's running on.
 /// </summary>
-public static class CurrentApp
+public static class NekaiApp
 {
 	/// <summary> Whether the application is running in DEBUG mode. </summary>
 	public const bool IS_DEBUG
@@ -43,7 +43,7 @@ public static class CurrentApp
 
 
 
-	static CurrentApp()
+	static NekaiApp()
 	{
 		AppDomain.CurrentDomain.ProcessExit += (sender, args) => OnProcessExit?.Invoke(sender, args);
 	}

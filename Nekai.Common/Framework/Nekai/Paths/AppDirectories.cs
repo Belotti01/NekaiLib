@@ -25,7 +25,7 @@ public static partial class NekaiData
 		/// <summary> Folder for log files scoped to single programs. </summary>
 		public static string ProgramsLogs => Path.Combine(Logs, "Programs");
 		/// <summary> Folder for log files scoped to the current program. </summary>
-		public static string CurrentProgramLogs => Path.Combine(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(CurrentApp.Name));
+		public static string CurrentProgramLogs => Path.Combine(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(NekaiApp.Name));
 		/// <summary> View information of the currently active program. </summary>
 		public static string CurrentProgramViews => _Program("Views");
 		/// <summary> Storage for data specific to the currently active program. </summary>
@@ -80,7 +80,7 @@ public static partial class NekaiData
 
 		private static string _Program(params string[] relativePath)
 		{
-			string path = Path.Combine(relativePath.Prepend(_Local("ProgramData", CurrentApp.Name)).ToArray());
+			string path = Path.Combine(relativePath.Prepend(_Local("ProgramData", NekaiApp.Name)).ToArray());
 			return path;
 		}
 	}

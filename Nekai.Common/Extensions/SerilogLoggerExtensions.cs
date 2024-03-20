@@ -33,7 +33,7 @@ public static class SerilogLoggerExtensions
 
 	private static string _FormatForLogging(Exception ex)
 	{
-		if(CurrentApp.HasDebugger)
+		if(NekaiApp.HasDebugger)
 			return ex.ToString();
 		return ex.Message;
 	}
