@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using System.Diagnostics;
+using Serilog;
 
 namespace Nekai.Common;
 
@@ -58,5 +59,26 @@ public sealed class NekaiLoggerFactory
 
 		ILogger logger = serilogConfig.CreateLogger();
 		return new(logger);
+	}
+
+	/// <summary>
+	/// Create a Serilog <see cref="ILogger"/> that writes all logs under the program's "Logs" subfolder.
+	/// </summary>
+	public ILogger CreateForDebug()
+	{
+		string path = Path.Combine(Environment.CurrentDirectory, "Logs");
+		Directory.CreateDirectory(path);
+
+		LoggerConfiguration config = new();
+		config.WriteTo.File(
+			path: path,
+			rollingInterval: RollingInterval.Day,
+			restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
+			shared: true
+		);
+
+		var result = TryCreate();
+		Debug.Assert(result.IsSuccessful);
+		return result.Value;
 	}
 }

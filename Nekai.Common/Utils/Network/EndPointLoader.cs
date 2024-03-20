@@ -49,7 +49,7 @@ public class EndPointLoader
 	{
 		try
 		{
-			endPointLoader = new(hostnameOrIp);
+			endPointLoader = new(hostnameOrIp, addressFamily);
 			return true;
 		}
 		catch
