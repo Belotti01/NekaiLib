@@ -6,6 +6,18 @@ namespace Nekai.Common;
 
 public static class NekaiParsing
 {
+	public static T Parse<T>(string value, IFormatProvider? formatProvider = null)
+		where T : IParsable<T>
+	{
+		return T.Parse(value, formatProvider);
+	}
+
+	public static bool TryParse<T>(string value, IFormatProvider? formatProvider, out T parsedValue)
+		where T : IParsable<T>
+	{
+		return T.TryParse(value, formatProvider, out parsedValue);
+	}
+
 	public static bool CanParse<T>()
 		=> CanParse(typeof(T));
 
