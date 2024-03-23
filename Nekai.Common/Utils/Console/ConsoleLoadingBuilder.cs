@@ -14,9 +14,6 @@ public class ConsoleLoadingBuilder
     public ConsoleColor Color { get; private set; } = ConsoleColor.White;
 
 
-    internal ConsoleLoadingBuilder() { }
-
-
     public ConsoleLoadingBuilder WithCharacter(char character)
     {
         Character = character;

@@ -69,7 +69,7 @@ public static class NumberToByteArrayConversionExtensions
     /// <returns> An array of bytes of length 1. </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] ToByteArray(this byte value)
-        => new[] { value };
+        => [value];
     
     /// <summary>
     /// Convert the specified numeric <paramref name="value"/> to an array of <see langword="byte"/>.
@@ -84,11 +84,11 @@ public static class NumberToByteArrayConversionExtensions
         // Added to support generic numeric types.
         return value switch
         {
-            byte b => new byte[] { b },
+			byte b => [b],
             ushort us => us.ToByteArray(),
             uint ui => ui.ToByteArray(),
             ulong ul => ul.ToByteArray(),
-            sbyte sb => new byte[] { (byte)sb },
+			sbyte sb => [(byte)sb],
             short s => s.ToByteArray(),
             int i => i.ToByteArray(),
             long l => l.ToByteArray(),

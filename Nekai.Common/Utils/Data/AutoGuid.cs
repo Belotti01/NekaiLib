@@ -70,5 +70,5 @@ public readonly struct AutoGuid : IParsable<AutoGuid>, ISpanParsable<AutoGuid>
 	/// <inheritdoc cref="TryParse(ReadOnlySpan{char}, IFormatProvider?, out AutoGuid)"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out AutoGuid result)
-		=> TryParse(s is null ? ReadOnlySpan<char>.Empty : s.AsSpan(), provider, out result);
+		=> TryParse(s is null ? [] : s.AsSpan(), provider, out result);
 }

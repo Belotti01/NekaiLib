@@ -6,27 +6,6 @@ namespace Nekai.Common;
 public static class NekaiPath
 {
 
-	public static bool TryRemovePathStep(ReadOnlySpan<char> path, out ReadOnlySpan<char> trimmedPath)
-	{
-		if(path.IsEmpty)
-		{
-			trimmedPath = "";
-			return false;
-		}
-
-		path = Path.TrimEndingDirectorySeparator(path);
-		int dirSeparatorIndex = LastIndexOfDirectorySeparatorChar(path);
-
-		if(dirSeparatorIndex <= 0)
-		{
-			trimmedPath = "";
-			return false;
-		}
-
-		trimmedPath = path[..dirSeparatorIndex];
-		return !trimmedPath.IsEmpty;
-	}
-
 	public static bool TryRemovePathStep(string path, [NotNullWhen(true)] out string? trimmedPath)
 	{
 		if(string.IsNullOrWhiteSpace(path))

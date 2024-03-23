@@ -136,7 +136,6 @@ public static class NekaiFile
 			return result.Error;
 
 		return result.Value.EnsureExistsAsFile();
-		return PathOperationResult.Success;
 	}
 
 	public static Result<FileInfo, PathOperationResult> TryGetFileInfo([NotNullWhen(true)] string? filepath)
@@ -171,7 +170,7 @@ public static class NekaiFile
 	public static Result<bool, PathOperationResult> WasLastAccessedWithin(string filePath, TimeSpan time)
 	{
 
-		var result= PathString.TryParse(filePath);
+		var result = PathString.TryParse(filePath);
 		if(!result.IsSuccessful)
 			return new(result.Error);
 

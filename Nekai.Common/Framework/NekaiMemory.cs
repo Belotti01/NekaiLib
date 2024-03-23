@@ -11,13 +11,13 @@ public static class NekaiMemory
 	/// The maximum memory size (NOT array length) of any stackalloc-based
 	/// <see cref="Span{T}"/> creation.
 	/// </summary>
-	private static readonly uint _MAX_STACKALLOC_SIZE;
+	private static readonly uint _maxStackAllocSize;
 
 
 	static NekaiMemory()
 	{
 		// 1MB is allocated to 32bit processes, and 4MB to 64bit processes
-		_MAX_STACKALLOC_SIZE = _MAX_32BIT_PROCESS_STACKALLOC_SIZE *
+		_maxStackAllocSize = _MAX_32BIT_PROCESS_STACKALLOC_SIZE *
 			(Environment.Is64BitProcess
 				? 4u
 				: 1u);
@@ -42,6 +42,6 @@ public static class NekaiMemory
 	{
 		// To avoid overflow errors, store the result in a bigger container type.
 		ulong bitLength = (ulong)length * (ulong)typeSize;
-		return bitLength <= _MAX_STACKALLOC_SIZE;
+		return bitLength <= _maxStackAllocSize;
 	}
 }

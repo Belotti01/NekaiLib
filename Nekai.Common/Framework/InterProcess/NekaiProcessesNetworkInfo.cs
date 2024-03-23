@@ -11,7 +11,7 @@ public sealed class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiPr
 	private const int _SERIALIZATION_ATTEMPT_DELAY_MS = 50;
 
 	[JsonInclude]
-	public NekaiProcessNetworkInfo[] Processes { get; set; } = Array.Empty<NekaiProcessNetworkInfo>();
+	public NekaiProcessNetworkInfo[] Processes { get; set; } = [];
 	[JsonIgnore]
 	private CancellationTokenSource _serializationCancellationTokenSource = new();
 	[JsonIgnore]

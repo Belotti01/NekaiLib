@@ -5,8 +5,6 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nekai.Common", "Nekai.Common.csproj", "{380662CB-03F8-46C3-8860-30EE450C41A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nekai.Interactivity", "..\Nekai.Interactivity\Nekai.Interactivity.csproj", "{C30489C9-DB19-4148-86C9-35BC179EB5E1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{380662CB-03F8-46C3-8860-30EE450C41A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{380662CB-03F8-46C3-8860-30EE450C41A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{380662CB-03F8-46C3-8860-30EE450C41A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C30489C9-DB19-4148-86C9-35BC179EB5E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C30489C9-DB19-4148-86C9-35BC179EB5E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C30489C9-DB19-4148-86C9-35BC179EB5E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C30489C9-DB19-4148-86C9-35BC179EB5E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

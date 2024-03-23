@@ -8,7 +8,7 @@ namespace Nekai.Common;
 /// Immutable data storage for key-value pairs.
 /// </summary>
 /// <inheritdoc cref="IImmutableMemoryCache{TKey, TValue}"/>
-public class ImmutableMemoryCache<TKey, TValue> : IImmutableMemoryCache<TKey, TValue>
+public sealed class ImmutableMemoryCache<TKey, TValue> : IImmutableMemoryCache<TKey, TValue>
     where TKey : notnull
 {
     public static ImmutableMemoryCache<TKey, TValue> Empty => new(ImmutableSortedDictionary<TKey, TValue>.Empty);

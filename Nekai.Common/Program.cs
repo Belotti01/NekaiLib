@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using static DotNext.Generic.BooleanConst;
 
 namespace Nekai.Common;
 
@@ -25,26 +26,9 @@ public class Program
 #endif
 	}
 
-	public static async Task RunManualTestsAsync()
+    public static async Task RunManualTestsAsync()
     {
-		NekaiConsole.PrintSignature();
-		NekaiConsole.Write("Loading ", ConsoleColor.Red);
-
-		CancellationTokenSource source = new();
-		var task = NekaiConsole
-			.CreateDotLoader()
-			.WithCharacter('.')
-			.WithColor(ConsoleColor.Yellow)
-			.WithMaxCharacters(5)
-			.RunAsync(source.Token);
-
-		NekaiConsole.WriteLine();
-		for(int i = 0; i < 10; i++)
-		{
-			await Task.Delay(TimeSpan.FromSeconds(1));
-			NekaiConsole.Write($"{i} ");
-		}
-		source.Cancel();
+		NekaiConsole.PrintSignature(2, ConsoleColor.Cyan);
     }
 
 	[JsonSerializable(typeof(_Test))]

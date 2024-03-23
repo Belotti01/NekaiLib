@@ -4,3 +4,4 @@ global using System.Linq;
 global using System.Text;
 global using CommunityToolkit.Common.Extensions;
 global using CommunityToolkit.HighPerformance;
+global using Nekai;

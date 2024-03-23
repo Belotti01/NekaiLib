@@ -13,4 +13,5 @@ namespace Nekai.Common;
 [AttributeUsage(AttributeTargets.Enum)]
 public sealed class OperationResultAttribute : Attribute
 {
+	
 }
