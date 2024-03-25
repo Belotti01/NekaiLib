@@ -25,7 +25,7 @@ public sealed class ConfigurationAttribute : Attribute, IConfigurationAttribute
 	/// <param name="aliases">Eventual aliases that could be found for this configuration element.</param>
 	public ConfigurationAttribute(string name, params string[] aliases)
 	{
-		Names = aliases.Prepend(name).ToArray();
+		Names = [name, ..aliases];
 		Debug.Assert(Names.All(x => !string.IsNullOrWhiteSpace(x)), "ConfigurationAttribute name or alias set to null or an empty string.");
 	}
 

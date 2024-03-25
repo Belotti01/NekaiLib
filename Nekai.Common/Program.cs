@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using static DotNext.Generic.BooleanConst;
 
 namespace Nekai.Common;
 
@@ -29,6 +28,8 @@ public class Program
     public static async Task RunManualTestsAsync()
     {
 		NekaiConsole.PrintSignature(2, ConsoleColor.Cyan);
+
+		
     }
 
 	[JsonSerializable(typeof(_Test))]

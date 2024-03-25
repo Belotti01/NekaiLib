@@ -8,18 +8,18 @@ namespace Nekai.Common;
 /// </summary>
 public class FileBackupManager : IDisposable
 {
-	public string FilePath { get; protected set; }
+	public PathString FilePath { get; protected set; }
 	public string Filename => Path.GetFileName(FilePath);
 	/// <summary> Whether a single backup file, if created, should be kept even after this instance is disposed. </summary>
 	public bool KeepPersistentBackup { get; set; }
 
-	public string BackupDirectory { get; protected set; }
+	public PathString BackupDirectory { get; protected set; }
 	public string? BackupFilename { get; protected set; }
 
 	[NotNullIfNotNull(nameof(BackupFilename))]
-	public string? BackupFilePath => BackupFilename is null
+	public PathString? BackupFilePath => BackupFilename is null
 		? null
-		: Path.Combine(BackupDirectory, BackupFilename);
+		: PathString.Parse(Path.Combine(BackupDirectory, BackupFilename));
 
 	/// <summary>
 	/// Whether a backup file was created by this object.
@@ -30,20 +30,18 @@ public class FileBackupManager : IDisposable
 
 	public FileBackupManager(string filepath)
 	{
-		BackupDirectory = Path.Combine(NekaiData.Directories.Temp, Environment.ProcessId.ToString());
-		FilePath = filepath;
+		FilePath = PathString.Parse(filepath);
+        string backupDirectory = Path.Combine(NekaiData.Directories.Temp, Environment.ProcessId.ToString());
+		BackupDirectory = PathString.Parse(backupDirectory);
 	}
 
 	public FileBackupManager(string filepath, string backupDirectory)
 	{
-		if(!File.Exists(filepath))
-			throw new FileNotFoundException($"File does not exist.", filepath);
-
-		BackupDirectory = backupDirectory;
-		FilePath = filepath;
+		BackupDirectory = PathString.Parse(backupDirectory);
+		FilePath = PathString.Parse(filepath);
 	}
 
-	public Result<string, PathOperationResult> TryBackup()
+	public Result<PathString, PathOperationResult> TryBackup()
 	{
 		if(!File.Exists(FilePath))
 			return new(PathOperationResult.DoesNotExist);
@@ -65,7 +63,7 @@ public class FileBackupManager : IDisposable
 		}
 	}
 
-	public string Backup()
+	public PathString Backup()
 	{
 		var originalFileResult = PathString.TryParse(FilePath);
 		if(!originalFileResult.IsSuccessful)
@@ -80,13 +78,14 @@ public class FileBackupManager : IDisposable
 		var backupFileResult = PathString.TryParse(BackupFilePath);
 		if(!backupFileResult.IsSuccessful)
 			throw new FormatException("Invalid backup file name.");
-
-		File.Copy(FilePath, BackupFilePath, true);
+		
+		var backupFilePath = backupFileResult.Value;
+		File.Copy(FilePath, backupFilePath.Path, true);
 
         if(oldBackupFilePath is not null)
 		{
 			// Delete the old backup file.
-			var duplicateDeletionResult = NekaiFile.TryEnsureDoesNotExist(BackupFilePath);
+			var duplicateDeletionResult = backupFilePath.EnsureDeletion();
 			if(!duplicateDeletionResult.IsSuccess())
 			{
 				Debug.Fail("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
@@ -95,7 +94,7 @@ public class FileBackupManager : IDisposable
 				// Non-blocking error, but might result in useless disk usage. Continue anyway.
 			}
 		}
-		return BackupFilePath;
+		return backupFilePath;
 	}
 
 	public PathOperationResult TryRestore()
@@ -122,12 +121,12 @@ public class FileBackupManager : IDisposable
 
 	public void Dispose()
 	{
-		if(BackupFilePath is null || !File.Exists(BackupFilePath))
+		if(BackupFilePath is null || !BackupFilePath.IsExistingFile())
 			return;
 
-		if(!KeepPersistentBackup && File.Exists(BackupFilePath))
+		if(!KeepPersistentBackup)
 		{
-			var result = NekaiFile.TryEnsureDoesNotExist(BackupFilePath);
+			var result = BackupFilePath.EnsureDeletion();
 			if(!result.IsSuccess())
 			{
 				NekaiLogs.Program.Warning($"Backup file could not be deleted upon disposal of object of type {GetType().Name}; {result.GetMessage()}");
