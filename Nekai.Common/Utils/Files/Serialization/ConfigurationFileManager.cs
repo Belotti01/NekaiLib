@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
@@ -23,7 +24,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 	/// The path to the file linked to this instance.
 	/// </summary>
 	[JsonIgnore]
-	public virtual string? FilePath { get; private set; }
+	public virtual PathString? FilePath { get; private set; }
 
 	// JsonSerializerOptions are single-use, so use a generator method rather than a static instance.
 	private static JsonSerializerOptions _CreateSerializerOptions(bool includeFields)
@@ -51,20 +52,19 @@ where TSelf : ConfigurationFileManager<TSelf>
 
 	private PathOperationResult _TrySetFilePath(string? filePath)
 	{
-		if(string.IsNullOrWhiteSpace(filePath))
-			return PathOperationResult.PathIsEmpty;
+		var result = PathString.TryParse(filePath);
+		if(!result.IsSuccessful)
+			return result.Error;
 
+		FilePath = result.Value;
 		// Don't append an extension to the path to avoid confusion when trying to access the file with the same string.
 
-		var result = PathString.Parse(filePath).EnsureExistsAsFile();
-		if(!result.IsSuccess())
-			return result;
+		if(!FilePath.IsExistingFile())
+			return PathOperationResult.DoesNotExist;
 
-		result = NekaiFile.CanReadFile(filePath);
-		if(!result.IsSuccess())
-			return result;
+		if(!FilePath.CanBeReadAsFile())
+			return PathOperationResult.FailedRead;
 
-		FilePath = filePath;
 		return PathOperationResult.Success;
 	}
 
@@ -93,7 +93,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 		if(obj is null)
 			return new(PathOperationResult.BadFormat);
 
-		obj.FilePath = filePath;
+		obj.FilePath = PathString.Parse(filePath);
 		return obj;
 	}
 
@@ -105,7 +105,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 			if(!result.IsSuccessful)
 				return result;
 
-			result.Value.FilePath = filePath;
+			result.Value.FilePath = PathString.Parse(filePath);
 			return result;
 		}
 		catch(Exception ex)

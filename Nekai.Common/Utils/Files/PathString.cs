@@ -321,6 +321,19 @@ public class PathString
 		return new(System.IO.Path.GetFullPath(Path, basePath));
 	}
 
+	public bool CanBeReadAsFile()
+	{
+		try
+		{
+			using FileStream stream = File.Open(Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+			return true;
+        }
+        catch
+		{
+			return false;
+		}
+	}
+
     /// <summary>
     /// Check whether this path is virtually equivalent to <paramref name="other"/>.
     /// </summary>

@@ -10,7 +10,7 @@ public class FileBackupManager : IDisposable
 {
 	public PathString FilePath { get; protected set; }
 	public string Filename => Path.GetFileName(FilePath);
-	/// <summary> Whether a single backup file, if created, should be kept even after this instance is disposed. </summary>
+	/// <summary> Whether a backup file, if any is created, should be kept even after this instance is disposed. </summary>
 	public bool KeepPersistentBackup { get; set; }
 
 	public PathString BackupDirectory { get; protected set; }
