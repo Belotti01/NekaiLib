@@ -119,21 +119,16 @@ where TSelf : ConfigurationFileManager<TSelf>
 
 	public PathOperationResult TrySerialize()
 	{
-		var result = PathString.TryParse(FilePath);
-		if(!result.IsSuccessful)
-			return result.Error;
-
-		FilePath = result.Value;
 		using FileBackupManager backupManager = new(FilePath);
-		if(result.Value.IsExistingFile())
+		if(FilePath.IsExistingFile())
 		{
 			var backupResult = backupManager.TryBackup();
-			if(!result.IsSuccessful)
+			if(!backupResult.IsSuccessful)
 				return backupResult.Error;
 		}
 		else
 		{
-			var fileCreationResult = result.Value.EnsureExistsAsFile();
+			var fileCreationResult = FilePath.EnsureExistsAsFile();
 			if(!fileCreationResult.IsSuccess())
 				return fileCreationResult;
 		}
