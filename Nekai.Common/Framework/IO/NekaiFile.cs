@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
+using Microsoft.Win32.SafeHandles;
 
 namespace Nekai.Common;
 
@@ -9,21 +10,6 @@ namespace Nekai.Common;
 /// </summary>
 public static class NekaiFile
 {
-	/// <summary>
-	/// Check whether a file is set to read-only, or if the file is a system file.
-	/// </summary>
-	/// <param name="filePath"> The path to the file. </param>
-	/// <returns></returns>
-	public static Result<bool, PathOperationResult> IsReadOnlyOrSystem(string filePath)
-	{
-		var result = CanReadFile(filePath);
-		if(result.IsSuccess())
-			return new(result);
-
-		var attr = File.GetAttributes(filePath);
-		bool isReadOnlyOrSystem = attr.HasFlag(FileAttributes.ReadOnly) || attr.HasFlag(FileAttributes.System);
-		return isReadOnlyOrSystem;
-	}
 
 	/// <summary>
 	/// Check whether the file exists, and attempt to delete it if it does.

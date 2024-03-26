@@ -31,7 +31,7 @@ public static partial class NekaiData
 		int deletions = 0;
 		var operation = Parallel.ForEach(filesEnumerator, file =>
 		{
-			var result = NekaiFile.TryEnsureDoesNotExist(file);
+			var result = ((PathString)file)!.EnsureDeletion();
 			if(!result.IsSuccess())
 			{
 				failedDeletions++;

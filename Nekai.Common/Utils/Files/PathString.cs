@@ -79,7 +79,6 @@ public class PathString
 		|| !left.Equals(right);
 
 
-
     internal PathString(PathSpan path)
 		=> Path = path.ToString();
 
@@ -319,9 +318,22 @@ public class PathString
 			return new(System.IO.Path.GetFullPath(Path));
 		}
 		return new(System.IO.Path.GetFullPath(Path, basePath));
-	}
+    }
 
-	public bool CanBeReadAsFile()
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	/// <exception cref="InvalidOperationException"></exception>
+    public FileAttributes GetFileAttributes()
+    {
+		if(!IsExistingFile())
+			throw new InvalidOperationException("The path points to a directory or a file that does not exist.");
+
+		return File.GetAttributes(Path);
+    }
+
+    public bool CanBeReadAsFile()
 	{
 		try
 		{

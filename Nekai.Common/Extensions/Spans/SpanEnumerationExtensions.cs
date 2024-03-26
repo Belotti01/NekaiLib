@@ -2,7 +2,7 @@
 
 public static class SpanEnumerationExtensions
 {
-	public static bool Any<T>(this ReadOnlySpan<T> span, Func<T, bool> predicate)
+	public static bool Any<T>(this ReadOnlySpan<T> span, Predicate<T> predicate)
 	{
 		for(int i = span.Length - 1; i >= 0; --i)
 		{
@@ -12,7 +12,7 @@ public static class SpanEnumerationExtensions
 		return false;
 	}
 
-	public static bool All<T>(this ReadOnlySpan<T> span, Func<T, bool> predicate)
+	public static bool All<T>(this ReadOnlySpan<T> span, Predicate<T> predicate)
 	{
 		for(int i = span.Length - 1; i >= 0; --i)
 		{
