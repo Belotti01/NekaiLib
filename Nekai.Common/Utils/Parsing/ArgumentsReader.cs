@@ -90,7 +90,7 @@ public class ArgumentsReader
 	protected void Parse(string args)
 	{
 		char? wrapper;
-		Dictionary<string, string> parameters = new();
+		Dictionary<string, string> parameters = [];
 		args = args.Trim();
 		ReadOnlySpan<char> span = args.AsSpan();
 		string? lastKey = null, lastValue = null;

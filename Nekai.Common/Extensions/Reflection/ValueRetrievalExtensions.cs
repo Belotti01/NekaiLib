@@ -13,7 +13,7 @@ public static class ValueRetrievalExtensions
 	{
 		var properties = obj.GetType()
  			.GetProperties();
-		Dictionary<PropertyInfo, object?> values = new();
+		Dictionary<PropertyInfo, object?> values = [];
 
 		foreach(var property in properties)
 		{
@@ -32,7 +32,7 @@ public static class ValueRetrievalExtensions
 	public static Dictionary<MemberInfo, object?> ExtractAllMembersValues(this object obj)
 	{
 		MemberInfo[] members = obj.GetType().GetMembers();
-		Dictionary<MemberInfo, object?> values = new();
+		Dictionary<MemberInfo, object?> values = [];
 		foreach(var member in members)
 		{
 			if(member.TryGetMemberValue(obj, out object? value))

@@ -32,7 +32,7 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 
 	public static Set<T> operator |(Set<T> a, IEnumerable<T> b)
 	{
-		Set<T> set = new();
+		Set<T> set = [];
 		set.UnionWith(a);
 		set.UnionWith(b);
 		return set;
@@ -40,7 +40,7 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 
 	public static Set<T> operator &(Set<T> a, IEnumerable<T> b)
 	{
-		Set<T> set = new();
+		Set<T> set = [];
 		set.UnionWith(a);
 		set.IntersectWith(b);
 		return set;
@@ -48,7 +48,7 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 
 	public static Set<T> operator ^(Set<T> a, IEnumerable<T> b)
 	{
-		Set<T> set = new();
+		Set<T> set = [];
 		set.UnionWith(a);
 		set.SymmetricExceptWith(b);
 		return set;
@@ -56,7 +56,7 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 
 	public static Set<T> operator +(Set<T> a, T b)
 	{
-		Set<T> set = new();
+		Set<T> set = [];
 		set.UnionWith(a);
 		set.Add(b);
 		return set;
@@ -64,7 +64,7 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 
 	public static Set<T> operator -(Set<T> a, T b)
 	{
-		Set<T> set = new();
+		Set<T> set = [];
 		set.UnionWith(a);
 		set.Remove(b);
 		return set;
@@ -72,7 +72,7 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 
 	public static Set<T> operator +(Set<T> a, IEnumerable<T> b)
 	{
-		Set<T> set = new();
+		Set<T> set = [];
 		set.UnionWith(a);
 		foreach(T value in b)
 		{
@@ -85,7 +85,7 @@ public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 
 	public static Set<T> operator -(Set<T> a, IEnumerable<T> b)
 	{
-		Set<T> set = new();
+		Set<T> set = [];
 		set.UnionWith(a);
 		set.ExceptWith(b);
 		return set;

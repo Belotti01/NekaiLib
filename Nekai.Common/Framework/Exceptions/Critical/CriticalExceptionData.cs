@@ -20,7 +20,7 @@ public sealed class CriticalExceptionData
 	/// have been invoked. Defaults to <see langword="true"/>. </summary>
 	public bool ExitApplication { get; set; } = true;
 
-	private readonly List<string> _additionalDumpInformation = new();
+	private readonly List<string> _additionalDumpInformation = [];
 
 	internal CriticalExceptionData(Exceptor._CriticalException ex)
 	{

@@ -42,7 +42,7 @@ public static partial class NekaiData
 			}
 		});
 
-		// Some files might be currently in use - only return an error if all deletions failed.
+		// Some files might be currently in use - only return an error if ALL deletions failed.
 		if(deletions > 0)
 			return deletions;
 

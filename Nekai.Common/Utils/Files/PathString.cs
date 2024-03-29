@@ -344,7 +344,17 @@ public class PathString
 		{
 			return false;
 		}
-	}
+    }
+
+    public string GetFileContent()
+    {
+        return File.ReadAllText(Path);
+    }
+
+    public string[] GetFileLines()
+    {
+        return File.ReadAllLines(Path);
+    }
 
     /// <summary>
     /// Check whether this path is virtually equivalent to <paramref name="other"/>.

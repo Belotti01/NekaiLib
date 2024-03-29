@@ -42,7 +42,7 @@ public class ConcurrentList<T> : IList<T>, IReadOnlyList<T>
 	/// <inheritdoc cref="List{T}.List()"/>
 	public ConcurrentList()
 	{
-		_internalList = new();
+		_internalList = [];
 	}
 
 	/// <inheritdoc cref="List{T}.List(IEnumerable{T})"/>

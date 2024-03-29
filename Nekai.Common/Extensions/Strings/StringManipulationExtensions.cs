@@ -4,12 +4,12 @@ public static class StringManipulationExtensions
 {
 	private static readonly string[] _NewLineCharacters = new[] { "\n", "\r\n" };
 
-	public static string[] SplitBySpaces(this string str)
-	{
-		return str.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-	}
+    public static string[] SplitBySpaces(this string str)
+    {
+        return str.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+    }
 
-	public static string[] SplitLines(this string str, StringSplitOptions options = StringSplitOptions.None)
+    public static string[] SplitLines(this string str, StringSplitOptions options = StringSplitOptions.None)
 	{
 		return str.Split(_NewLineCharacters, options);
 	}

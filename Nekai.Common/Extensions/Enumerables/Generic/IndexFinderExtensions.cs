@@ -2,13 +2,13 @@
 
 public static class IndexFinderExtensions
 {
-	public static int[] IndexesWhere<T>(this IEnumerable<T> data, Func<T, bool> comparer)
+	public static int[] IndexesWhere<T>(this IEnumerable<T> data, Predicate<T> comparer)
 		=> data._IndexesWhereInternal(comparer).ToArray();
 
 	public static int[] IndexesOfAny<T>(this IEnumerable<T> data, IEnumerable<T> values, Func<T, T, bool> comparer)
 	{
 		int i = 0;
-		List<int> indexes = new();
+		List<int> indexes = [];
 
 		foreach(var item in data)
 		{
@@ -42,7 +42,7 @@ public static class IndexFinderExtensions
 	public static int[] IndexesOfAny<T>(this IEnumerable<T> data, IEnumerable<T> values) where T : IEquatable<T>
 		=> data._IndexesOfInternal(values, (x, y) => x.Equals(y)).ToArray();
 
-	private static IEnumerable<int> _IndexesWhereInternal<T>(this IEnumerable<T> data, Func<T, bool> comparer)
+	private static IEnumerable<int> _IndexesWhereInternal<T>(this IEnumerable<T> data, Predicate<T> comparer)
 	{
 		int i = 0;
 
