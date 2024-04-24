@@ -7,7 +7,7 @@
 /// </summary>
 public sealed class StringSetBuilder
 {
-	private ISet<string> _Set { get; } = new HashSet<string>();
+	private HashSet<string> _Set { get; } = [];
 
 	/// <summary>
 	/// Appends a string to the result if it is not already present.

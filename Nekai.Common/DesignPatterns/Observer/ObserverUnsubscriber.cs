@@ -41,7 +41,7 @@ public class ObserverUnsubscriber<T, TObserver> : IDisposable
 	/// <summary>
 	/// Unsubscribe the <typeparamref name="TObserver"/> from the <see cref="IObservable{T}"/>.
 	/// </summary>
-	public virtual void Dispose()
+	public void Dispose()
 	{
 		Subscribers?.Remove(Observer);
 		GC.SuppressFinalize(this);

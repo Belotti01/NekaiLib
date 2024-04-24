@@ -21,7 +21,8 @@ public class PathString
 	/// <summary> Extracts the contained path as a <see langword="string"/>. </summary>
 	/// <param name="path"> The path to extract. </param>
 	public static implicit operator string(PathString path)
-		=> path.Path;// <summary> Extracts the contained path as a <see langword="string"/>. </summary>
+		=> path.Path;
+	// <summary> Extracts the contained path as a <see langword="string"/>. </summary>
 	/// <param name="path"> The path to extract. </param>
 	public static implicit operator PathString(PathSpan path)
 		=> path.ToPathString();

@@ -19,7 +19,7 @@ public static class SpanOperationExtensions
 		return count;
 	}
 
-	public static ReadOnlySpan<char> SliceLine(this ReadOnlySpan<char> span, int lineIndex)
+    public static ReadOnlySpan<char> SliceLine(this ReadOnlySpan<char> span, int lineIndex)
 	{
 		if(lineIndex < 0)
 			throw new ArgumentOutOfRangeException(nameof(lineIndex), $"Index must be greater or equal to 0.");
