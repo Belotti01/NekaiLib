@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Core;
 
 namespace Nekai.Common.Extensions;
 
@@ -15,7 +14,7 @@ public static class IServiceCollectionExtensions
 		return services.AddSingleton(NekaiLogs.Program);
 	}
 
-	public static IServiceCollection AddDebugLoggerToCurrentFolder(this IServiceCollection services)
+	public static IServiceCollection AddDebugLoggingToCurrentFolder(this IServiceCollection services)
 	{
 		string rawPath = Path.Combine(Environment.CurrentDirectory, "Logs");
 		var path = PathString.Parse(rawPath);

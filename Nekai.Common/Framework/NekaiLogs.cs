@@ -87,7 +87,7 @@ public static class NekaiLogs
 		try
 		{
 			// TODO: Pick between the JSONFormatter and the outputTemplate for the Shared and Program loggers.
-			// - Using the Json format will require another way to view the logs properly, but is more software-friendly
+			// - Using the Json format will require another way to view the logs properly, but it is more software-friendly
 			// - ... otherwise just make the logs straightforward with a simple prefix, but losing information in the process
 			// fml idk keep it json for now
 			NekaiLoggerConfiguration config = new()
