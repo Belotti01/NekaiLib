@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace Nekai.Common;
 
@@ -74,6 +75,78 @@ public static class NekaiConsole
         }
     }
 
-	public static ConsoleLoadingBuilder CreateDotLoader()
+	public static T Read<T>()
+		where T : IParsable<T>
+	{
+		lock(_lock)
+		{
+			T? result = default;
+			string? input;
+			bool isValidInput = false;
+			
+			do
+			{
+				input = Console.ReadLine();
+				isValidInput = T.TryParse(input, null, out result);
+            } while(!isValidInput);
+
+			return result!;
+		}
+	}
+
+    public static string ReadLine()
+	{
+		return Read<string>();
+    }
+
+    public static ConsoleKeyInfo ReadKey(ConsoleKey[]? allowed = null)
+    {
+        lock(_lock)
+        {
+            if(allowed is null)
+                return Console.ReadKey();
+
+            ConsoleKeyInfo input;
+
+            do
+            {
+                input = Console.ReadKey();
+            } while(!allowed.Contains(input.Key));
+
+            return input;
+        }
+    }
+
+    public static char ReadChar()
+    {
+        lock(_lock)
+        {
+            int input;
+
+            do
+            {
+                input = Console.Read();
+            } while(input == -1);
+
+            return (char)input;
+        }
+    }
+
+    public static char ReadChar(char[] allowed)
+    {
+        lock(_lock)
+        {
+            int input;
+
+            do
+            {
+                input = Console.Read();
+            } while(input == -1 || !allowed.Contains((char)input));
+
+            return (char)input;
+        }
+    }
+
+    public static ConsoleLoadingBuilder CreateDotLoader()
 		=> new();
 }

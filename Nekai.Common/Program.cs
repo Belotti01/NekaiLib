@@ -22,7 +22,6 @@ public class Program
 
     public static async Task RunManualTestsAsync()
     {
-        // idk test something
 
     }
 
