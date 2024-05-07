@@ -22,7 +22,9 @@ public class Program
 
     public static async Task RunManualTestsAsync()
     {
-
+        NekaiConsole.WriteError("Error");
+        NekaiConsole.WriteWarning("Warning");
+        NekaiConsole.WriteSuccess("Success");
     }
 
 	public static void RunBenchmarks()
