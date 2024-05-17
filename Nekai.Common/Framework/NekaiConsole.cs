@@ -74,35 +74,32 @@ public static class NekaiConsole
         }
     }
 
-	public static T Read<T>()
+	public static T Read<T>(IFormatProvider? format = null)
 		where T : IParsable<T>
-	{
-		lock(_lock)
+    {
+        T? result;
+        string? input;
+        bool isValidInput;
+
+        lock(_lock)
 		{
-			T? result = default;
-			string? input;
-			bool isValidInput = false;
-			
 			do
 			{
 				input = Console.ReadLine();
-				isValidInput = T.TryParse(input, null, out result);
+				isValidInput = T.TryParse(input, format, out result);
             } while(!isValidInput);
+        }
 
-			return result!;
-		}
-	}
-
-    public static string ReadLine()
-	{
-		return Read<string>();
+        return result!;
     }
 
-    public static ConsoleKeyInfo ReadKey(ConsoleKey[]? allowed = null)
+    public static string ReadLine() => Read<string>();
+
+    public static ConsoleKeyInfo ReadKey(params ConsoleKey[] allowed)
     {
         lock(_lock)
         {
-            if(allowed is null)
+            if(allowed.Length == 0)
                 return Console.ReadKey();
 
             ConsoleKeyInfo input;
@@ -118,38 +115,39 @@ public static class NekaiConsole
 
     public static char ReadChar()
     {
+        int input;
+
         lock(_lock)
         {
-            int input;
-
             do
             {
                 input = Console.Read();
             } while(input == -1);
-
-            return (char)input;
         }
+        return (char)input;
     }
 
-    public static char ReadChar(char[] allowed)
+    public static char ReadChar(params char[] allowed)
     {
+        int input;
+        bool isValidInput;
+
         lock(_lock)
         {
-            int input;
-
             do
             {
                 input = Console.Read();
-            } while(input == -1 || !allowed.Contains((char)input));
-
-            return (char)input;
+                isValidInput = input == -1 
+                    || !allowed.Contains((char)input);
+            } while(isValidInput);
         }
+        return (char)input;
     }
 
     public static ConsoleLoadingBuilder CreateDotLoader()
 		=> new();
 
-    /// <summary> Non-locking nternal wrapper of the <see cref="Console.Write()"/> operation. </summary>
+    /// <summary> Non-locking nternal wrapper of the <see cref="Console.Write(object)"/> operation. </summary>
     private static void _Write(object? text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black)
     {
         var prevForeColor = Console.ForegroundColor;
@@ -164,7 +162,7 @@ public static class NekaiConsole
         Console.BackgroundColor = prevBackColor;
     }
 
-    /// <summary> Non-locking nternal wrapper of the <see cref="Console.WriteLine()"/> operation. </summary>
+    /// <summary> Non-locking internal wrapper of the <see cref="Console.WriteLine()"/> operation. </summary>
     private static void _WriteLine(object? text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black)
     {
         var prevForeColor = Console.ForegroundColor;

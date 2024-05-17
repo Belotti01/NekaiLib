@@ -79,7 +79,6 @@ public class PathString
 		=> left is null
 		|| !left.Equals(right);
 
-
     internal PathString(PathSpan path)
 		=> Path = path.ToString();
 

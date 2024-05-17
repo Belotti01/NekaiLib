@@ -49,6 +49,7 @@ public static partial class NekaiData
 			{
 				_ = sb.Remove(sb.Length - 1, 1);
 			}
+
 			return sb.ToString();
 		}
 	}
