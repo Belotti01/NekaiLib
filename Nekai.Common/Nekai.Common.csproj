@@ -10,9 +10,9 @@
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Title>Nekai.Common</Title>
 	  <Authors>Nekai</Authors>
-	  <AssemblyVersion>0.24.0501.1</AssemblyVersion>
-	  <FileVersion>0.24.0501.1</FileVersion>
-	  <OutputType>exe</OutputType>
+	  <AssemblyVersion>0.24.0525.1</AssemblyVersion>
+	  <FileVersion>0.24.0525.1</FileVersion>
+	  <OutputType>library</OutputType>
 	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
