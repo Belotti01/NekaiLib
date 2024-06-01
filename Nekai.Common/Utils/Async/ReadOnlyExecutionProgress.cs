@@ -6,10 +6,12 @@ public class ReadOnlyExecutionProgress
 	/// The time at which the operation started.
 	/// </summary>
 	public DateTime UTCStartTime { get; protected set; } = DateTime.UtcNow;
+
 	// Used to calculate the ElapsedTime once the operation is completed.
 	private DateTime? _completionTimeUTC = null;
 
 	private float _progress = 0;
+
 	/// <summary>
 	/// Percentage of the operation that has been completed. Value will always be in the range 0 to 100 (inclusive).
 	/// </summary>
@@ -26,14 +28,17 @@ public class ReadOnlyExecutionProgress
 			}
 		}
 	}
+
 	/// <summary>
 	/// The last status message set by the operation.
 	/// </summary>
 	public string? StatusMessage { get; protected set; }
+
 	/// <summary>
 	/// The time elapsed since the operation started.
 	/// </summary>
 	public TimeSpan ElapsedTime => (_completionTimeUTC ?? DateTime.UtcNow) - UTCStartTime;
+
 	/// <summary>
 	/// The estimated time remaining for the operation to complete, or <see cref="TimeSpan.Zero"/> if no progress has been done.
 	/// </summary>

@@ -5,7 +5,6 @@ namespace Nekai.Common;
 
 public static class NekaiPath
 {
-
 	public static bool TryRemovePathStep(string path, [NotNullWhen(true)] out string? trimmedPath)
 	{
 		if(string.IsNullOrWhiteSpace(path))

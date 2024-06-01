@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
 using System.Numerics;
 
 namespace Nekai.Common;
 
 // - No need to implement IEquatable<PathString>, as it's already implemented for strings and the type is implicitly convertible to string (and
 // the logic wouldn't change anyway - it should just check the Path property).
-// - Implements IParsable to more easily allow deserialization of this type. Using this type over a string allows the prevention of 
+// - Implements IParsable to more easily allow deserialization of this type. Using this type over a string allows the prevention of
 // invalid paths in the middle of the program's main logic, as any error is caught during parsing.
 // - Does not implement ISpanParsable since the span would have to be converted to a string object anyway for validation.
 
@@ -22,25 +20,29 @@ public class PathString
 	/// <param name="path"> The path to extract. </param>
 	public static implicit operator string(PathString path)
 		=> path.Path;
+
 	// <summary> Extracts the contained path as a <see langword="string"/>. </summary>
 	/// <param name="path"> The path to extract. </param>
 	public static implicit operator PathString(PathSpan path)
 		=> path.ToPathString();
+
 	/// <summary> Extracts the contained path as a <see cref="ReadOnlySpan{T}"/> of <see langword="char"/>. </summary>
 	/// <param name="path"> The path to extract. </param>
 	public static implicit operator ReadOnlySpan<char>(PathString path)
 		=> path.Path.AsSpan();
+
 	/// <inheritdoc cref="AsSpan"/>
 	/// <param name="path"> The path to convert. </param>
 	// Used for optimization with methods that don't require the string object.
 	public static implicit operator PathSpan(PathString path)
 		=> new(path);
+
 	/// <inheritdoc cref="AsSpan"/>
 	/// <param name="path"> The path to convert. </param>
 	public static implicit operator PathString(ReadOnlySpan<char> path)
 		=> new(path.ToString());
 
-	/// <summary> Validate the <paramref name="path"/> and wrap it as a <see cref="PathString"/> if successful. Returns <see langword="null"/> 
+	/// <summary> Validate the <paramref name="path"/> and wrap it as a <see cref="PathString"/> if successful. Returns <see langword="null"/>
 	/// if the path validation fails. </summary>
 	/// <param name="path"> The <see langword="string"/> to convert. </param>
 	public static explicit operator PathString?(string? path)
@@ -53,33 +55,38 @@ public class PathString
 
 	/// <summary> The <see langword="string"/> representation of this <see cref="PathString"/>. </summary>
 	public string Path { get; }
+
 	public static PathString Empty { get; } = new("");
 
 	public int Length => Path.Length;
 	public bool IsEmpty => Path.AsSpan().IsEmpty;
 	public bool IsAbsolute => System.IO.Path.IsPathRooted(Path.AsSpan());
 	public bool IsRelative => !IsAbsolute;
-	public bool IsRootOnly { 
-		get {
+
+	public bool IsRootOnly
+	{
+		get
+		{
 			var span = Path.AsSpan();
 			return System.IO.Path.GetPathRoot(span) == span;
 		}
 	}
-    public static bool operator ==(PathString? left, string? right)
+
+	public static bool operator ==(PathString? left, string? right)
 		=> string.Equals(left?.Path, right);
 
 	public static bool operator !=(PathString? left, string? right)
 		=> !string.Equals(left?.Path, right);
 
 	public static bool operator ==(PathString? left, ReadOnlySpan<char> right)
-		=> left is not null 
+		=> left is not null
 		&& left.Equals(right);
 
 	public static bool operator !=(PathString? left, ReadOnlySpan<char> right)
 		=> left is null
 		|| !left.Equals(right);
 
-    internal PathString(PathSpan path)
+	internal PathString(PathSpan path)
 		=> Path = path.ToString();
 
 	/// <summary> Used internally to create a new instance. </summary>
@@ -142,16 +149,16 @@ public class PathString
 		}
 	}
 
-    /// <inheritdoc cref="PathSpan.GetContainingFolder"/>
-    /// <remarks> Returns a <see cref="PathSpan"/> rather than a <see cref="PathString"/> to avoid allocating a new object for each call during
-    /// loops. </remarks>
-    public PathSpan GetContainingFolder()
+	/// <inheritdoc cref="PathSpan.GetContainingFolder"/>
+	/// <remarks> Returns a <see cref="PathSpan"/> rather than a <see cref="PathString"/> to avoid allocating a new object for each call during
+	/// loops. </remarks>
+	public PathSpan GetContainingFolder()
 		=> AsSpan().GetContainingFolder();
 
-    /// <inheritdoc cref="PathSpan.TryGetContainingFolder"/>
+	/// <inheritdoc cref="PathSpan.TryGetContainingFolder"/>
 	/// <remarks> Returns a <see cref="PathSpan"/> rather than a <see cref="PathString"/> to avoid allocating a new object for each call during
-    /// loops. </remarks>
-    public bool TryGetContainingFolder(out PathSpan containingFolder)
+	/// loops. </remarks>
+	public bool TryGetContainingFolder(out PathSpan containingFolder)
 	{
 		containingFolder = GetContainingFolder();
 		return Length != containingFolder.Length;
@@ -197,7 +204,8 @@ public class PathString
 			{
 				File.Delete(this);
 				return PathOperationResult.Success;
-			}catch(Exception ex)
+			}
+			catch(Exception ex)
 			{
 				return ex switch
 				{
@@ -235,17 +243,17 @@ public class PathString
 			return new(PathOperationResult.PathIsEmpty);
 
 		string newPath = System.IO.Path.Combine(Path, relativePath);
-        // Don't use the constructor here, since the length and characters of the new path need to be validated.
+		// Don't use the constructor here, since the length and characters of the new path need to be validated.
 		return TryParse(newPath);
 	}
 
 	public Result<PathString, PathOperationResult> TryAppend(params string[] pathSteps)
-    {
-        if(pathSteps.Length == 0)
+	{
+		if(pathSteps.Length == 0)
 			return new(PathOperationResult.PathIsEmpty);
-		
-        string relativePath = System.IO.Path.Combine(pathSteps);
-        return TryAppend(relativePath);
+
+		string relativePath = System.IO.Path.Combine(pathSteps);
+		return TryAppend(relativePath);
 	}
 
 	/// <summary>
@@ -255,7 +263,7 @@ public class PathString
 	/// containing directory is available (e.g. the path is a root directory). </returns>
 	public PathString GetContainingDirectory()
 		=> NekaiPath.TryRemovePathStep(Path, out string? result)
-			? new(result)	// This is safe since we already validated the path.
+			? new(result)   // This is safe since we already validated the path.
 			: this;
 
 	/// <summary>
@@ -263,7 +271,6 @@ public class PathString
 	/// </summary>
 	public bool IsRooted()
 		=> System.IO.Path.IsPathRooted(Path);
-
 
 	/// <inheritdoc cref="IParsable{TSelf}.Parse(string, IFormatProvider?)"/>
 	/// <exception cref="FormatException"> Thrown when the path validation fails (see inner exception for more information). </exception>
@@ -276,31 +283,31 @@ public class PathString
 		{
 			string path = System.IO.Path.GetFullPath(s);
 			return new(path);
-		}catch(Exception ex)
+		}
+		catch(Exception ex)
 		{
 			// Just throw the exception if it fails.
 			throw new FormatException($"Failed to parse \"{s}\" as a {nameof(PathString)}.", ex);
 		}
-    }
+	}
 
-    /// <inheritdoc cref="IParsable{TSelf}.TryParse(string?, IFormatProvider?, out TSelf)"/>
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [NotNullWhen(true)] out PathString? result)
-    {
-        result = null;
-        if(string.IsNullOrWhiteSpace(s))
+	/// <inheritdoc cref="IParsable{TSelf}.TryParse(string?, IFormatProvider?, out TSelf)"/>
+	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [NotNullWhen(true)] out PathString? result)
+	{
+		result = null;
+		if(string.IsNullOrWhiteSpace(s))
 		{
 			result = Empty;
 			return true;
 		}
-            
 
-        Result<PathString, PathOperationResult> parseResult = TryParse(s);
+		Result<PathString, PathOperationResult> parseResult = TryParse(s);
 		if(!parseResult.IsSuccessful)
 			return false;
-        
+
 		result = parseResult.Value;
-        return true;
-    }
+		return true;
+	}
 
 	/// <summary>
 	/// Get or generate the absolute path of this instance.
@@ -318,63 +325,62 @@ public class PathString
 			return new(System.IO.Path.GetFullPath(Path));
 		}
 		return new(System.IO.Path.GetFullPath(Path, basePath));
-    }
+	}
 
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <returns></returns>
 	/// <exception cref="InvalidOperationException"></exception>
-    public FileAttributes GetFileAttributes()
-    {
+	public FileAttributes GetFileAttributes()
+	{
 		if(!IsExistingFile())
 			throw new InvalidOperationException("The path points to a directory or a file that does not exist.");
 
 		return File.GetAttributes(Path);
-    }
+	}
 
-    public bool CanBeReadAsFile()
+	public bool CanBeReadAsFile()
 	{
 		try
 		{
 			using FileStream stream = File.Open(Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			return true;
-        }
-        catch
+		}
+		catch
 		{
 			return false;
 		}
-    }
+	}
 
-    public string GetFileContent()
-    {
-        return File.ReadAllText(Path);
-    }
+	public string GetFileContent()
+	{
+		return File.ReadAllText(Path);
+	}
 
-    public string[] GetFileLines()
-    {
-        return File.ReadAllLines(Path);
-    }
+	public string[] GetFileLines()
+	{
+		return File.ReadAllLines(Path);
+	}
 
-    /// <summary>
-    /// Check whether this path is virtually equivalent to <paramref name="other"/>.
-    /// </summary>
-    /// <param name="other"> The path to compare this instance to. </param>
-    /// <returns> <see langword="true"/> if this path points to the same directory or file as <paramref name="other"/>; 
-    /// <see langword="false"/> otherwise. </returns>
-    public bool Equals(string? other) 
-		=> Path.Equals(other);		// TODO: Check OS for case-sensitivity and use the proper comparer.
-	
+	/// <summary>
+	/// Check whether this path is virtually equivalent to <paramref name="other"/>.
+	/// </summary>
+	/// <param name="other"> The path to compare this instance to. </param>
+	/// <returns> <see langword="true"/> if this path points to the same directory or file as <paramref name="other"/>;
+	/// <see langword="false"/> otherwise. </returns>
+	public bool Equals(string? other)
+		=> Path.Equals(other);      // TODO: Check OS for case-sensitivity and use the proper comparer.
+
 	/// <inheritdoc cref="string.CompareTo(string?)"/>
-	public int CompareTo(string? other) 
+	public int CompareTo(string? other)
 		=> Path.CompareTo(other);  // TODO: Check OS for case-sensitivity and use the proper comparer.
-
 
 	public override bool Equals(object? obj)
 	{
 		if(obj is null)
 			return false;
-		
+
 		if(ReferenceEquals(this, obj))
 			return true;
 
@@ -400,11 +406,12 @@ public class PathString
 
 	/// <inheritdoc cref="Equals(string?)"/>
 	public bool Equals(ReadOnlySpan<char> other)
-		=> Path.AsSpan() == other;		// TODO: Check OS for case-sensitivity and use the proper comparer.
-	
+		=> Path.AsSpan() == other;      // TODO: Check OS for case-sensitivity and use the proper comparer.
+
 	/// <inheritdoc cref="System.MemoryExtensions.SequenceCompareTo{T}(ReadOnlySpan{T}, ReadOnlySpan{T})"/>
-	public int CompareTo(ReadOnlySpan<char> other) 
+	public int CompareTo(ReadOnlySpan<char> other)
 		=> Path.AsSpan().CompareTo(other, StringComparison.Ordinal);   // TODO: Check OS for case-sensitivity and use the proper comparer.
-    public bool Equals(PathString? other) 
+
+	public bool Equals(PathString? other)
 		=> string.Equals(Path, other?.Path);
 }

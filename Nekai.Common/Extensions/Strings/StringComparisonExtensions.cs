@@ -15,7 +15,7 @@ public static class StringComparisonExtensions
 	}
 
 	/// <summary>
-	/// Shorthand for <see cref="string.Equals(string, string, StringComparison)"/> with 
+	/// Shorthand for <see cref="string.Equals(string, string, StringComparison)"/> with
 	/// <see cref="StringComparison.OrdinalIgnoreCase"/>, or <see cref="StringComparison.InvariantCultureIgnoreCase"/>
 	/// if <paramref name="cultureInvariant"/> is set to <see langword="true"/>.
 	/// </summary>

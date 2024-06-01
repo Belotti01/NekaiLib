@@ -13,10 +13,13 @@ public static class NekaiApp
 		= true;
 #else
 		= false;
+
 #endif
+
 	/// <summary> Whether the application is running in DEBUG mode and has a debugger attached. </summary>
 	public static bool IsDebugWithDebugger
 		=> IS_DEBUG && HasDebugger;
+
 	/// <summary> Whether the application is running with a debugger attached. </summary>
 	public static bool HasDebugger
 		=> Debugger.IsAttached;
@@ -31,6 +34,7 @@ public static class NekaiApp
 
 	/// <inheritdoc cref="AppDomain.ProcessExit"/>
 	public static event EventHandler? OnProcessExit;
+
 	/// <summary>
 	/// Invoked when the Application is about to exit, and all the handlers attached to <see cref="OnProcessExit"/>
 	/// have completed execution.
@@ -41,14 +45,10 @@ public static class NekaiApp
 	/// </remarks>
 	internal static event EventHandler? _OnProcessExitHandledInternal;
 
-
-
 	static NekaiApp()
 	{
 		AppDomain.CurrentDomain.ProcessExit += (sender, args) => OnProcessExit?.Invoke(sender, args);
 	}
-
-
 
 	private static void _ProcessExitHandler(object? sender, EventArgs e)
 	{

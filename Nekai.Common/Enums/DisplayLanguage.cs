@@ -10,7 +10,6 @@ public enum DisplayLanguage
 	Italian
 }
 
-
 public static class DisplayLanguageExtensions
 {
 	/// <summary>

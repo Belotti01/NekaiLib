@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace Nekai.Common;
@@ -48,7 +47,7 @@ public class ArgumentsReader
 		Parse(args);
 	}
 
-    public bool TryRead(string parameter, [NotNullWhen(true)] out string? value)
+	public bool TryRead(string parameter, [NotNullWhen(true)] out string? value)
 	{
 		value = this[parameter];
 		return value is not null;

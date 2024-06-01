@@ -8,7 +8,7 @@ public static class TaskExtensions
 	/// Check whether the <see cref="Task"/> has at any point been activated.
 	/// </summary>
 	/// <param name="task"> The task to check. </param>
-	/// <returns> <see langword="true"/> if the <see cref="Task"/>'s execution has been previously requested; 
+	/// <returns> <see langword="true"/> if the <see cref="Task"/>'s execution has been previously requested;
 	/// <see langword="false"/> otherwise. </returns>
 	public static bool WasActivated(this Task task)
 	{

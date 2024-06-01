@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 public static class SpanOperationExtensions
 {
@@ -12,14 +6,14 @@ public static class SpanOperationExtensions
 	{
 		var enumerator = span.GetEnumerator();
 		var count = 0;
-		while (enumerator.MoveNext())
+		while(enumerator.MoveNext())
 		{
 			count++;
 		}
 		return count;
 	}
 
-    public static ReadOnlySpan<char> SliceLine(this ReadOnlySpan<char> span, int lineIndex)
+	public static ReadOnlySpan<char> SliceLine(this ReadOnlySpan<char> span, int lineIndex)
 	{
 		if(lineIndex < 0)
 			throw new ArgumentOutOfRangeException(nameof(lineIndex), $"Index must be greater or equal to 0.");

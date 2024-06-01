@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nekai.Common;
 
@@ -16,8 +10,10 @@ public readonly struct SocketTransmissionInfo
 {
 	/// <summary> The size of the buffer to use for each fragment. </summary>
 	public int BufferSize { get; }
+
 	/// <summary> The total size of the data to be transmitted. </summary>
 	public int TotalSize { get; }
+
 	/// <summary> The implied size of the last fragment. </summary>
 	public int LastPacketSize
 	{
@@ -25,10 +21,11 @@ public readonly struct SocketTransmissionInfo
 		{
 			int size = TotalSize % BufferSize;
 			if(size == 0)
-				return BufferSize;	// Packets are all of the same size:	[-----][-----][-----]
-			return size;	// One extra packet is present:					[-----][-----][-----][--]
+				return BufferSize;  // Packets are all of the same size:	[-----][-----][-----]
+			return size;    // One extra packet is present:					[-----][-----][-----][--]
 		}
 	}
+
 	/// <summary> The number of fragments that will be sent. </summary>
 	public int PacketsCount => (int)Math.Ceiling((double)TotalSize / BufferSize);
 
@@ -59,12 +56,12 @@ public readonly struct SocketTransmissionInfo
 			throw new ArgumentNullException(nameof(bytes));
 		if(bytes.Length < 8)
 			throw new ArgumentException("Byte array must be at least 8 bytes long.", nameof(bytes));
-		
+
 		int bufferSize = BitConverter.ToInt32(bytes, 0);
 		int totalSize = BitConverter.ToInt32(bytes, 4);
 		return new(bufferSize, totalSize);
 	}
-	
+
 	/// <summary> Format the data contained in this instance into a <see langword="byte"/> array. </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private byte[] _ToByteArray()

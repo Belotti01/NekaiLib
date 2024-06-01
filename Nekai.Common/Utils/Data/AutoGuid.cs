@@ -11,6 +11,7 @@ public readonly struct AutoGuid : IParsable<AutoGuid>, ISpanParsable<AutoGuid>
 	/// <summary> Cast the <paramref name="id"/> into its contained <see cref="Guid"/>. </summary>
 	/// <param name="id"> The <see cref="AutoGuid"/> to cast. </param>
 	public static implicit operator Guid(AutoGuid id) => id.Value;
+
 	/// <summary> Wrap the <paramref name="id"/> into an <see cref="AutoGuid"/>. </summary>
 	/// <param name="id"> The <see cref="Guid"/> to wrap. </param>
 	public static explicit operator AutoGuid(Guid id) => new(id);
@@ -52,9 +53,9 @@ public readonly struct AutoGuid : IParsable<AutoGuid>, ISpanParsable<AutoGuid>
 	/// </summary>
 	/// <param name="s"> The <see langword="string"/> to parse. </param>
 	/// <param name="provider"> Provider of the format information of <paramref name="s"/>. </param>
-	/// <param name="result"> The parsed GUID wrapped into an <see cref="AutoGuid"/>, or <see langword="default"/> if <paramref name="s"/> 
+	/// <param name="result"> The parsed GUID wrapped into an <see cref="AutoGuid"/>, or <see langword="default"/> if <paramref name="s"/>
 	/// is not a valid GUID format. </param>
-	/// <returns> <see langword="true"/> if <paramref name="s"/> was successfully parsed into <paramref name="result"/>; 
+	/// <returns> <see langword="true"/> if <paramref name="s"/> was successfully parsed into <paramref name="result"/>;
 	/// <see langword="false"/> otherwise. </returns>
 	public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out AutoGuid result)
 	{
@@ -64,7 +65,7 @@ public readonly struct AutoGuid : IParsable<AutoGuid>, ISpanParsable<AutoGuid>
 	}
 
 	/// <inheritdoc cref="Parse(string, IFormatProvider?)"/>
-	public static AutoGuid Parse(ReadOnlySpan<char> s, IFormatProvider? provider) 
+	public static AutoGuid Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
 		=> (AutoGuid)Guid.Parse(s, provider);
 
 	/// <inheritdoc cref="TryParse(ReadOnlySpan{char}, IFormatProvider?, out AutoGuid)"/>

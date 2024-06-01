@@ -10,6 +10,7 @@ public class FileBackupManager : IDisposable
 {
 	public PathString FilePath { get; protected set; }
 	public string Filename => Path.GetFileName(FilePath);
+
 	/// <summary> Whether a backup file, if any is created, should be kept even after this instance is disposed. </summary>
 	public bool KeepPersistentBackup { get; set; }
 
@@ -31,7 +32,7 @@ public class FileBackupManager : IDisposable
 	public FileBackupManager(string filepath)
 	{
 		FilePath = PathString.Parse(filepath);
-        string backupDirectory = Path.Combine(NekaiData.Directories.Temp, Environment.ProcessId.ToString());
+		string backupDirectory = Path.Combine(NekaiData.Directories.Temp, Environment.ProcessId.ToString());
 		BackupDirectory = PathString.Parse(backupDirectory);
 	}
 
@@ -73,16 +74,16 @@ public class FileBackupManager : IDisposable
 
 		// If a backup file already exists, delete it, but only if the new backup file creation succeeds.
 		string? oldBackupFilePath = BackupFilePath;
-		
+
 		BackupFilename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{Filename}.bak";
 		var backupFileResult = PathString.TryParse(BackupFilePath);
 		if(!backupFileResult.IsSuccessful)
 			throw new FormatException("Invalid backup file name.");
-		
+
 		var backupFilePath = backupFileResult.Value;
 		File.Copy(FilePath, backupFilePath.Path, true);
 
-        if(oldBackupFilePath is not null)
+		if(oldBackupFilePath is not null)
 		{
 			// Delete the old backup file.
 			var duplicateDeletionResult = backupFilePath.EnsureDeletion();

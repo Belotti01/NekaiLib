@@ -13,12 +13,11 @@ namespace Nekai.Common;
 /// </summary>
 public static partial class Exceptor
 {
-
 	public delegate void CriticalExceptionHandler(CriticalExceptionData exception);
+
 	/// <summary> Invoked upon throwing a <see cref="_CriticalException"/>, before ending the Application's execution. </summary>
 	/// <remarks> Does not replace <see cref="NekaiApp.OnProcessExit"/> when throwing a critical exception; this will be fired first. </remarks>
 	public static event CriticalExceptionHandler? OnCriticalException;
-
 
 	[StackTraceHidden, DebuggerStepThrough]
 	public static void ThrowCritical(AppExitCode exitCode, Exception? innerException = null)
@@ -74,7 +73,6 @@ public static partial class Exceptor
 		NekaiLogs.Shared.Write(ex, logType);
 		_Throw(ex);
 	}
-
 
 	[StackTraceHidden]
 	private static void _ThrowCriticalException(_CriticalException ex)

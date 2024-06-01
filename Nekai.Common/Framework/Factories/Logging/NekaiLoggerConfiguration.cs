@@ -16,7 +16,6 @@ public sealed class NekaiLoggerConfiguration
 	public LogEventLevel MinimumConsoleLogLevel { get; set; } = LogEventLevel.Information;
 	public LogEventLevel MinimumFileLogLevel { get; set; } = LogEventLevel.Information;
 
-
 	public NekaiLoggerConfiguration WithConsoleOutput()
 	{
 		LogToConsole = true;
@@ -97,5 +96,3 @@ public sealed class NekaiLoggerConfiguration
 		return this;
 	}
 }
-
-

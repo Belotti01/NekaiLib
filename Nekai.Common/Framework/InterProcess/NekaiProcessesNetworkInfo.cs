@@ -7,13 +7,16 @@ public sealed class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiPr
 {
 	[JsonIgnore]
 	private const int _SERIALIZATION_MAX_ATTEMPTS = 10;
+
 	[JsonIgnore]
 	private const int _SERIALIZATION_ATTEMPT_DELAY_MS = 50;
 
 	[JsonInclude]
 	public NekaiProcessNetworkInfo[] Processes { get; set; } = [];
+
 	[JsonIgnore]
 	private CancellationTokenSource _serializationCancellationTokenSource = new();
+
 	[JsonIgnore]
 	private Task? _serializationTask;
 

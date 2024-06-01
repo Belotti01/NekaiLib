@@ -13,10 +13,13 @@ public class ProcessHostInformationLoader
 {
 	/// <summary> The fallback <see cref="HostName"/> value used when an Inter-Network hostname cannot be retrieved. </summary>
 	public const string DEFAULT_HOSTNAME = "localhost";
+
 	/// <summary> The fallback <see cref="IPAddress"/> value used when an Inter-Network ip address cannot be retrieved. </summary>
 	public static IPAddress DefaultIpAddress { get; } = new(new byte[] { 127, 0, 0, 1 });
+
 	/// <summary> Array of all the IP addresses associated with the current process' host. </summary>
 	public ImmutableArray<IPAddress> IpAddresses { get; protected set; }
+
 	/// <summary> The result of the last attempt to load the host information. </summary>
 	public NetworkOperationResult LastLoadingOperationResult { get; protected set; }
 
@@ -28,12 +31,13 @@ public class ProcessHostInformationLoader
 	public bool HasInterNetworkInfo => !(_hostName == DEFAULT_HOSTNAME || ReferenceEquals(_ipAddress, DefaultIpAddress));
 
 	private IPAddress? _ipAddress;
+
 	/// <summary> Inter-Network IP Address of the host on which this application is running. </summary>
 	/// <remarks> If the DNS failed to retrieve the required information, this will return <see cref="DefaultIpAddress"/> instead. </remarks>
 	public IPAddress IPAddress
 	{
-        get
-        {
+		get
+		{
 			if(_ipAddress is not null)
 				return _ipAddress;
 
@@ -55,6 +59,7 @@ public class ProcessHostInformationLoader
 			return _hostName;
 		}
 	}
+
 	private static string? _hostName;
 
 	public ProcessHostInformationLoader(bool preloadInfo = true)
@@ -95,7 +100,7 @@ public class ProcessHostInformationLoader
 
 	[Pure]
 	private static Result<string, NetworkOperationResult> _TryGetLocalHostName()
-    {
+	{
 		try
 		{
 			string localHostname = Dns.GetHostName();
@@ -144,21 +149,20 @@ public class ProcessHostInformationLoader
 		}
 	}
 
-    /// <summary>
-    /// Return the string representation of this <see cref="ProcessHostInformationLoader"/>.
-    /// </summary>
-    /// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>  in IPv4 format. </returns>
-    [Pure]
-    public override string ToString()
+	/// <summary>
+	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>.
+	/// </summary>
+	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/>  in IPv4 format. </returns>
+	[Pure]
+	public override string ToString()
 		=> ToIPv4String();  // Just use the conventional format (IPv4) for the default string representation.
 
-
-    /// <summary>
-    /// Return the string representation of this <see cref="ProcessHostInformationLoader"/>, using IPv6 addresses.
-    /// </summary>
-    /// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/> in IPv6 format. </returns>
-    [Pure]
-    public string ToIPv6String()
+	/// <summary>
+	/// Return the string representation of this <see cref="ProcessHostInformationLoader"/>, using IPv6 addresses.
+	/// </summary>
+	/// <returns> A <see langword="string"/> containing the values of <see cref="HostName"/> and <see cref="IPAddress"/> in IPv6 format. </returns>
+	[Pure]
+	public string ToIPv6String()
 	{
 		var ipv6Addresses = IpAddresses
 			.Select(x => x.MapToIPv6());

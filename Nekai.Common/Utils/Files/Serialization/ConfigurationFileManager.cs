@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
@@ -20,6 +19,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 	/// </summary>
 	[JsonIgnore]
 	protected bool includeFields = false;
+
 	/// <summary>
 	/// The path to the file linked to this instance.
 	/// </summary>
@@ -37,7 +37,6 @@ where TSelf : ConfigurationFileManager<TSelf>
 			IgnoreReadOnlyProperties = false,
 			IncludeFields = includeFields
 		};
-
 
 	static ConfigurationFileManager()
 	{
@@ -67,8 +66,6 @@ where TSelf : ConfigurationFileManager<TSelf>
 
 		return PathOperationResult.Success;
 	}
-
-
 
 	private static Result<TSelf, PathOperationResult> _DeserializeInternal(string filePath)
 	{
@@ -114,8 +111,6 @@ where TSelf : ConfigurationFileManager<TSelf>
 			return new(PathOperationResult.UnknownFailure);
 		}
 	}
-
-
 
 	public PathOperationResult TrySerialize()
 	{

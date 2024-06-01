@@ -10,12 +10,16 @@ public sealed class CriticalExceptionData
 {
 	/// <inheritdoc cref="Exception.Message"/>
 	public string Message { get; }
+
 	/// <inheritdoc cref="Exception.StackTrace"/>
 	public string? StackTrace { get; }
+
 	/// <inheritdoc cref="Exceptor._CriticalException.ExitCode"/>
 	public AppExitCode ExitCode { get; }
+
 	/// <inheritdoc cref="Exception.InnerException"/>
 	public Exception? InnerException { get; }
+
 	/// <summary> Whether the application should exit with exit code <see cref="ExitCode"/> after all handlers
 	/// have been invoked. Defaults to <see langword="true"/>. </summary>
 	public bool ExitApplication { get; set; } = true;

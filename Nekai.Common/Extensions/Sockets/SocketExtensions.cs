@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Security;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Nekai.Common;
 
@@ -57,7 +50,7 @@ public static class SocketExtensions
 			if(token.IsCancellationRequested)
 				return new(NetworkOperationResult.TimedOut);
 		}
-		
+
 		T? result = JsonSerializer.Deserialize<T>(bytes);
 		if(result is null)
 			return new(NetworkOperationResult.BadFormat);

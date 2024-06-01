@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
-using Microsoft.Win32.SafeHandles;
 
 namespace Nekai.Common;
 
@@ -10,7 +8,6 @@ namespace Nekai.Common;
 /// </summary>
 public static class NekaiFile
 {
-
 	/// <summary>
 	/// Check whether the file exists, and attempt to delete it if it does.
 	/// </summary>
@@ -75,47 +72,47 @@ public static class NekaiFile
 		{
 			return new(NekaiPath.GetResultFromException(ex));
 		}
-    }
+	}
 
-    public static Result<string, PathOperationResult> TryReadText([NotNullWhen(true)] string? filePath)
-    {
-        var result = NekaiPath.IsValidPath(filePath);
-        if(!result.IsSuccess())
-            return new(result);
+	public static Result<string, PathOperationResult> TryReadText([NotNullWhen(true)] string? filePath)
+	{
+		var result = NekaiPath.IsValidPath(filePath);
+		if(!result.IsSuccess())
+			return new(result);
 
-        if(!File.Exists(filePath))
-            return new(PathOperationResult.DoesNotExist);
+		if(!File.Exists(filePath))
+			return new(PathOperationResult.DoesNotExist);
 
-        try
-        {
-            return File.ReadAllText(filePath);
-        }
-        catch(Exception ex)
-        {
-            return new(NekaiPath.GetResultFromException(ex));
-        }
-    }
+		try
+		{
+			return File.ReadAllText(filePath);
+		}
+		catch(Exception ex)
+		{
+			return new(NekaiPath.GetResultFromException(ex));
+		}
+	}
 
-    public static Result<Memory<byte>, PathOperationResult> TryReadBytes([NotNullWhen(true)] string? filePath)
-    {
-        var result = NekaiPath.IsValidPath(filePath);
-        if(!result.IsSuccess())
-            return new(result);
+	public static Result<Memory<byte>, PathOperationResult> TryReadBytes([NotNullWhen(true)] string? filePath)
+	{
+		var result = NekaiPath.IsValidPath(filePath);
+		if(!result.IsSuccess())
+			return new(result);
 
-        if(!File.Exists(filePath))
-            return new(PathOperationResult.DoesNotExist);
+		if(!File.Exists(filePath))
+			return new(PathOperationResult.DoesNotExist);
 
-        try
-        {
-            return File.ReadAllBytes(filePath).AsMemory();
-        }
-        catch(Exception ex)
-        {
-            return new(NekaiPath.GetResultFromException(ex));
-        }
-    }
+		try
+		{
+			return File.ReadAllBytes(filePath).AsMemory();
+		}
+		catch(Exception ex)
+		{
+			return new(NekaiPath.GetResultFromException(ex));
+		}
+	}
 
-    public static PathOperationResult TryEnsureExists([NotNullWhen(true)] string? filepath)
+	public static PathOperationResult TryEnsureExists([NotNullWhen(true)] string? filepath)
 	{
 		var result = PathString.TryParse(filepath);
 		if(!result.IsSuccessful)
@@ -155,7 +152,6 @@ public static class NekaiFile
 	/// cannot be found or an error occurs, returns an unsuccesful <see cref="PathOperationResult"/> instead. </returns>
 	public static Result<bool, PathOperationResult> WasLastAccessedWithin(string filePath, TimeSpan time)
 	{
-
 		var result = PathString.TryParse(filePath);
 		if(!result.IsSuccessful)
 			return new(result.Error);

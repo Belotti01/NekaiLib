@@ -24,6 +24,7 @@ public class StringSetBuilder<TId, TSelf>
 	{
 		return string.Join(' ', Set.Values);
 	}
+
 	public override string ToString()
 		=> Build();
 }

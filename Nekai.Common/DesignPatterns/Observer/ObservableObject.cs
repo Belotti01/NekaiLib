@@ -7,10 +7,10 @@
 /// <inheritdoc cref="IObservable{T}"/>
 public abstract class ObservableObject<T> : IObservable<T>
 {
-    /// <summary>
-    /// Container of the subscribed observers to notify.
-    /// </summary>
-    protected ICollection<IObserver<T>> Observers { get; } = [];
+	/// <summary>
+	/// Container of the subscribed observers to notify.
+	/// </summary>
+	protected ICollection<IObserver<T>> Observers { get; } = [];
 
 	/// <summary>
 	/// Add the <paramref name="observer"/> to the list of objects to notify.
@@ -47,7 +47,6 @@ public abstract class ObservableObject<T> : IObservable<T>
 			observer.OnError(error);
 		}
 	}
-
 
 	/// <summary>
 	/// Notify all subscribed observers of the completion of an operation.

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace Nekai.Common;
 
 /// <summary>
-/// Singleton implementation of a <see cref="ConfigurationFileManager{TSelf}"/> that handles the general configuration shared among 
+/// Singleton implementation of a <see cref="ConfigurationFileManager{TSelf}"/> that handles the general configuration shared among
 /// all Nekai applications.
 /// </summary>
 [JsonSerializable(typeof(NekaiGeneralConfiguration))]
@@ -18,13 +18,14 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 	/// Unique instance of this class.
 	/// </summary>
 	public static NekaiGeneralConfiguration Singleton => _instanceInitializer.Value;
-	private readonly static Lazy<NekaiGeneralConfiguration> _instanceInitializer = new(_CreateSingleton);
+
+	private static readonly Lazy<NekaiGeneralConfiguration> _instanceInitializer = new(_CreateSingleton);
 
 	/// <summary> The default display language. </summary>
 	public DisplayLanguage? DefaultLanguage { get; set; }
+
 	/// <summary> Whether to use dark color tones for the UI when possible. </summary>
 	public bool PreferDarkMode { get; set; } = true;
-
 
 	public NekaiGeneralConfiguration()
 		: base(_FilePath)
@@ -54,7 +55,7 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 	/// <summary>
 	/// Attempt to set the <see cref="DefaultLanguage"/> to the operating system's UI language.
 	/// </summary>
-	/// <returns> 
+	/// <returns>
 	/// <see langword="true"/> if the OS language was loaded, <see langword="false"/> if the operation failed or the OS's language is
 	/// not supported.
 	/// </returns>
@@ -81,7 +82,6 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 					osLanguage = language;
 					return true;
 				}
-
 			}
 		}
 		catch(Exception ex)

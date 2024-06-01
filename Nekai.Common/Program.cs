@@ -5,13 +5,13 @@ using BenchmarkDotNet.Running;
 namespace Nekai.Common;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+
 [MemoryDiagnoser]
 public class Program
 {
-
 	public static async Task Main(string[] args)
 	{
-        // Do checks to ensure that the tests work
+		// Do checks to ensure that the tests work
 #if DEBUG
         await RunManualTestsAsync();
 #else
@@ -20,12 +20,13 @@ public class Program
 #endif
 	}
 
-    public static async Task RunManualTestsAsync()
-    {
-        NekaiConsole.WriteError("Error");
-        NekaiConsole.WriteWarning("Warning");
-        NekaiConsole.WriteSuccess("Success");
-    }
+	public static async Task RunManualTestsAsync()
+	{
+		NekaiConsole.WriteLine("Default");
+		NekaiConsole.WriteError("Error");
+		NekaiConsole.WriteWarning("Warning");
+		NekaiConsole.WriteSuccess("Success");
+	}
 
 	public static void RunBenchmarks()
 	{
@@ -36,14 +37,14 @@ public class Program
 			Console.ResetColor();
 			return;
 		}
-		
+
 		BenchmarkRunner.Run<Program>();
 	}
 
 	[Benchmark]
 	public void SomethingToBenchmark()
 	{
-
 	}
 }
+
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously

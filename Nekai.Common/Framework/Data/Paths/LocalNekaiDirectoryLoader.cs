@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 // - Made standalone to avoid circular dependency, while keeping access to App.Directories and App.Files as simple
 // as possible.
@@ -33,9 +31,9 @@ public static partial class NekaiData
 			var parseResult = PathString.TryParse(dir);
 			if(!parseResult.IsSuccessful)
 				return parseResult.Error;
-            path = parseResult.Value;
+			path = parseResult.Value;
 
-            var creationResult = path.EnsureExistsAsDirectory();
+			var creationResult = path.EnsureExistsAsDirectory();
 			return creationResult;
 		}
 
@@ -60,12 +58,12 @@ public static partial class NekaiData
 			result = _CheckAndCreateDir(_GlobalConfigurationFilepath, out path);
 			if(result == PathOperationResult.Success)
 				return path;
-			
+
 			AppExitCode exitCode = File.Exists(_GlobalConfigurationFilepath)
 				? AppExitCode.FileAccessError
 				: AppExitCode.FileCreationError;
 			Exceptor.ThrowCritical(exitCode, "Configuration could not be loaded. " + result.GetMessage());
-			
+
 			result = _CheckAndCreateDir(_DefaultLocalConfigurationDirectory, out path);
 			if(result == PathOperationResult.Success)
 				return path;

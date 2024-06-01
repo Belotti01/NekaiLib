@@ -49,7 +49,7 @@ public static class StringTransformationExtensions
 	/// </summary>
 	/// <param name="str"> The <see langword="string"/> to apply the tabbing to. </param>
 	/// <param name="tabCount"> The amount of tab characters to prepend to each line of the <see langword="string"/>. </param>
-	/// <returns> A new <see langword="string"/> that is a copy of <paramref name="str"/> with normalized newline characters 
+	/// <returns> A new <see langword="string"/> that is a copy of <paramref name="str"/> with normalized newline characters
 	/// for the current environment. If <paramref name="tabCount"/> is greater than 0, prepend each line with that amount of
 	/// <c>'\t'</c> characters. </returns>
 	/// <exception cref="ArgumentOutOfRangeException"> Thrown when <paramref name="tabCount"/> is less than 0. </exception>

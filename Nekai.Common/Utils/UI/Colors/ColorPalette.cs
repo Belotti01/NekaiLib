@@ -1,5 +1,4 @@
-﻿
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 public abstract class ColorPalette : ConfigurationFileManager<ColorPalette>
 {

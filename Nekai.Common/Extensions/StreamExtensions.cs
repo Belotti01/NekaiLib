@@ -44,15 +44,15 @@ public static class StreamExtensions
 		} while(read != -1);
 
 		return builder.ToString();
-    }
+	}
 
-    /// <summary>
-    /// Read all the content of the <paramref name="stream"/> as text and return it as a <see langword="string"/>.
-    /// </summary>
-    /// <param name="stream"> The stream to read. </param>
-    public static string? ReadAllText(this Stream stream)
-    {
-        using TextReader reader = new StreamReader(stream);
-        return reader.ReadToEnd();
-    }
+	/// <summary>
+	/// Read all the content of the <paramref name="stream"/> as text and return it as a <see langword="string"/>.
+	/// </summary>
+	/// <param name="stream"> The stream to read. </param>
+	public static string? ReadAllText(this Stream stream)
+	{
+		using TextReader reader = new StreamReader(stream);
+		return reader.ReadToEnd();
+	}
 }

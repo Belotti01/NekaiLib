@@ -46,5 +46,6 @@ public enum AppExitCode
 
 	// 60 - 69 | System errors
 	SystemError = 60,
+
 	NotEnoughDiskSpace = 61,
 }

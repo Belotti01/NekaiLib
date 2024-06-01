@@ -13,12 +13,11 @@ public static class NekaiLogs
 	private static readonly object _lock = new();
 	private static ILogger? _sharedLogger;
 	private static ILogger? _currentProgramLogger;
+
 	/// <summary>
 	/// Factory used to generate the <see cref="NekaiLogs"/>' <see cref="ILogger"/> instances.
 	/// </summary>
 	public static NekaiLoggerFactory Factory { get; } = new();
-
-
 
 	/// <summary>
 	/// Thread-safe instance of <see cref="ILogger"/> that serializes logs into <see cref="NekaiData.Directories.SharedLogs"/>.
@@ -57,7 +56,7 @@ public static class NekaiLogs
 	}
 
 	/// <summary>
-	/// Thread-safe instance of <see cref="ILogger"/> scoped to the currently running program. Serializes logs into 
+	/// Thread-safe instance of <see cref="ILogger"/> scoped to the currently running program. Serializes logs into
 	/// <see cref="NekaiData.Directories.CurrentProgramLogs"/>.
 	/// </summary>
 	public static ILogger Program

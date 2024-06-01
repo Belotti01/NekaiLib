@@ -16,7 +16,7 @@ public static class NekaiString
 	/// <param name="emptyChar">  The <see langword="char"/> identifying an empty step of the bar. </param>
 	/// <param name="prefix"> <see langword="string"/> to place before the progress bar. </param>
 	/// <param name="postfix"> <see langword="string"/> to be appended to the progress bar. </param>
-	/// <returns> 
+	/// <returns>
 	/// A <see langword="string"/> starting with <paramref name="prefix"/> and ending with <paramref name="postfix"/>,
 	/// containing <paramref name="barSteps"/> amount of <paramref name="filledChar"/> and <paramref name="emptyChar"/>
 	/// based on the <paramref name="progressPercentage"/>.

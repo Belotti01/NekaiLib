@@ -9,71 +9,73 @@ namespace Nekai.Common;
 /// </summary>
 /// <inheritdoc cref="IImmutableMemoryCache{TKey, TValue}"/>
 public sealed class ImmutableMemoryCache<TKey, TValue> : IImmutableMemoryCache<TKey, TValue>
-    where TKey : notnull
+	where TKey : notnull
 {
-    public static ImmutableMemoryCache<TKey, TValue> Empty => new(ImmutableSortedDictionary<TKey, TValue>.Empty);
+	public static ImmutableMemoryCache<TKey, TValue> Empty => new(ImmutableSortedDictionary<TKey, TValue>.Empty);
 
-    /// <summary>
-    /// Internal storage of all key-value pairs.
-    /// </summary>
-    protected ImmutableSortedDictionary<TKey, TValue> Entries { get; private set; }
-    /// <inheritdoc cref="ImmutableSortedDictionary{TKey, TValue}.IsEmpty"/>
-    public bool IsEmpty => Entries.IsEmpty;
-    /// <inheritdoc cref="ImmutableSortedDictionary{TKey, TValue}.Count"/>
-    public int Count => Entries.Count;
+	/// <summary>
+	/// Internal storage of all key-value pairs.
+	/// </summary>
+	protected ImmutableSortedDictionary<TKey, TValue> Entries { get; private set; }
 
-    private bool _disposed;
-    
-    public ImmutableMemoryCache(ImmutableSortedDictionary<TKey, TValue> entries)
-    {
-        Entries = entries;
-    }
+	/// <inheritdoc cref="ImmutableSortedDictionary{TKey, TValue}.IsEmpty"/>
+	public bool IsEmpty => Entries.IsEmpty;
 
-    public ImmutableMemoryCache(IDictionary<TKey, TValue> entries, IComparer<TKey>? keyComparer = null)
-        : this(entries.ToImmutableSortedDictionary(keyComparer))
-    {
-    }
+	/// <inheritdoc cref="ImmutableSortedDictionary{TKey, TValue}.Count"/>
+	public int Count => Entries.Count;
 
-    public ImmutableMemoryCache(IEnumerable<TValue> entries, Func<TValue, TKey> keySelector, IComparer<TKey>? keyComparer = null)
-        : this(entries.ToImmutableSortedDictionary(keySelector, x => x, keyComparer))
-    {
-    }
+	private bool _disposed;
 
-    /// <inheritdoc />
-    [Pure]
-    public TValue? Get(TKey key)
-    {
-        _ThrowIfDisposed();
+	public ImmutableMemoryCache(ImmutableSortedDictionary<TKey, TValue> entries)
+	{
+		Entries = entries;
+	}
 
-        if(!Entries.TryGetValue(key, out var entry))
-            return default;
-        return entry;
-    }
+	public ImmutableMemoryCache(IDictionary<TKey, TValue> entries, IComparer<TKey>? keyComparer = null)
+		: this(entries.ToImmutableSortedDictionary(keyComparer))
+	{
+	}
 
-    /// <inheritdoc />
-    [Pure]
-    public bool TryGet(TKey key, [MaybeNullWhen(false)] out TValue? entry)
-    {
-        _ThrowIfDisposed();
+	public ImmutableMemoryCache(IEnumerable<TValue> entries, Func<TValue, TKey> keySelector, IComparer<TKey>? keyComparer = null)
+		: this(entries.ToImmutableSortedDictionary(keySelector, x => x, keyComparer))
+	{
+	}
 
-        return Entries.TryGetValue(key, out entry);
-    }
+	/// <inheritdoc />
+	[Pure]
+	public TValue? Get(TKey key)
+	{
+		_ThrowIfDisposed();
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void _ThrowIfDisposed()
-    {
-        if(_disposed)
-            throw new ObjectDisposedException(nameof(ImmutableMemoryCache<TKey, TValue>));
-    }
+		if(!Entries.TryGetValue(key, out var entry))
+			return default;
+		return entry;
+	}
 
-    public void Dispose()
-    {
-        if(_disposed) 
-            return;
-        _disposed = true;
+	/// <inheritdoc />
+	[Pure]
+	public bool TryGet(TKey key, [MaybeNullWhen(false)] out TValue? entry)
+	{
+		_ThrowIfDisposed();
 
-        Entries.Clear();
-        Entries = null!;
-        GC.SuppressFinalize(this);
-    }
+		return Entries.TryGetValue(key, out entry);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void _ThrowIfDisposed()
+	{
+		if(_disposed)
+			throw new ObjectDisposedException(nameof(ImmutableMemoryCache<TKey, TValue>));
+	}
+
+	public void Dispose()
+	{
+		if(_disposed)
+			return;
+		_disposed = true;
+
+		Entries.Clear();
+		Entries = null!;
+		GC.SuppressFinalize(this);
+	}
 }
