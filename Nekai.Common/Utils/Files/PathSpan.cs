@@ -3,7 +3,7 @@
 /// <summary>
 /// <see cref="ReadOnlySpan{T}"/> of a <see cref="PathString"/>.
 /// </summary>
-public readonly struct PathSpan
+public readonly ref struct PathSpan
 {
 	public static implicit operator PathSpan(PathString path)
 		=> new(path);
