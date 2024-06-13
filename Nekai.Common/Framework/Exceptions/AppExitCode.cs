@@ -22,7 +22,6 @@ public enum AppExitCode
 
 	// 1 - 9 | Unknown error
 	UnknownError = 1,
-
 	ExternalError = 2,
 
 	// 10 - 19 | Configuration errors
@@ -30,7 +29,6 @@ public enum AppExitCode
 
 	// 20 - 29 | File errors
 	FileAccessError = 20,
-
 	FileCreationError = 21,
 	SerializationError = 22,
 	DeserializationError = 23,
@@ -46,6 +44,10 @@ public enum AppExitCode
 
 	// 60 - 69 | System errors
 	SystemError = 60,
-
 	NotEnoughDiskSpace = 61,
+	
+	// 70 - 79 | Code errors
+	CodeError = 70,
+	FixedPathError = 71
+
 }

@@ -27,7 +27,7 @@ public class FileBackupManager : IDisposable
 	/// </summary>
 	// File can be deleted at any time, so check every time rather than using a simple flag.
 	[MemberNotNullWhen(true, nameof(BackupFilename), nameof(BackupFilePath))]
-	public bool BackupExists => File.Exists(BackupFilePath);
+	public bool BackupExists => BackupFilePath?.IsExistingFile() ?? false;
 
 	public FileBackupManager(string filepath)
 	{
@@ -49,9 +49,8 @@ public class FileBackupManager : IDisposable
 
 		if(BackupExists)
 		{
-			var result = NekaiFile.CanReadFile(BackupFilePath);
-			if(!result.IsSuccess())
-				return new(result);
+			if(!BackupFilePath.CanBeReadAsFile())
+				return new(PathOperationResult.FailedRead);
 		}
 
 		try
@@ -100,15 +99,14 @@ public class FileBackupManager : IDisposable
 
 	public PathOperationResult TryRestore()
 	{
-		if(!File.Exists(BackupFilePath))
+		if(!BackupExists)
 			return PathOperationResult.DoesNotExist;
 
 		try
 		{
 			File.Copy(BackupFilePath, FilePath, true);
 			// Assertion used to ensure that both files can be found and contain the same content.
-			Debug.Assert(NekaiFile.CanReadFile(FilePath).IsSuccess(), "Could not access restored file.");
-			Debug.Assert(NekaiFile.TryReadText(FilePath).Value == NekaiFile.TryReadText(BackupFilePath).Value, "Content of source file differs from the restored one.");
+			Debug.Assert(FilePath.CanBeReadAsFile(), "Could not access restored file.");
 			return PathOperationResult.Success;
 		}
 		catch(Exception ex)

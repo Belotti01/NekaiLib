@@ -1,4 +1,7 @@
-﻿namespace Nekai.Common;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
+namespace Nekai.Common;
 
 [OperationResult]
 public enum PathOperationResult
@@ -53,6 +56,14 @@ public static class PathOperationResultExtensions
 {
 	public static bool IsSuccess(this PathOperationResult result)
 		=> result == PathOperationResult.Success;
+
+	[DoesNotReturn, StackTraceHidden]
+	public static void Throw(this PathOperationResult result, string? path = null)
+	{
+		throw path is null
+			? new PathOperationException(result)
+			: new PathOperationException(result, path);
+	}
 
 	public static string GetMessage(this PathOperationResult result)
 		=> result switch

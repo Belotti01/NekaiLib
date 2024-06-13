@@ -24,7 +24,7 @@ public static partial class NekaiData
 			return localDir!;
 		}
 
-		private static PathOperationResult _CheckAndCreateDir(string dir, out PathString path)
+		private static PathOperationResult _CheckAndCreateDirectory(string dir, out PathString path)
 		{
 			path = null!;
 
@@ -42,43 +42,46 @@ public static partial class NekaiData
 			// It may be beneficial in the future to add checks of the last modified date of the files in <path> and
 			// <_DefaultLocalConfigurationDirectory>, and overwrite the first if the second is newer.
 
+			// Ensure that the fixed filepath is valid
+			var conversionResult = PathString.TryParse(_GlobalConfigurationFilepath);
+			if(!conversionResult.IsSuccessful)
+				Exceptor.ThrowCritical(AppExitCode.FixedPathError, conversionResult.Error.GetMessage());
+
 			PathOperationResult result;
-			PathString path;
-			var fileReadResult = NekaiFile.TryReadText(_GlobalConfigurationFilepath);
-			if(fileReadResult.IsSuccessful)
+			PathString globalPath = conversionResult.Value, localPath;
+			if(globalPath.IsExistingFile())
 			{
+				var rawLocalPath = globalPath.GetFileContent();
 				// Fetched from global config file - validate it
-				var localDir = fileReadResult.Value.Trim();
-				result = _CheckAndCreateDir(localDir, out path);
+				result = _CheckAndCreateDirectory(rawLocalPath.Trim(), out localPath);
 				if(result != PathOperationResult.Success)
-					return path;
+					return localPath;
 			}
 
 			// Create file, and exit the app in case of file access errors (such as permission errors)
-			result = _CheckAndCreateDir(_GlobalConfigurationFilepath, out path);
+			result = _CheckAndCreateDirectory(_GlobalConfigurationFilepath, out localPath);
 			if(result == PathOperationResult.Success)
-				return path;
+				return localPath;
 
 			AppExitCode exitCode = File.Exists(_GlobalConfigurationFilepath)
 				? AppExitCode.FileAccessError
 				: AppExitCode.FileCreationError;
-			Exceptor.ThrowCritical(exitCode, "Configuration could not be loaded. " + result.GetMessage());
+			Exceptor.ThrowCritical(exitCode, "Configuration could not be loaded: " + result.GetMessage());
 
-			result = _CheckAndCreateDir(_DefaultLocalConfigurationDirectory, out path);
+			result = _CheckAndCreateDirectory(_DefaultLocalConfigurationDirectory, out localPath);
 			if(result == PathOperationResult.Success)
-				return path;
+				return localPath;
+
+			try
 			{
-				try
-				{
-					File.WriteAllText(_GlobalConfigurationFilepath, _DefaultLocalConfigurationDirectory);
-				}
-				catch
-				{
-					// TODO: ... well sh1t
-				}
+				File.WriteAllText(_GlobalConfigurationFilepath, _DefaultLocalConfigurationDirectory);
+			}
+			catch
+			{
+				// TODO: ... well sh1t
 			}
 
-			return path;
+			return localPath;
 		}
 	}
 }

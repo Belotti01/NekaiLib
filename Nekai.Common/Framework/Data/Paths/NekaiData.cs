@@ -18,7 +18,7 @@ public static partial class NekaiData
 			.Where(filePath =>
 			{
 				// Only delete files that have been accessed recently.
-				var result = NekaiFile.WasLastAccessedWithin(filePath, _minimumTempFileAgeForDeletion);
+				var result = ((PathString)filePath!).WasLastAccessedWithin(_minimumTempFileAgeForDeletion);
 				return result.IsSuccessful && !result.Value;
 			});
 		if(!filesEnumerator.Any())

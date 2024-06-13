@@ -39,7 +39,12 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 
 	private static NekaiGeneralConfiguration _CreateSingleton()
 	{
-		if(NekaiFile.CanReadFile(_FilePath).IsSuccess())
+		var result = PathString.TryParse(_FilePath);
+		if(!result.IsSuccessful)
+			Exceptor.ThrowCritical(AppExitCode.FixedPathError, result.Error.GetMessage());
+		
+		var path = result.Value;
+		if(path.CanBeReadAsFile())
 		{
 			// File is accessible, deserialize it.
 			var deserializationResult = TryDeserialize(_FilePath);
@@ -48,6 +53,7 @@ public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralCo
 
 			Debug.Fail("General configuration file exists, but deserialization failed. Creating a new instance...");
 		}
+
 		// If file is not found or something goes wrong, load the default values instead.
 		return new();
 	}

@@ -326,6 +326,25 @@ public class PathString
 		}
 		return new(System.IO.Path.GetFullPath(Path, basePath));
 	}
+	public Result<bool, PathOperationResult> WasLastAccessedWithin(TimeSpan time)
+	{
+		if(!IsExistingFile())
+			return new(PathOperationResult.DoesNotExist);
+
+		DateTime lastAccessUTC;
+		try
+		{
+			lastAccessUTC = File.GetLastAccessTimeUtc(Path);
+		}
+		catch(Exception ex)
+		{
+			// Metadata access denied, or file was not accessible.
+			return new(NekaiPath.GetResultFromException(ex));
+		}
+
+		bool wasLastAccessInRange = DateTime.UtcNow <= lastAccessUTC + time;
+		return wasLastAccessInRange;
+	}
 
 	/// <summary>
 	///

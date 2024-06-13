@@ -67,18 +67,19 @@ where TSelf : ConfigurationFileManager<TSelf>
 		return PathOperationResult.Success;
 	}
 
-	private static Result<TSelf, PathOperationResult> _DeserializeInternal(string filePath)
+	private static Result<TSelf, PathOperationResult> _DeserializeInternal(PathString filePath)
 	{
-		var result = NekaiFile.TryReadText(filePath);
-		if(!result.IsSuccessful)
-			return new(result.Error);
+		if(!filePath.CanBeReadAsFile())
+			return new(PathOperationResult.FailedRead);
+
+		var content = filePath.GetFileContent();
 
 		TSelf? obj;
 		try
 		{
 			// Always include fields during deserialization. The choice of whether to include them is supposed to have an
 			// effect during serialization, so if they're present in the serialized data, read them.
-			obj = JsonSerializer.Deserialize<TSelf>(result.Value, _CreateSerializerOptions(true));
+			obj = JsonSerializer.Deserialize<TSelf>(content, _CreateSerializerOptions(true));
 		}
 		catch(Exception ex)
 		{
@@ -96,25 +97,30 @@ where TSelf : ConfigurationFileManager<TSelf>
 
 	public static Result<TSelf, PathOperationResult> TryDeserialize(string filePath)
 	{
-		try
-		{
-			var result = _DeserializeInternal(filePath);
-			if(!result.IsSuccessful)
-				return result;
+		var result = PathString.TryParse(filePath);
+		if(!result.IsSuccessful)
+			return new(result.Error);
 
-			result.Value.FilePath = PathString.Parse(filePath);
+		return TryDeserialize(result.Value);
+	}
+
+	public static Result<TSelf, PathOperationResult> TryDeserialize(PathString filePath)
+	{
+		var result = _DeserializeInternal(filePath);
+		if(!result.IsSuccessful)
 			return result;
-		}
-		catch(Exception ex)
-		{
-			NekaiLogs.Program.Error(ex);
-			return new(PathOperationResult.UnknownFailure);
-		}
+
+		result.Value.FilePath = filePath;
+		return result;
 	}
 
 	public PathOperationResult TrySerialize()
 	{
+		if(FilePath is null)
+			throw new NullReferenceException($"Serialization path is null.");
+
 		using FileBackupManager backupManager = new(FilePath);
+
 		if(FilePath.IsExistingFile())
 		{
 			var backupResult = backupManager.TryBackup();
