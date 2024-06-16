@@ -1,0 +1,32 @@
+﻿@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<FluentDesignTheme Mode="DesignThemeModes.Dark" OfficeColor="OfficeColor.Word" />
+
+<FluentMainLayout Class="@Class" Style="@Style" HeaderHeight="@HeaderHeight">
+    <Header>
+        <FluentLabel Typo="Typography.H1">
+            @Title
+        </FluentLabel>
+    </Header>
+
+    <NavMenuContent>
+        @NavMenu
+    </NavMenuContent>
+
+    <Body>
+        @Body
+    </Body>
+</FluentMainLayout>
+
+@code {
+    [Parameter]
+    public RenderFragment? Body { get; set; }
+    [Parameter]
+    public RenderFragment? NavMenu { get; set; }
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter]
+    public int? HeaderHeight { get; set; }
+
+}

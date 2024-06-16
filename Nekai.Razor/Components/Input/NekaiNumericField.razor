@@ -1,0 +1,23 @@
+﻿@namespace Nekai.Razor
+@using System.Numerics
+@typeparam TValue where TValue : INumber<TValue>, new()
+@inherits NekaiInputBase<TValue>
+
+<FluentNumberField TValue="@TValue" Label="@Label" Style="@Style" Class="@Class" Value="@Value" Disabled="@Disabled" ValueChanged="@ValueChanged" DisplayName="@Label" AriaLabel="@Label" Name="@Label"
+	Min="@Min" Max="@Max" Placeholder="@Placeholder" HideStep="@HideStep" Required="@Required" Step="@Step">
+</FluentNumberField>
+
+@code {
+	/// <summary> The minimum allowed value. </summary>
+	[Parameter]
+	public string? Min { get; set; }
+	/// <summary> The maximum allowed value. </summary>
+	[Parameter]
+	public string? Max { get; set; }
+	/// <summary> Whether to hide the step scroll buttons. </summary>
+	[Parameter]
+	public bool HideStep { get; set; }
+	/// <summary> The amount added/subtracted each time the step scroll buttons are clicked. </summary>
+	[Parameter]
+	public string? Step { get; set; }
+}
