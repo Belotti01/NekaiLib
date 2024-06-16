@@ -5,9 +5,17 @@
 
 <FluentMainLayout Class="@Class" Style="@Style" HeaderHeight="@HeaderHeight">
     <Header>
-        <FluentLabel Typo="Typography.H1">
-            @Title
-        </FluentLabel>
+        @if(Title is not null) {
+            <FluentLabel Typo="Typography.H1">
+                @Title
+            </FluentLabel>
+        }
+
+        @if(HeaderEndContent is not null)
+        {
+            <FluentSpacer />
+            @HeaderEndContent
+        }
     </Header>
 
     <NavMenuContent>
@@ -20,12 +28,19 @@
 </FluentMainLayout>
 
 @code {
+    /// <summary> The main content for the layout. </summary>
     [Parameter]
     public RenderFragment? Body { get; set; }
+    /// <summary> The content of the navigation column. </summary>
     [Parameter]
     public RenderFragment? NavMenu { get; set; }
+    /// <summary> The content displayed at the end of the header. </summary>
+    [Parameter]
+    public RenderFragment? HeaderEndContent { get; set; }
+    /// <summary> The title to display in the header. </summary>
     [Parameter]
     public string? Title { get; set; }
+    /// <summary> The height of the header. </summary>
     [Parameter]
     public int? HeaderHeight { get; set; }
 
