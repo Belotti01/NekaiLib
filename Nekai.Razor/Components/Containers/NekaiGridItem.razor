@@ -1,0 +1,21 @@
+﻿@namespace Nekai.Razor
+@inherits NekaiAdaptiveComponent
+
+<FluentGridItem Style="@Style" Class="@Class" AdaptiveRendering="@AdaptiveRendering" Justify="@Justify"
+	xxl="@Xxl" xl="@Xl" lg="@Lg" md="@Md" sm="@Sm" xs="@Xs">
+	@ChildContent
+</FluentGridItem>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+	/// <inheritdoc cref="FluentGrid.AdaptiveRendering"/>
+	[Parameter]
+	public bool AdaptiveRendering { get; set; }
+	/// <inheritdoc cref="FluentGrid.Spacing"/>
+	[Parameter]
+	public int Spacing { get; set; }
+	/// <inheritdoc cref="FluentGrid.Justify"/>
+	[Parameter]
+	public JustifyContent Justify { get; set; }
+}
