@@ -25,7 +25,7 @@ public class NekaiInputBase<T> : NekaiComponentBase
 
 	/// <summary> The current input value. </summary>
 	[Parameter]
-	public T Value { get; set; }
+	public T? Value { get; set; }
 
 	[Parameter]
 	public EventCallback<T> ValueChanged { get; set; }
