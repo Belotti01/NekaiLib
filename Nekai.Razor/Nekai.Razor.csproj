@@ -25,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Components\Containers\NekaiDiv.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Components\Input\NekaiNumericField.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
