@@ -4,6 +4,7 @@
 public enum NetworkOperationResult
 {
 	Success = 0,
+	NotConnected,
 	NoInternet,
 	InvalidTarget,
 	TargetNotFound,

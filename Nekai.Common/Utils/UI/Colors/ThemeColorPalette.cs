@@ -2,43 +2,41 @@
 
 namespace Nekai.Common;
 
-public class ThemeColorPalette : ColorPalette
+public class ThemeColorPalette : ConfigurationFileManager<ThemeColorPalette>
 {
-	[Configuration("Primary Main Color")]
+	[Configuration("Theme Name")]
+	public string Name { get; }
+
+    [Configuration("Primary Color")]
 	public Color Primary { get; set; }
 
-	[Configuration("Primary Background Color")]
-	public Color PrimaryBackground { get; set; }
-
-	[Configuration("Primary Text Color")]
-	public Color PrimaryText { get; set; }
-
-	[Configuration("Secondary Main Color")]
+	[Configuration("Secondary Color")]
 	public Color Secondary { get; set; }
 
-	[Configuration("Secondary Background Color")]
-	public Color SecondaryBackground { get; set; }
+	[Configuration("Info Color")]
+	public Color Info { get; set; }
 
-	[Configuration("Secondary Text Color")]
-	public Color SecondaryText { get; set; }
+	[Configuration("Success Color")]
+	public Color Success { get; set; }
 
-	[Configuration("Tertiary Main Color")]
-	public Color Tertiary { get; set; }
+	[Configuration("Danger Color")]
+	public Color Danger { get; set; }
 
-	[Configuration("Tertiary Background Color")]
-	public Color TertiaryBackground { get; set; }
+	[Configuration("White Color")]
+	public Color White { get; set; } = Color.White;
 
-	[Configuration("Tertiary Text Color")]
-	public Color TertiaryText { get; set; }
+	[Configuration("Black Color")]
+	public Color Black { get; set; } = Color.Black;
 
-	[Configuration("Highlighted Text Color")]
-	public Color HighlightText { get; set; }
+    [Configuration("Light Color")]
+    public Color Light { get; set; }
 
-	[Configuration("Highlighted Background Color")]
-	public Color HighlightBackground { get; set; }
+    [Configuration("Dark Color")]
+    public Color Dark { get; set; }
 
-	public ThemeColorPalette(string name)
-		: base(NekaiData.Directories.Themes, name)
+    public ThemeColorPalette(string themeName)
+		: base(NekaiData.Directories.Themes)
 	{
+		Name = themeName;
 	}
 }
