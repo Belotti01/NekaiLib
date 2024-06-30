@@ -1,7 +1,7 @@
 ﻿@namespace Nekai.Razor
 @inherits NekaiComponentBase
 
-<FluentDesignTheme Mode="DesignThemeModes.Dark" OfficeColor="OfficeColor.Word" />
+<NekaiDesignTheme @bind-Mode="@_ThemeMode" />
 
 <FluentMainLayout Class="@Class" Style="@Style" HeaderHeight="@HeaderHeight">
     <Header>
@@ -10,11 +10,19 @@
                 @Title
             </FluentLabel>
         }
+        <FluentSpacer />
 
-        @if(HeaderEndContent is not null)
+        @if(HeaderContent is not null)
         {
+            <div>
+                @HeaderContent
+            </div>
             <FluentSpacer />
-            @HeaderEndContent
+        }
+
+        @if(ThemeToggle)
+        {
+            <NekaiButton OnClick="@_ToggleThemeMode" Name="Theme mode toggle" Icon="@_ThemeModeToggleIcon" />
         }
     </Header>
 
@@ -36,12 +44,32 @@
     public RenderFragment? NavMenu { get; set; }
     /// <summary> The content displayed at the end of the header. </summary>
     [Parameter]
-    public RenderFragment? HeaderEndContent { get; set; }
+    public RenderFragment? HeaderContent { get; set; }
     /// <summary> The title to display in the header. </summary>
     [Parameter]
     public string? Title { get; set; }
     /// <summary> The height of the header. </summary>
     [Parameter]
     public int? HeaderHeight { get; set; }
+    /// <summary> Whether to display a toggle for light/dark mode. </summary>
+    [Parameter]
+    public bool ThemeToggle { get; set; }
 
+    private DesignThemeModes _ThemeMode { get; set; }
+    private Icon _ThemeModeToggleIcon => _ThemeMode switch
+    {
+        DesignThemeModes.System => new Icons.Filled.Size16.Laptop(),
+        DesignThemeModes.Light => new Icons.Filled.Size16.WeatherSunny(),
+        _ => new Icons.Filled.Size16.WeatherMoon()
+    };
+
+    private void _ToggleThemeMode(MouseEventArgs args)
+    {
+        _ThemeMode = _ThemeMode switch
+        {
+            DesignThemeModes.System => DesignThemeModes.Light,
+            DesignThemeModes.Light => DesignThemeModes.Dark,
+            _ => DesignThemeModes.System
+        };
+    }
 }
