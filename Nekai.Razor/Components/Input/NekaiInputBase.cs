@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace Nekai.Razor;
 
@@ -15,7 +10,7 @@ public class NekaiInputBase<T> : NekaiComponentBase
 		Name ??= Label;
 	}
 
-	/// <summary> The label shown for component. </summary>
+	/// <summary> The label shown for this component. </summary>
 	[Parameter]
 	public string? Label { get; set; }
 
