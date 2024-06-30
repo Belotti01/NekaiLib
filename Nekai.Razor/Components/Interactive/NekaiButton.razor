@@ -1,7 +1,8 @@
 ﻿@namespace Nekai.Razor
 @inherits NekaiComponentBase
+@rendermode InteractiveServer
 
-<FluentButton Type="@Type" Loading="@Loading" Title="@ToolTip" Style="@Style" Class="@Class" Value="@Value" Disabled="@Disabled" Name="@Name" IconStart="@Icon">
+<FluentButton OnClick="@OnClick" Type="@Type" Loading="@Loading" Title="@ToolTip" Style="@Style" Class="@Class" Value="@Value" Disabled="@Disabled" Name="@Name" IconStart="@Icon">
 	@if(ChildContent is null)
 	{
 		@Label
@@ -35,4 +36,6 @@
 	public string? ToolTip { get; set; }
 	[Parameter]
 	public ButtonType? Type { get; set; }
+	[Parameter]
+	public EventCallback<MouseEventArgs> OnClick { get; set; }
 }
