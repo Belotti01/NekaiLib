@@ -22,10 +22,12 @@ public class Program
 
 	public static async Task RunManualTestsAsync()
 	{
+		NekaiConsole.SlowPrintMode = true;
 		NekaiConsole.WriteLine("Default");
 		NekaiConsole.WriteError("Error");
 		NekaiConsole.WriteWarning("Warning");
 		NekaiConsole.WriteSuccess("Success");
+		NekaiConsole.WriteLine(null);
 	}
 
 	public static void RunBenchmarks()

@@ -1,10 +1,24 @@
-﻿namespace Nekai.Common;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+namespace Nekai.Common;
 
 /// <summary>
 /// Thread-safe Console output and input methods.
 /// </summary>
 public static class NekaiConsole
 {
+	/// <summary>
+	/// Whether to print out each character one by one, rather than the whole string in one shot.
+	/// </summary>
+	public static bool SlowPrintMode { get; set; }
+	/// <summary>
+	/// The delay between each character when writing in <see cref="SlowPrintMode"/>.
+	/// </summary>
+	/// <remarks>
+	/// Defaults to 30ms.
+	/// </remarks>
+	public static readonly TimeSpan SlowPrintDelay = TimeSpan.FromMilliseconds(30);
+	
 	private static readonly object _lock = new();
 
 	/// <summary>
@@ -153,8 +167,20 @@ public static class NekaiConsole
 		Console.ForegroundColor = foreColor;
 		Console.BackgroundColor = backColor;
 
-		Console.Write(text);
+		string? s = text?.ToString();
 
+		if(SlowPrintMode && s is not null)
+		{
+			foreach(var c in s)
+			{
+				Console.Write(c);
+				Thread.Sleep(SlowPrintDelay);
+			}
+		}
+		else
+		{
+			Console.Write(text);
+		}
 		Console.ForegroundColor = prevForeColor;
 		Console.BackgroundColor = prevBackColor;
 	}
@@ -168,7 +194,21 @@ public static class NekaiConsole
 		Console.ForegroundColor = foreColor;
 		Console.BackgroundColor = backColor;
 
-		Console.WriteLine(text);
+		string? s = text?.ToString();
+
+		if(SlowPrintMode && s is not null)
+		{
+			foreach(var c in s)
+			{
+				Console.Write(c);
+				Thread.Sleep(SlowPrintDelay);
+			}
+			Console.WriteLine();
+		}
+		else
+		{
+			Console.WriteLine(text);
+		}
 
 		Console.ForegroundColor = prevForeColor;
 		Console.BackgroundColor = prevBackColor;
