@@ -2,11 +2,11 @@
 @inherits NekaiInputBase<string>
 @typeparam TOption
 
-<FluentSelect TOption="@TOption" Items="@Options" Style="@Style" Class="@Class" Label="@Label" Disabled="@Disabled" Required="@Required" AriaLabel="@Label" Appearance="@Appearance"
-				ValueChanged="@ValueChanged"
+<FluentCombobox TOption="@TOption" Items="@Options" Style="@Style" Class="@Class" Label="@Label" Disabled="@Disabled" Required="@Required" AriaLabel="@Label" Appearance="@Appearance"
+				ValueChanged="@ValueChanged"  Autocomplete="@Autocomplete" Placeholder="@Placeholder"
 				SelectedOption="@SelectedOption" SelectedOptionChanged="@SelectedOptionChanged"
 				SelectedOptions="@SelectedOptions" SelectedOptionsChanged="@SelectedOptionsChanged"
-				Multiple="@Multiple" OptionValue="@OptionValue" OptionDisabled="@OptionDisabled" OptionSelected="@OptionSelected" Open="@Open">
+				OptionValue="@OptionValue" OptionDisabled="@OptionDisabled" OptionSelected="@OptionSelected" Open="@Open">
 
 	<ChildContent> @ChildContent </ChildContent>
 	<OptionTemplate> 
@@ -19,7 +19,7 @@
 			@OptionTemplate
 		}
 	</OptionTemplate>
-</FluentSelect>
+</FluentCombobox>
 
 @code {
 	[Parameter]
@@ -42,8 +42,6 @@
 	[Parameter]
 	public Appearance? Appearance { get; set; }
 	[Parameter]
-	public bool Multiple { get; set; }
-	[Parameter]
 	public bool Open { get; set; }
 	[Parameter]
 	public Func<TOption, string?> OptionText { get; set; } = x => x?.ToString();
@@ -53,4 +51,6 @@
 	public Func<TOption, bool> OptionDisabled { get; set; } = x => false;
 	[Parameter]
 	public Func<TOption, bool> OptionSelected { get; set; } = x => false;
+	[Parameter]
+	public ComboboxAutocomplete Autocomplete { get; set; }
 }
