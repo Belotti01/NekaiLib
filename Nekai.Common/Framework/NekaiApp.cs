@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 
 namespace Nekai.Common;
 
@@ -28,9 +29,14 @@ public static class NekaiApp
 	public static string Name => AppDomain.CurrentDomain.FriendlyName;
 
 	/// <summary>
-	/// Network information of the host on which this application is running.
+	/// Load the current host's network information.
 	/// </summary>
-	public static ProcessHostInformationLoader LocalHost { get; } = new(false);
+	public static IPHostEntry LocalHost => Dns.GetHostEntry(LocalHostName);
+
+	/// <summary>
+	/// The network hostname.
+	/// </summary>
+	public static string LocalHostName => Dns.GetHostName();
 
 	/// <inheritdoc cref="AppDomain.ProcessExit"/>
 	public static event EventHandler? OnProcessExit;

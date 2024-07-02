@@ -23,11 +23,12 @@ public class Program
 	public static async Task RunManualTestsAsync()
 	{
 		NekaiConsole.SlowPrintMode = true;
-		NekaiConsole.WriteLine("Default");
-		NekaiConsole.WriteError("Error");
-		NekaiConsole.WriteWarning("Warning");
-		NekaiConsole.WriteSuccess("Success");
-		NekaiConsole.WriteLine(null);
+
+		var host = EndPointData.TryLoadCurrentHost().Value;
+		foreach(var item in host.Addresses)
+		{
+			NekaiConsole.WriteLine(item);
+		}
 	}
 
 	public static void RunBenchmarks()
