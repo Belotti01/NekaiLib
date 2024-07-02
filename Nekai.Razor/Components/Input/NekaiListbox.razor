@@ -1,0 +1,56 @@
+﻿@namespace Nekai.Razor
+@inherits NekaiInputBase<string>
+@typeparam TOption
+
+<FluentListbox TOption="@TOption" Items="@Options" Style="@Style" Class="@Class" Label="@Label" Disabled="@Disabled" Required="@Required" AriaLabel="@Label"
+				ValueChanged="@ValueChanged"
+				SelectedOption="@SelectedOption" SelectedOptionChanged="@SelectedOptionChanged"
+				SelectedOptions="@SelectedOptions" SelectedOptionsChanged="@SelectedOptionsChanged"
+				Multiple="@Multiple" OptionValue="@OptionValue" OptionDisabled="@OptionDisabled" OptionSelected="@OptionSelected" Open="@Open">
+
+	<ChildContent> @ChildContent </ChildContent>
+	<OptionTemplate> 
+		@if(OptionTemplate is null) 
+		{
+			@OptionText(context)
+		}
+		else
+		{
+			@OptionTemplate
+		}
+	</OptionTemplate>
+</FluentListbox>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+	[Parameter]
+	public RenderFragment? OptionTemplate { get; set; }
+	[Parameter]
+	public IEnumerable<TOption> Options { get; set; } = Enumerable.Empty<TOption>();
+
+	[Parameter]
+	public EventCallback<TOption?> SelectedOptionChanged { get; set; }
+	[Parameter]
+	public TOption? SelectedOption { get; set; }
+
+	[Parameter]
+	public IEnumerable<TOption> SelectedOptions { get; set; } = Enumerable.Empty<TOption>();
+	[Parameter]
+	public EventCallback<IEnumerable<TOption>> SelectedOptionsChanged { get; set; }
+
+	[Parameter]
+	public Appearance? Appearance { get; set; }
+	[Parameter]
+	public bool Multiple { get; set; }
+	[Parameter]
+	public bool Open { get; set; }
+	[Parameter]
+	public Func<TOption, string?> OptionText { get; set; } = x => x?.ToString();
+	[Parameter]
+	public Func<TOption, string?> OptionValue { get; set; } = x => x?.ToString();
+	[Parameter]
+	public Func<TOption, bool> OptionDisabled { get; set; } = x => false;
+	[Parameter]
+	public Func<TOption, bool> OptionSelected { get; set; } = x => false;
+}

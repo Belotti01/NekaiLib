@@ -1,0 +1,28 @@
+﻿@namespace Nekai.Razor
+@inherits NekaiComponentBase
+@typeparam TOption
+
+<FluentOption Selected="@Selected" TOption="@TOption" Style="@Style" Class="@Class" Disabled="@Disabled"
+	OnSelect="@OnSelect" SelectedChanged="@SelectedChanged" Value="@Value">
+	@ChildContent
+</FluentOption>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+	[Parameter]
+	public RenderFragment? OptionTemplate { get; set; }
+	[Parameter]
+	public IEnumerable<TOption> Options { get; set; } = Enumerable.Empty<TOption>();
+	[Parameter]
+	public string? Value { get; set; }
+	[Parameter]
+	public bool Disabled { get; set; }
+	[Parameter]
+	public EventCallback<string?> OnSelect { get; set; }
+	[Parameter]
+	public EventCallback<bool> SelectedChanged { get; set; }
+	[Parameter]
+	public bool Selected { get; set; }
+
+}
