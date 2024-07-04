@@ -20,7 +20,7 @@ public static partial class NekaiData
 		{
 			if(obj is null)
 				return "null";
-			string lineFormat = "\t{0} {1}: {2}";
+			string lineFormat = "\n\t{0} {1}: {2}";
 			var fields = obj.ExtractAllFieldsValues().ToSortedDictionary(Comparer<FieldInfo>.Create((x, y) => x.Name.CompareTo(y.Name)));
 			var properties = obj.ExtractAllPropertiesValues().ToSortedDictionary(Comparer<PropertyInfo>.Create((x, y) => x.Name.CompareTo(y.Name)));
 

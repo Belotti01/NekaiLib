@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Nekai.Common;
 
@@ -21,7 +23,15 @@ public sealed class NekaiProcessNetworkInfo
 
 	public static NekaiProcessNetworkInfo ForCurrentProcess(ProtocolType protocol, int port)
 	{
-		string hostIp = NekaiApp.LocalHost.IPAddress.MapToIPv4().ToString();
+		IPAddress? address = NekaiApp.LocalHost.AddressList.First(x => x.AddressFamily == AddressFamily.InterNetwork);
+		if(address is null)
+		{
+			NekaiLogs.Shared.Warning("Couldn't load InterNetwork-type IP for the process' host.");
+			Debug.Fail("Internetwork IP not found.");
+			address = NekaiApp.LocalHost.AddressList.First();
+		}
+
+		string hostIp = address.MapToIPv4().ToString();
 		return new(NekaiApp.Name, hostIp, port, Environment.ProcessId, protocol);
 	}
 }

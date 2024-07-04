@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Net.Sockets;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
 
@@ -22,13 +24,9 @@ public class Program
 
 	public static async Task RunManualTestsAsync()
 	{
-		NekaiConsole.SlowPrintMode = true;
-
-		var host = EndPointData.TryLoadCurrentHost().Value;
-		foreach(var item in host.Addresses)
-		{
-			NekaiConsole.WriteLine(item);
-		}
+		var info = NekaiProcessNetworkInfo.ForCurrentProcess(ProtocolType.Tcp, 9883);
+		var data = NekaiData.ManualTesting.ExtractObjectData(info);
+		NekaiConsole.WriteLine(data);
 	}
 
 	public static void RunBenchmarks()

@@ -382,6 +382,15 @@ public class PathString
 		return File.ReadAllLines(Path);
 	}
 
+	public string? TryGetFileOrDirectoryName()
+	{
+		return IsExistingDirectory()
+			? System.IO.Path.GetDirectoryName(Path)
+			: IsExistingFile()
+				? System.IO.Path.GetFileName(Path)
+				: null;
+	}
+
 	/// <summary>
 	/// Check whether this path is virtually equivalent to <paramref name="other"/>.
 	/// </summary>

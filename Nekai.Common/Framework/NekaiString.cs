@@ -3,7 +3,7 @@
 public static class NekaiString
 {
 	/// <summary> The (multiline) signature of the Nekai framework.</summary>
-	/// <remarks> To properly print the signature to the Console, use <see cref="NekaiConsole.PrintSignature(int, ConsoleColor)"/>. </remarks>
+	/// <remarks> To properly print the signature to the Console, use <see cref="NekaiConsole.PrintSignature(int, ConsoleColor, ConsoleColor)"/>. </remarks>
 	public static string Signature => NekaiResources.Signature;
 
 	/// <summary>

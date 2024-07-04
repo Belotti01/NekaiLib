@@ -59,7 +59,7 @@ public static partial class NekaiData
 			}
 
 			// Create file, and exit the app in case of file access errors (such as permission errors)
-			result = _CheckAndCreateDirectory(_GlobalConfigurationFilepath, out localPath);
+			result = _CheckAndCreateDirectory(_GlobalConfigurationDirectory, out localPath);
 			if(result == PathOperationResult.Success)
 				return localPath;
 

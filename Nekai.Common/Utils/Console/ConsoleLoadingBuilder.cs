@@ -2,36 +2,15 @@
 
 public class ConsoleLoadingBuilder
 {
-	public char Character { get; private set; } = '.';
-	public TimeSpan Interval { get; private set; } = TimeSpan.FromSeconds(1);
-	public int MaxCharacters { get; private set; } = 3;
-	public ConsoleColor Color { get; private set; } = ConsoleColor.White;
-
-	public ConsoleLoadingBuilder WithCharacter(char character)
-	{
-		Character = character;
-		return this;
+	public char Character { get; set; } = '.';
+	public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(1);
+	private int _maxCharacters = 3;
+	public int MaxCharacters { 
+		get => _maxCharacters; 
+		set => _maxCharacters = int.Max(0, value);
 	}
+	public ConsoleColor Color { get; set; } = ConsoleColor.White;
 
-	public ConsoleLoadingBuilder WithInterval(TimeSpan interval)
-	{
-		if(interval == default)
-			interval = TimeSpan.FromSeconds(1);
-		Interval = interval;
-		return this;
-	}
-
-	public ConsoleLoadingBuilder WithMaxCharacters(int maxCharacters)
-	{
-		MaxCharacters = int.Max(maxCharacters, 0);
-		return this;
-	}
-
-	public ConsoleLoadingBuilder WithColor(ConsoleColor color)
-	{
-		Color = color;
-		return this;
-	}
 
 	public async Task RunAsync(CancellationToken token = default)
 	{

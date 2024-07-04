@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Serilog;
 using Serilog.Core;
 
@@ -110,5 +111,35 @@ public static class NekaiLogs
 			Exceptor.ThrowAndLogIfDebug(ex);
 		}
 		return false;
+	}
+
+	public static IEnumerable<Log> DeserializeAll(string sourceDirectory, bool recursive = false)
+	{
+		List<PathString> files = Directory.EnumerateFileSystemEntries(sourceDirectory)
+			.Select(x => PathString.Parse(x))
+			.ToList();
+
+		List<Log> logs = [];
+
+		foreach(PathString file in files)
+		{
+			if(file.IsExistingDirectory())
+			{
+				if(!recursive)
+					continue;
+				logs.AddRange(DeserializeAll(file));
+				continue;
+			}
+			
+			logs.AddRange(Deserialize(file));
+		}
+
+		return logs;
+	}
+
+	public static IEnumerable<Log> Deserialize(string filePath)
+	{
+		var fileLogs = JsonSerializer.Deserialize<Log[]>(filePath);
+		return fileLogs ?? Array.Empty<Log>();
 	}
 }
