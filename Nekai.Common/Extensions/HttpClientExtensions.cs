@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 
 namespace Nekai.Common;
@@ -20,6 +23,27 @@ public static class HttpClientExtensions
 	public static async Task<HttpResponseMessage> SendJsonAsync<T>(this HttpClient client, HttpMethod method, string? requestUri, T obj)
 	{
 		var content = JsonContent.Create(obj);
+		return await client.SendAsync(method, requestUri, content);
+	}
+
+	/// <inheritdoc cref="SendJsonAsync{T}(HttpClient, HttpMethod, string?, T)"/>
+	public static async Task<HttpResponseMessage> SendJsonAsync<T>(this HttpClient client, HttpMethod method, string? requestUri, T obj, JsonTypeInfo jsonTypeInfo, MediaTypeHeaderValue? headerValue = null)
+	{
+		var content = JsonContent.Create(obj, jsonTypeInfo, headerValue);
+		return await client.SendAsync(method, requestUri, content);
+	}
+
+	/// <inheritdoc cref="SendJsonAsync{T}(HttpClient, HttpMethod, string?, T)"/>
+	public static async Task<HttpResponseMessage> SendJsonAsync<T>(this HttpClient client, HttpMethod method, string? requestUri, T obj, JsonSerializerOptions serializerOptions, MediaTypeHeaderValue? headerValue = null)
+	{
+		var content = JsonContent.Create(obj, headerValue, serializerOptions);
+		return await client.SendAsync(method, requestUri, content);
+	}
+
+	/// <inheritdoc cref="SendJsonAsync{T}(HttpClient, HttpMethod, string?, T)"/>
+	public static async Task<HttpResponseMessage> SendJsonAsync(this HttpClient client, Type type, HttpMethod method, string? requestUri, object? obj, JsonSerializerOptions serializerOptions, MediaTypeHeaderValue? headerValue = null)
+	{
+		var content = JsonContent.Create(obj, type, headerValue, serializerOptions);
 		return await client.SendAsync(method, requestUri, content);
 	}
 
