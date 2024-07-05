@@ -113,7 +113,7 @@ public static class NekaiLogs
 		return false;
 	}
 
-	public static IEnumerable<Log> DeserializeAll(string sourceDirectory, bool recursive = false)
+	public static List<Log> DeserializeAll(string sourceDirectory, bool recursive = false)
 	{
 		List<PathString> files = Directory.EnumerateFileSystemEntries(sourceDirectory)
 			.Select(x => PathString.Parse(x))
@@ -134,12 +134,22 @@ public static class NekaiLogs
 			logs.AddRange(Deserialize(file));
 		}
 
-		return logs;
+		return new(logs);
 	}
 
-	public static IEnumerable<Log> Deserialize(string filePath)
+	public static Log[] Deserialize(PathString filePath)
 	{
-		var fileLogs = JsonSerializer.Deserialize<Log[]>(filePath);
-		return fileLogs ?? Array.Empty<Log>();
+		string[]? json = filePath.ReadFileLines();
+		if(json is null)
+		{
+			Shared.Warning($"Logs file {filePath} could not be deserialized.");
+			return [];
+		}
+
+		Log[] fileLogs = json
+			.Select(x => JsonSerializer.Deserialize<Log>(x))
+			.ExceptNulls()
+			.ToArray();
+		return fileLogs;
 	}
 }

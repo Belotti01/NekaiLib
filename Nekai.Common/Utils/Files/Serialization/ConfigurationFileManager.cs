@@ -72,7 +72,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 		if(!filePath.CanBeReadAsFile())
 			return new(PathOperationResult.FailedRead);
 
-		var content = filePath.GetFileContent();
+		var content = filePath.ReadFileContent();
 
 		TSelf? obj;
 		try

@@ -372,23 +372,39 @@ public class PathString
 		}
 	}
 
-	public string GetFileContent()
+	public string? ReadFileContent()
 	{
-		return File.ReadAllText(Path);
+		try
+		{
+			return File.ReadAllText(Path);
+		}catch { }
+		return null;
 	}
 
-	public string[] GetFileLines()
+	public string[]? ReadFileLines()
 	{
-		return File.ReadAllLines(Path);
+		try
+		{
+			return File.ReadAllLines(Path);
+		}
+		catch { }
+		return null;
 	}
 
-	public string? TryGetFileOrDirectoryName()
+	/// <summary>
+	/// Returns the filename or directory name 
+	/// </summary>
+	/// <returns></returns>
+	public ReadOnlySpan<char> GetFileName(bool keepExtension = true)
 	{
-		return IsExistingDirectory()
-			? System.IO.Path.GetDirectoryName(Path)
-			: IsExistingFile()
-				? System.IO.Path.GetFileName(Path)
-				: null;
+		return keepExtension
+			? System.IO.Path.GetFileName(Path.AsSpan())
+			: System.IO.Path.GetFileNameWithoutExtension(Path.AsSpan());
+	}
+
+	public ReadOnlySpan<char> GetDirectoryName()
+	{
+		return System.IO.Path.GetDirectoryName(Path.AsSpan());
 	}
 
 	/// <summary>

@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Loggers;
 using DotNext.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Nekai.Common;
 
@@ -13,12 +14,16 @@ namespace Nekai.Common;
 public class Log
 {
 	[JsonPropertyName("@t")]
-	public Timestamp TimeStamp { get; set; }
+	public DateTime TimeStamp { get; set; }
 	[JsonPropertyName("@mt")]
 	public string Message { get; set; } = "";
 	[JsonPropertyName("@l")]
 	public string TypeString { get; set; } = "";
+	[JsonPropertyName("@tr")]
+	public string? TR { get; set; }
+	[JsonPropertyName("@sp")]
+	public string? SP { get; set; }
 
-	public LogKind Type => Enum.Parse<LogKind>(TypeString);
+	public LogLevel Type => Enum.Parse<LogLevel>(TypeString);
 
 }

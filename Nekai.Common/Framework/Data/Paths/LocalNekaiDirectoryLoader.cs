@@ -51,7 +51,7 @@ public static partial class NekaiData
 			PathString globalPath = conversionResult.Value, localPath;
 			if(globalPath.IsExistingFile())
 			{
-				var rawLocalPath = globalPath.GetFileContent();
+				var rawLocalPath = globalPath.ReadFileContent();
 				// Fetched from global config file - validate it
 				result = _CheckAndCreateDirectory(rawLocalPath.Trim(), out localPath);
 				if(result != PathOperationResult.Success)
