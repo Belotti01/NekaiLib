@@ -11,4 +11,25 @@ public static class NumberOperationExtensions
 			return value + other;
 		return T.MaxValue;
 	}
+
+    public static string ToScientificNotation(this double value, int decimals = 2)
+        => value.ToString($"E{decimals}");
+    
+	public static string ToScientificNotation(this float value, int decimals = 2)
+        => value.ToString($"E{decimals}");
+
+    public static string ToScientificNotation(this decimal value, int decimals = 2)
+        => value.ToString($"E{decimals}");
+
+    public static string ToScientificNotation(this int value, int decimals = 2)
+        => value.ToString($"E{decimals}");
+
+    public static string ToScientificNotation(this long value, int decimals = 2)
+        => value.ToString($"E{decimals}");
+
+    public static string ToScientificNotation(this uint value, int decimals = 2)
+        => value.ToString($"E{decimals}");
+
+    public static string ToScientificNotation(this ulong value, int decimals = 2)
+        => value.ToString($"E{decimals}");
 }

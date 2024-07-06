@@ -86,10 +86,6 @@ public static class NekaiLogs
 
 		try
 		{
-			// TODO: Pick between the JSONFormatter and the outputTemplate for the Shared and Program loggers.
-			// - Using the Json format will require another way to view the logs properly, but it is more software-friendly
-			// - ... otherwise just make the logs straightforward with a simple prefix, but losing information in the process
-			// fml idk keep it json for now
 			NekaiLoggerConfiguration config = new()
 			{
 				LogToConsole = true
@@ -139,7 +135,17 @@ public static class NekaiLogs
 
 	public static Log[] Deserialize(PathString filePath)
 	{
-		string[]? json = filePath.ReadFileLines();
+		// The runtime-tied file can't be accessed without the FileShare.ReadWrite option.
+
+		using var buffer = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        List<string> json = [];
+		var line = buffer.ReadLine();
+		while(line is not null)
+		{
+			json.Add(line);
+			line = buffer.ReadLine();
+		}
+
 		if(json is null)
 		{
 			Shared.Warning($"Logs file {filePath} could not be deserialized.");

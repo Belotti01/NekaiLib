@@ -24,6 +24,14 @@ public class Log
 	[JsonPropertyName("@sp")]
 	public string? SP { get; set; }
 
-	public LogLevel Type => Enum.Parse<LogLevel>(TypeString);
-
+	public LogLevel Type
+	{
+		get
+		{
+			var success = Enum.TryParse(TypeString, out LogLevel result);
+			return success 
+				? result 
+				: LogLevel.None;
+		}
+	}
 }

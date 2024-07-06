@@ -42,7 +42,8 @@ public sealed class NekaiLoggerFactory
 					rollingInterval: RollingInterval.Day,
 					restrictedToMinimumLevel: config.MinimumFileLogLevel,
 					formatter: config.Formatter,
-					shared: true
+					shared: true,
+					retainedFileCountLimit: 100
 				);
 			}
 			else

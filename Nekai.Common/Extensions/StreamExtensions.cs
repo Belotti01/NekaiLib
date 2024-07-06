@@ -36,9 +36,14 @@ public static class StreamExtensions
 		do
 		{
 			if(read == '\r')
+			{
+				read = stream.ReadByte();
 				continue;
+			}
 			if(read == '\n')
-				break;
+			{
+                break;
+			}
 			builder.Append((char)read);
 			read = stream.ReadByte();
 		} while(read != -1);
