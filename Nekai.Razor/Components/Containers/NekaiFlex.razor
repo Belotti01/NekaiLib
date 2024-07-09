@@ -1,12 +1,14 @@
 ﻿@namespace Nekai.Razor
 @using System.Text
-@inherits NekaiDiv
+@inherits NekaiComponentBase
 
-<NekaiDiv Style="@Style" Class="@Class">
+<div style="@Style" class="@Class">
 	@ChildContent
-</NekaiDiv>
+</div>
 
 @code {
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
 	[Parameter]
 	public bool Inline { get; set; }
 	[Parameter]
