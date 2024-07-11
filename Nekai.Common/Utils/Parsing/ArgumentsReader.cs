@@ -6,11 +6,11 @@ namespace Nekai.Common;
 public class ArgumentsReader
 {
 	internal const char DEFAULT_PARAMETER_PREFIX = '-';
-	protected Dictionary<string, string> _arguments = new(StringComparer.OrdinalIgnoreCase);
+	protected Dictionary<string, string> arguments = new(StringComparer.OrdinalIgnoreCase);
 
-	public string ParameterlessArgument => _arguments[""];
+	public string ParameterlessArgument => arguments[""];
 	public char ParameterPrefix { get; protected set; }
-	public string? this[string parameter] => _arguments.GetValueOrDefault(parameter);
+	public string? this[string parameter] => arguments.GetValueOrDefault(parameter);
 	public string? this[params string[] parameters] => this[parameters.AsEnumerable()];
 	public string? this[IEnumerable<string> parameters] => ReadAny(parameters);
 
@@ -55,14 +55,14 @@ public class ArgumentsReader
 
 	public string? Read(string? parameter)
 	{
-		return _arguments.GetValueOrDefault(parameter ?? "");
+		return arguments.GetValueOrDefault(parameter ?? "");
 	}
 
 	public string Read(string? parameter, string defaultValue)
 	{
 		parameter ??= "";
-		return _arguments.ContainsKey(parameter)
-			? _arguments[parameter]
+		return arguments.ContainsKey(parameter)
+			? arguments[parameter]
 			: defaultValue;
 	}
 
@@ -151,7 +151,7 @@ public class ArgumentsReader
 			parameters.Add("", lastValue);
 		}
 
-		_arguments = parameters;
+		arguments = parameters;
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -16,6 +16,7 @@ public static class HttpClientExtensions
 	/// Send an HTTP request to the <paramref name="requestUri"/> using the specified <paramref name="method"/>, with the <paramref name="obj"/>
 	/// serialized to JSON as content.
 	/// </summary>
+	/// <param name="client"> The client to use. </param>
 	/// <param name="method"> The HTTP method of the request. </param>
 	/// <param name="requestUri"> The endpoint to send the request to. </param>
 	/// <param name="obj"> The content of the request. </param>

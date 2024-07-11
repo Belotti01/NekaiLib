@@ -3,95 +3,74 @@
 public static partial class NekaiData
 {
 	/// <summary>
-	/// Contains the absolute paths to the directories used by the framework.
+	/// Contains the absolute paths to the directories used by the framework, automatically created upon access.
 	/// </summary>
 	public static class Directories
 	{
 		private static readonly Lazy<string> _localConfiguration = new(_LocalNekaiDirectoryLoader._Load);
 
 		/// <summary> Framework configuration directory. </summary>
-		public static string LocalConfiguration => _Local();
+		public static string LocalConfiguration => _CreateLocal();
 
 		/// <summary> Folder to use to store temporary files. </summary>
-		public static string Temp => Path.Combine(Path.GetTempPath(), "Nekai");
+		public static string Temp => _Create(Path.GetTempPath(), "Nekai");
 
 		/// <summary> Directory for UI personalization data. </summary>
-		public static string UI => _Local("UI");
+		public static string UI => _CreateLocal("UI");
 
 		/// <summary> Folder to store color palettes into. </summary>
-		public static string ColorPalettes { get; private set; } = Path.Combine(UI, "Colors");
+		public static string ColorPalettes { get; private set; } = _Create(UI, "Colors");
 
 		/// <summary> Folder to store themes into. </summary>
-		public static string Themes => Path.Combine(UI, "Themes");
+		public static string Themes => _Create(UI, "Themes");
 
 		/// <summary> Directory containing the log folders. </summary>
-		public static string Logs => _Local("Logs");
+		public static string Logs => _CreateLocal("Logs");
 
 		/// <summary> Folder for log files shared across programs. </summary>
-		public static string SharedLogs => Path.Combine(Logs, "Shared");
+		public static string SharedLogs => _Create(Logs, "Shared");
 
 		/// <summary> Folder for log files scoped to single programs. </summary>
-		public static string ProgramsLogs => Path.Combine(Logs, "Programs");
+		public static string ProgramsLogs => _Create(Logs, "Programs");
 
 		/// <summary> Folder for log files scoped to the current program. </summary>
-		public static string CurrentProgramLogs => Path.Combine(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(NekaiApp.Name));
+		public static string CurrentProgramLogs => _Create(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(NekaiApp.Name));
 
 		/// <summary> View information of the currently active program. </summary>
-		public static string CurrentProgramViews => _Program("Views");
+		public static string CurrentProgramViews => _CreateProgram("Views");
 
 		/// <summary> Storage for data specific to the currently active program. </summary>
-		public static string CurrentProgramData => _Program("Data");
+		public static string CurrentProgramData => _CreateProgram("Data");
 
 		/// <summary> Configurations folder of the current program. </summary>
-		public static string CurrentProgramConfiguration => _Program("Configuration");
+		public static string CurrentProgramConfiguration => _CreateProgram("Configuration");
 
-		// Help avoid errors at runtime due to missing folders
-		static Directories()
+
+
+		private static PathString _CreateProgram(params string[] relativePath)
+			=> _Create(relativePath.Prepend(_CreateLocal("ProgramData", NekaiApp.Name)).ToArray());
+
+		private static PathString _CreateLocal(params string[] relativePath)
+			=> _Create(relativePath.Prepend(_localConfiguration.Value).ToArray());
+
+		private static PathString _Create(params string[] fullPath)
 		{
-			ReadOnlySpan<string> paths = new string[]
+			string pathString = Path.Combine(fullPath);
+			var result = PathString.TryParse(pathString);
+
+			if(!result.IsSuccessful)
 			{
-				LocalConfiguration,
-				Temp,
-				ColorPalettes,
-				Themes,
-				SharedLogs,
-				ProgramsLogs,
-				CurrentProgramLogs
-			}.AsSpan();
-
-			foreach(string rawPath in paths)
-			{
-				var result = PathString.TryParse(rawPath);
-				if(!result.IsSuccessful)
-					Exceptor.ThrowIfDebug($"{result.Error}: \"{rawPath}\" is not a valid directory path.");
-
-				result.Value.EnsureExistsAsDirectory();
-
-				if(!result.IsSuccessful)
-				{
-					// Directory could not be found or created
-					Exceptor.ThrowIfDebug($"{result.Error}: the directory \"{rawPath}\" could not be generated.");
-					// In release, attempt to continue execution anyways.
-					// Directories should always be checked for availability before access, since they can be deleted,
-					// moved, renamed or locked at any time; so this is not to be treated as a critical error.
-
-					// Note: Using the NekaiFile and NekaiDirectory wrapper classes instead of the .NET File and Directory when possible
-					// helps minimize errors, while also enforcing proper error handling and standardize log formats for easier
-					// bug report analysis.
-				}
+				throw new NekaiInternalException($"The constructed shared directory path is not valid: {string.Join(" + ", fullPath)}.", nameof(fullPath));
 			}
-		}
 
-		private static string _Local(params string[] relativePath)
-		{
-			string pathStart = _localConfiguration.Value;
-			string path = Path.Combine(relativePath.Prepend(pathStart).ToArray());
-			return path;
-		}
+			var path = result.Value;
+			var creationResult = path.EnsureExistsAsDirectory();
 
-		private static string _Program(params string[] relativePath)
-		{
-			string path = Path.Combine(relativePath.Prepend(_Local("ProgramData", NekaiApp.Name)).ToArray());
+			if(!creationResult.IsSuccess())
+			{
+				throw new NekaiInternalException($"The shared directory could not be created (error: {creationResult}): {string.Join(" + ", fullPath)}.", nameof(fullPath));
+			}
+
 			return path;
 		}
 	}
