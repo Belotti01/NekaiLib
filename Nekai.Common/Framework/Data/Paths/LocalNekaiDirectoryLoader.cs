@@ -52,10 +52,13 @@ public static partial class NekaiData
 			if(globalPath.IsExistingFile())
 			{
 				var rawLocalPath = globalPath.ReadFileContent();
-				// Fetched from global config file - validate it
-				result = _CheckAndCreateDirectory(rawLocalPath.Trim(), out localPath);
-				if(result != PathOperationResult.Success)
-					return localPath;
+				if(!string.IsNullOrWhiteSpace(rawLocalPath))
+				{
+					// Fetched from global config file - validate it
+					result = _CheckAndCreateDirectory(rawLocalPath.Trim(), out localPath);
+					if(result != PathOperationResult.Success)
+						return localPath;
+				}
 			}
 
 			// Create file, and exit the app in case of file access errors (such as permission errors)
