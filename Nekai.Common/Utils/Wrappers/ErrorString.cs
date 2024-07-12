@@ -13,6 +13,7 @@ public class ErrorString
 {
 	public static implicit operator string(ErrorString error) => error.String;
 	public static implicit operator ErrorString(string error) => new(error);
+	public static implicit operator ErrorString(Exception ex) => new(ex.Message);
 
 	public string String { get; set; }
 

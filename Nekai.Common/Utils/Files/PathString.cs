@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Text;
+using Iced.Intel;
 
 namespace Nekai.Common;
 
@@ -326,6 +328,10 @@ public class PathString
 		}
 		return new(System.IO.Path.GetFullPath(Path, basePath));
 	}
+
+	/// <returns> <see langword="true"/> if the file was accessed after <paramref name="time"/> amount of time ago; <see langword="false"/> 
+	/// otherwise; returns an <see cref="PathOperationResult"/> instead if the access time information cannot be extracted. </returns>
+	/// <inheritdoc cref="WasLastAccessedWithin(TimeSpan, bool)"/>
 	public Result<bool, PathOperationResult> WasLastAccessedWithin(TimeSpan time)
 	{
 		if(!IsExistingFile())
@@ -347,18 +353,37 @@ public class PathString
 	}
 
 	/// <summary>
-	///
+	/// Checks whether the file was last accessed within <paramref name="time"/>.
 	/// </summary>
-	/// <returns></returns>
-	/// <exception cref="InvalidOperationException"></exception>
+	/// <param name="time"> The time span after which the file has to have been accessed. </param>
+	/// <param name="defaultValue"> The value returned when the required information is not accessible. </param>
+	/// <returns> <see langword="true"/> if the file was accessed after <paramref name="time"/> amount of time ago;
+	/// <see langword="false"/> otherwise, or <paramref name="defaultValue"/> if the access time information cannot be extracted. </returns>
+	public bool WasLastAccessedWithin(TimeSpan time, bool defaultValue)
+	{
+		var result = WasLastAccessedWithin(time);
+		if(!result.IsSuccessful)
+			return defaultValue;
+		return result.Value;
+	}
+
+	/// <summary>
+	/// Retrieve the metadata attributes of the file.
+	/// </summary>
+	/// <returns> A <see cref="FileAttributes"/> composed by the flags identifying the attributes of this file. </returns>
+	/// <exception cref="InvalidOperationException"> Thrown when the <see cref="PathString"/> points to a non-existing file, or a directory. </exception>
 	public FileAttributes GetFileAttributes()
 	{
 		if(!IsExistingFile())
-			throw new InvalidOperationException("The path points to a directory or a file that does not exist.");
+			throw new InvalidOperationException("The path points to a directory, or to a file that does not exist.");
 
 		return File.GetAttributes(Path);
 	}
 
+	/// <summary>
+	/// Attempt to open a <see cref="FileStream"/>.
+	/// </summary>
+	/// <returns> Whether the operation was successful or not. </returns>
 	public bool CanBeReadAsFile()
 	{
 		try
@@ -372,36 +397,110 @@ public class PathString
 		}
 	}
 
-	public string? ReadFileContent()
+	/// <summary>
+	/// Read all contents of the file.
+	/// </summary>
+	/// <param name="encoding"> The encoding of the contents of the file. </param>
+	/// <returns> The contents of the file, or <see langword="null"/> if the file does not exist or is not accessible. </returns>
+	public string? ReadFileContent(Encoding? encoding = null)
 	{
 		try
 		{
-			return File.ReadAllText(Path);
+			return File.ReadAllText(Path, encoding ?? Encoding.Default);
 		}catch { }
 		return null;
 	}
 
-	public string[]? ReadFileLines()
+	/// <inheritdoc cref="ReadFileContent(Encoding?)"/>
+	public async Task<string?> ReadFileContentAsync(Encoding? encoding = null)
 	{
 		try
 		{
-			return File.ReadAllLines(Path);
+			return await File.ReadAllTextAsync(Path, encoding ?? Encoding.Default);
+		}
+		catch { }
+		return null;
+	}
+
+	/// <inheritdoc cref="ReadFileLines(Encoding?)"/>
+	public async Task<string[]?> ReadFileLinesAsync(Encoding? encoding = null)
+	{
+		try
+		{
+			return await File.ReadAllLinesAsync(Path, encoding ?? Encoding.Default);
 		}
 		catch { }
 		return null;
 	}
 
 	/// <summary>
-	/// Returns the filename or directory name 
+	/// Attempt to read all contents of the file.
 	/// </summary>
-	/// <returns></returns>
-	public ReadOnlySpan<char> GetFileName(bool keepExtension = true)
+	/// <param name="encoding"> The encoding of the contents of the file. </param>
+	/// <returns> The contents of the file, or a <see cref="PathOperationResult"/> identifying an error. </returns>
+	public Result<string, PathOperationResult> TryReadFileContent(Encoding? encoding = null)
 	{
-		return keepExtension
-			? System.IO.Path.GetFileName(Path.AsSpan())
-			: System.IO.Path.GetFileNameWithoutExtension(Path.AsSpan());
+		try
+		{
+			return File.ReadAllText(Path, encoding ?? Encoding.Default);
+		}
+		catch(Exception ex)
+		{
+			return new(NekaiPath.GetResultFromException(ex));
+		}
 	}
 
+	/// <summary>
+	/// Attempt to read all contents of the file.
+	/// </summary>
+	/// <param name="encoding"> The encoding of the contents of the file. </param>
+	/// <returns> The contents of the file, or a <see cref="PathOperationResult"/> identifying an error. </returns>
+	public Result<string[], PathOperationResult> TryReadFileLines(Encoding? encoding = null)
+	{
+		try
+		{
+			return File.ReadAllLines(Path, encoding ?? Encoding.Default);
+		}
+		catch(Exception ex)
+		{
+			return new(NekaiPath.GetResultFromException(ex));
+		}
+	}
+
+	/// <summary>
+	/// Read all lines from the file.
+	/// </summary>
+	/// <param name="encoding"> The encoding of the contents of the file. </param>
+	/// <returns> The lines of the file, or <see langword="null"/> if the file does not exist or is not accessible. </returns>
+	public string[]? ReadFileLines(Encoding? encoding = null)
+	{
+		try
+		{
+			return File.ReadAllLines(Path, encoding ?? Encoding.Default);
+		}
+		catch { }
+		return null;
+	}
+
+	/// <summary>
+	/// Extract the file name from this path.
+	/// </summary>
+	/// <returns> The filename and its extension, or only the filename if <paramref name="keepExtension"/> is <see langword="false"/>. </returns>
+	public ReadOnlySpan<char> GetFileOrDirectoryName(bool keepExtension = true)
+	{
+		// Avoid returning an empty span when possible.
+		var span = System.IO.Path.TrimEndingDirectorySeparator(Path.AsSpan());
+
+		return keepExtension
+			? System.IO.Path.GetFileName(span)
+			: System.IO.Path.GetFileNameWithoutExtension(span);
+	}
+
+
+	/// <summary>
+	/// Extract the directory name from this path.
+	/// </summary>
+	/// <returns> The directory name, or an empty span if only the root is specified. </returns>
 	public ReadOnlySpan<char> GetDirectoryName()
 	{
 		return System.IO.Path.GetDirectoryName(Path.AsSpan());
