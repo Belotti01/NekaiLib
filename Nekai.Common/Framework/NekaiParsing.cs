@@ -12,7 +12,7 @@ public static class NekaiParsing
 		return T.Parse(value, formatProvider);
 	}
 
-	public static bool TryParse<T>(string value, IFormatProvider? formatProvider, out T parsedValue)
+	public static bool TryParse<T>(string value, IFormatProvider? formatProvider, [NotNullWhen(true)] out T? parsedValue)
 		where T : IParsable<T>
 	{
 		return T.TryParse(value, formatProvider, out parsedValue);

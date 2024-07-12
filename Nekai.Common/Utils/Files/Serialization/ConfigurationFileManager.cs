@@ -77,6 +77,8 @@ where TSelf : ConfigurationFileManager<TSelf>
 		TSelf? obj;
 		try
 		{
+			if(content is null)
+				throw new NullReferenceException("File content is null.");
 			// Always include fields during deserialization. The choice of whether to include them is supposed to have an
 			// effect during serialization, so if they're present in the serialized data, read them.
 			obj = JsonSerializer.Deserialize<TSelf>(content, _CreateSerializerOptions(true));
@@ -86,9 +88,9 @@ where TSelf : ConfigurationFileManager<TSelf>
 			// Log a meaningful message, but return a more user-friendly one.
 			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} \"{filePath}\" failed: {ex.Message}");
 			return new(PathOperationResult.NotAllowed);
-		}
+        }
 
-		if(obj is null)
+        if(obj is null)
 			return new(PathOperationResult.BadFormat);
 
 		obj.FilePath = PathString.Parse(filePath);

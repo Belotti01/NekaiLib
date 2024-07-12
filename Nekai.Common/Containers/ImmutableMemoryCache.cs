@@ -16,7 +16,7 @@ public sealed class ImmutableMemoryCache<TKey, TValue> : IImmutableMemoryCache<T
 	/// <summary>
 	/// Internal storage of all key-value pairs.
 	/// </summary>
-	protected ImmutableSortedDictionary<TKey, TValue> Entries { get; private set; }
+	private ImmutableSortedDictionary<TKey, TValue> Entries { get; set; }
 
 	/// <inheritdoc cref="ImmutableSortedDictionary{TKey, TValue}.IsEmpty"/>
 	public bool IsEmpty => Entries.IsEmpty;
