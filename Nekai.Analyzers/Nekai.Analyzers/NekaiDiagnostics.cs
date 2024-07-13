@@ -27,7 +27,7 @@ namespace Nekai.Analyzers
 		}
 
 		public static NekaiDiagnostic OperationResultWithoutAttribute { get; } = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Warning, nameof(OperationResultWithoutAttribute));
-		public static NekaiDiagnostic OperationResultBaseType { get; } = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Error, nameof(OperationResultBaseType));
+		public static NekaiDiagnostic OperationResultBaseType { get; } = new NekaiDiagnostic(TypeKind.Enum, DiagnosticCategory.Design, DiagnosticSeverity.Error, nameof(OperationResultBaseType)).WithCodeFix();
 		public static NekaiDiagnostic DontThrowInConstructors { get; } = new NekaiDiagnostic(SyntaxKind.ThrowKeyword, DiagnosticCategory.Security, DiagnosticSeverity.Warning, nameof(DontThrowInConstructors));
 	}
 
