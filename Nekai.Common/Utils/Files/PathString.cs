@@ -501,7 +501,7 @@ public class PathString
 	/// Extract the directory name from this path.
 	/// </summary>
 	/// <returns> The directory name, or an empty span if only the root is specified. </returns>
-	public ReadOnlySpan<char> GetDirectoryName()
+	public ReadOnlySpan<char> GetContainingDirectoryName()
 	{
 		return System.IO.Path.GetDirectoryName(Path.AsSpan());
 	}
