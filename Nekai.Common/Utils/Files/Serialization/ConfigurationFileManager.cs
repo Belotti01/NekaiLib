@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
@@ -11,31 +13,25 @@ namespace Nekai.Common;
 /// <remarks>
 /// Use <see cref="JsonSerializableAttribute"/> in derived Types to improve performance.
 /// </remarks>
-public abstract class ConfigurationFileManager<TSelf>
+public abstract class ConfigurationFileManager<TSelf> : JsonSerializerContext
 where TSelf : ConfigurationFileManager<TSelf>
 {
-	/// <summary>
-	/// Whether to also serialize and deserialize fields.
-	/// </summary>
-	[JsonIgnore]
-	protected bool includeFields = false;
-
 	/// <summary>
 	/// The path to the file linked to this instance.
 	/// </summary>
 	[JsonIgnore]
 	public virtual PathString? FilePath { get; private set; }
 
-	// JsonSerializerOptions are single-use, so use a generator method rather than a static instance.
-	private static JsonSerializerOptions _CreateSerializerOptions(bool includeFields)
-		=> new(JsonSerializerDefaults.General)
+	// The default serializer options.
+	protected override JsonSerializerOptions? GeneratedSerializerOptions => 
+		new(JsonSerializerDefaults.General)
 		{
 			WriteIndented = true,
 			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 			AllowTrailingCommas = true,
 			IgnoreReadOnlyFields = false,
 			IgnoreReadOnlyProperties = false,
-			IncludeFields = includeFields
+			IncludeFields = false
 		};
 
 	static ConfigurationFileManager()
@@ -43,10 +39,15 @@ where TSelf : ConfigurationFileManager<TSelf>
 		Debug.Assert(typeof(TSelf).TryGetAttribute<JsonSerializableAttribute>(out _), $"Types inheriting {nameof(ConfigurationFileManager<TSelf>)} should be decorated with the {nameof(JsonSerializableAttribute)}.");
 	}
 
-	protected ConfigurationFileManager(string? filePath = null, bool includeFields = false)
+	protected ConfigurationFileManager(string? filePath = null, JsonSerializerOptions? options = null)
+		: base(options)
 	{
-		this.includeFields = includeFields;
 		_TrySetFilePath(filePath);
+	}
+
+	protected ConfigurationFileManager(JsonSerializerOptions? options) 
+		: base(options)
+	{
 	}
 
 	private PathOperationResult _TrySetFilePath(string? filePath)
@@ -81,7 +82,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 				throw new NullReferenceException("File content is null.");
 			// Always include fields during deserialization. The choice of whether to include them is supposed to have an
 			// effect during serialization, so if they're present in the serialized data, read them.
-			obj = JsonSerializer.Deserialize<TSelf>(content, _CreateSerializerOptions(true));
+			obj = JsonSerializer.Deserialize<TSelf>(content);
 		}
 		catch(Exception ex)
 		{
@@ -139,14 +140,14 @@ where TSelf : ConfigurationFileManager<TSelf>
 		try
 		{
 			using FileStream stream = File.Create(FilePath);
-			JsonSerializer.Serialize(stream, (TSelf)this, _CreateSerializerOptions(includeFields));
+			JsonSerializer.Serialize(stream, (TSelf)this, Options);
 		}
 		catch(Exception ex)
 		{
 			var restoreResult = backupManager.TryRestore();
 			if(!restoreResult.IsSuccess())
 			{
-				Exceptor.ThrowIfDebug($"Bruh everything went wrong here ({ex.Message})");
+				Exceptor.ThrowIfDebug($"Multiple failures while serializing and restoring an instance of {typeof(TSelf).Name} ({ex.Message}).");
 				return restoreResult;
 			}
 		}
@@ -159,6 +160,9 @@ where TSelf : ConfigurationFileManager<TSelf>
 	/// </summary>
 	public override string ToString()
 	{
-		return JsonSerializer.Serialize(this, _CreateSerializerOptions(includeFields));
+		return JsonSerializer.Serialize(this, Options);
 	}
+	
+	/// <inheritdoc/>
+	public override JsonTypeInfo? GetTypeInfo(Type type) => JsonTypeInfo.CreateJsonTypeInfo<TSelf>(Options);
 }
