@@ -33,7 +33,7 @@ public static class NekaiLogs
 			string? sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.SharedLogs, "Logs.json");
 			var sharedLogPath = PathString.Parse(sharedLogFilesTemplate);
 			var fileCreationResult = sharedLogPath.EnsureExistsAsFile();
-			if(!fileCreationResult.IsSuccess())
+			if(!fileCreationResult.IsSuccessful())
 			{
 				// Don't export to file.
 				sharedLogFilesTemplate = null;
@@ -48,7 +48,7 @@ public static class NekaiLogs
 				if(sharedLogFilesTemplate is null)
 				{
 					_sharedLogger.Warning($"Logs folder could not be accessed or created. Logs will not be exported. (Error: {fileCreationResult.GetMessage()})");
-					Debug.Assert(!fileCreationResult.IsSuccess(), "Logical error: the file was found.");
+					Debug.Assert(!fileCreationResult.IsSuccessful(), "Logical error: the file was found.");
 				}
 			}
 

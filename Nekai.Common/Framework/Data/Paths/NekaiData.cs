@@ -32,7 +32,7 @@ public static partial class NekaiData
 		var operation = Parallel.ForEach(filesEnumerator, file =>
 		{
 			var result = ((PathString)file)!.EnsureDeletion();
-			if(!result.IsSuccess())
+			if(!result.IsSuccessful())
 			{
 				failedDeletions++;
 			}

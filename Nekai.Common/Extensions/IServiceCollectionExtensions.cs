@@ -18,7 +18,7 @@ public static class IServiceCollectionExtensions
 	{
 		string rawPath = Path.Combine(Environment.CurrentDirectory, "Logs");
 		var path = PathString.Parse(rawPath);
-		bool pathExists = path.EnsureExistsAsDirectory().IsSuccess();
+		bool pathExists = path.EnsureExistsAsDirectory().IsSuccessful();
 		Debug.Assert(pathExists);
 
 		var logger = NekaiLogs.Factory.CreateForDebug();

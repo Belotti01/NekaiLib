@@ -66,7 +66,7 @@ public static partial class NekaiData
 			var path = result.Value;
 			var creationResult = path.EnsureExistsAsDirectory();
 
-			if(!creationResult.IsSuccess())
+			if(!creationResult.IsSuccessful())
 			{
 				throw new NekaiInternalException($"The shared directory could not be created (error: {creationResult}): {string.Join(" + ", fullPath)}.", nameof(fullPath));
 			}

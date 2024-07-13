@@ -39,11 +39,9 @@ public static class NekaiParsing
 		if(type.IsEnum)
 			return Enum.Parse(type, value);
 
-		// "out" parameters can't be used through reflection - use the Parse method instead of TryParse,
-		// leaving the exception handling to the caller
 		if(_TryGetTryParseMethod(type, out MethodInfo? method))
 		{
-			object?[] args = { value, null };
+			object?[] args = [ value, null ];
 			bool parsed = (bool)method.Invoke(null, args)!;
 			if(!parsed)
 				throw new FormatException($"Value could not be parsed to type {type.Name}.");
@@ -80,7 +78,7 @@ public static class NekaiParsing
 			return false;   // No Parsing method found
 
 		// args: { valueToParse, resultValue }
-		object?[] args = { value, null };
+		object?[] args = [ value, null ];
 		// TryParse methods don't necessarily guarantee that Exceptions won't be thrown. Just in case, wrap the call in a try-catch block.
 		try
 		{
@@ -103,7 +101,7 @@ public static class NekaiParsing
 	{
 		// Type parameter TSelf in IParsable<TSelf> does not matter - all is needed is the name of the function.
 		// Note: The OUT parameter (aka the parsed value) is handled the same as REF parameters by Reflection methods.
-		tryParseMethod = type.GetMethod(nameof(IParsable<int>.TryParse), BindingFlags.Static | BindingFlags.Public, new[] { typeof(string), type.MakeByRefType() });
+		tryParseMethod = type.GetMethod(nameof(IParsable<int>.TryParse), BindingFlags.Static | BindingFlags.Public, [ typeof(string), type.MakeByRefType() ]);
 		return tryParseMethod is not null;
 	}
 }

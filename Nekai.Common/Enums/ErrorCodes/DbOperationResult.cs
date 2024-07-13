@@ -13,3 +13,9 @@ public enum DbOperationResult
 	QueryError,
 	UnknownError
 }
+
+public static class DbOperationResultExtensions
+{
+	public static bool IsSuccessful(this DbOperationResult result) 
+		=> result == DbOperationResult.Success;
+}

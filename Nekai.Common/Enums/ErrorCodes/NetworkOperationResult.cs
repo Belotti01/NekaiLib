@@ -17,3 +17,9 @@ public enum NetworkOperationResult
 	BadFormat,
 	UnknownError
 }
+
+public static class NetworkOperationResultExtensions
+{
+	public static bool IsSuccessful(this NetworkOperationResult result)
+		=> result == NetworkOperationResult.Success;
+}

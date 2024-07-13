@@ -54,7 +54,7 @@ public enum PathOperationResult
 
 public static class PathOperationResultExtensions
 {
-	public static bool IsSuccess(this PathOperationResult result)
+	public static bool IsSuccessful(this PathOperationResult result)
 		=> result == PathOperationResult.Success;
 
 	[DoesNotReturn, StackTraceHidden]

@@ -182,7 +182,7 @@ public class PathString
 		// First create the directory if it doesn't exist.
 		var directory = GetContainingDirectory();
 		var directoryResult = directory.EnsureExistsAsDirectory();
-		if(!directoryResult.IsSuccess())
+		if(!directoryResult.IsSuccessful())
 			return directoryResult;
 
 		try
