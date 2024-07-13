@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Microsoft.Extensions.Options;
 using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
@@ -21,8 +22,9 @@ where TSelf : JsonSerializableObject<TSelf>
 	[JsonIgnore]
 	public virtual PathString? FilePath { get; private set; }
 
-	// The default serializer options.
-	protected override JsonSerializerOptions? GeneratedSerializerOptions => 
+    // The default serializer options.
+    [JsonIgnore]
+    protected override JsonSerializerOptions? GeneratedSerializerOptions => 
 		new(JsonSerializerDefaults.General)
 		{
 			WriteIndented = true,
@@ -79,13 +81,10 @@ where TSelf : JsonSerializableObject<TSelf>
 		{
 			if(content is null)
 				throw new NullReferenceException("File content is null.");
-			// Always include fields during deserialization. The choice of whether to include them is supposed to have an
-			// effect during serialization, so if they're present in the serialized data, read them.
 			obj = JsonSerializer.Deserialize<TSelf>(content, options);
 		}
 		catch(Exception ex)
 		{
-			// Log a meaningful message, but return a more user-friendly one.
 			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} \"{filePath}\" failed: {ex.Message}");
 			return new(PathOperationResult.NotAllowed);
         }
@@ -114,6 +113,25 @@ where TSelf : JsonSerializableObject<TSelf>
 
 		result.Value.FilePath = filePath;
 		return result;
+	}
+
+	public static Result<TSelf> TryDeserializeJsonString(string json, JsonSerializerOptions? options = null)
+	{
+		TSelf? obj;
+		try
+		{
+			obj = JsonSerializer.Deserialize<TSelf>(json, options);
+		}
+		catch(Exception ex)
+		{
+			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} failed: {ex.Message}");
+			return new();
+		}
+
+		if(obj is null)
+			return new();
+
+		return obj;
 	}
 
 	public PathOperationResult TrySerialize()
