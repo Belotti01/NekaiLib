@@ -2,7 +2,7 @@
 
 namespace Nekai.Common;
 
-public class ThemeColorPalette : ConfigurationFileManager<ThemeColorPalette>
+public class ThemeColorPalette : JsonSerializableObject<ThemeColorPalette>
 {
 	[Configuration("Theme Name")]
 	public string Name { get; }

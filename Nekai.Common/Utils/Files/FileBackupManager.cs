@@ -86,7 +86,7 @@ public class FileBackupManager : IDisposable
 		{
 			// Delete the old backup file.
 			var duplicateDeletionResult = backupFilePath.EnsureDeletion();
-			if(!duplicateDeletionResult.IsSuccess())
+			if(!duplicateDeletionResult.IsSuccessful())
 			{
 				Debug.Fail("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
 				// Write a log entry, it might be useful to identify permission errors and such.
@@ -126,7 +126,7 @@ public class FileBackupManager : IDisposable
 		if(!KeepPersistentBackup)
 		{
 			var result = BackupFilePath.EnsureDeletion();
-			if(!result.IsSuccess())
+			if(!result.IsSuccessful())
 			{
 				NekaiLogs.Program.Warning($"Backup file could not be deleted upon disposal of object of type {GetType().Name}; {result.GetMessage()}");
 			}

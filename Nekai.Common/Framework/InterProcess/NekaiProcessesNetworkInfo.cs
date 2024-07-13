@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Nekai.Common;
 
-public sealed class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiProcessesNetworkInfo>, IDisposable
+public sealed class NekaiProcessesNetworkInfo : JsonSerializableObject<NekaiProcessesNetworkInfo>, IDisposable
 {
 	[JsonIgnore]
 	private const int _SERIALIZATION_MAX_ATTEMPTS = 10;
@@ -89,7 +89,7 @@ public sealed class NekaiProcessesNetworkInfo : ConfigurationFileManager<NekaiPr
 			if(cancellationToken.IsCancellationRequested)
 				return;
 
-			if(TrySerialize().IsSuccess())
+			if(TrySerialize().IsSuccessful())
 				return;
 			// File might be locked, so wait a bit before trying again.
 			await Task.Delay(_SERIALIZATION_ATTEMPT_DELAY_MS, cancellationToken);

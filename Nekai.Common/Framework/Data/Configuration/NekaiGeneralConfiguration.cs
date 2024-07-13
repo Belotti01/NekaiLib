@@ -7,11 +7,11 @@ using System.Text.Json.Serialization.Metadata;
 namespace Nekai.Common;
 
 /// <summary>
-/// Singleton implementation of a <see cref="ConfigurationFileManager{TSelf}"/> that handles the general configuration shared among
+/// Singleton implementation of a <see cref="JsonSerializableObject{TSelf}"/> that handles the general configuration shared among
 /// all Nekai applications.
 /// </summary>
 [JsonSerializable(typeof(NekaiGeneralConfiguration))]
-public class NekaiGeneralConfiguration : ConfigurationFileManager<NekaiGeneralConfiguration>
+public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConfiguration>
 {
 	/// <summary> The file containing the serialized configuration. </summary>
 	private static string _FilePath => NekaiData.Files.GeneralSettingsFile;

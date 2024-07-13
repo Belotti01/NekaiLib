@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
@@ -13,8 +12,8 @@ namespace Nekai.Common;
 /// <remarks>
 /// Use <see cref="JsonSerializableAttribute"/> in derived Types to improve performance.
 /// </remarks>
-public abstract class ConfigurationFileManager<TSelf> : JsonSerializerContext
-where TSelf : ConfigurationFileManager<TSelf>
+public abstract class JsonSerializableObject<TSelf> : JsonSerializerContext
+where TSelf : JsonSerializableObject<TSelf>
 {
 	/// <summary>
 	/// The path to the file linked to this instance.
@@ -34,18 +33,18 @@ where TSelf : ConfigurationFileManager<TSelf>
 			IncludeFields = false
 		};
 
-	static ConfigurationFileManager()
+	static JsonSerializableObject()
 	{
-		Debug.Assert(typeof(TSelf).TryGetAttribute<JsonSerializableAttribute>(out _), $"Types inheriting {nameof(ConfigurationFileManager<TSelf>)} should be decorated with the {nameof(JsonSerializableAttribute)}.");
+		Debug.Assert(typeof(TSelf).TryGetAttribute<JsonSerializableAttribute>(out _), $"Types inheriting {nameof(JsonSerializableObject<TSelf>)} should be decorated with the {nameof(JsonSerializableAttribute)}.");
 	}
 
-	protected ConfigurationFileManager(string? filePath = null, JsonSerializerOptions? options = null)
+	protected JsonSerializableObject(string? filePath = null, JsonSerializerOptions? options = null)
 		: base(options)
 	{
 		_TrySetFilePath(filePath);
 	}
 
-	protected ConfigurationFileManager(JsonSerializerOptions? options) 
+	protected JsonSerializableObject(JsonSerializerOptions? options) 
 		: base(options)
 	{
 	}
@@ -133,7 +132,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 		else
 		{
 			var fileCreationResult = FilePath.EnsureExistsAsFile();
-			if(!fileCreationResult.IsSuccess())
+			if(!fileCreationResult.IsSuccessful())
 				return fileCreationResult;
 		}
 
@@ -145,7 +144,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 		catch(Exception ex)
 		{
 			var restoreResult = backupManager.TryRestore();
-			if(!restoreResult.IsSuccess())
+			if(!restoreResult.IsSuccessful())
 			{
 				Exceptor.ThrowIfDebug($"Multiple failures while serializing and restoring an instance of {typeof(TSelf).Name} ({ex.Message}).");
 				return restoreResult;
