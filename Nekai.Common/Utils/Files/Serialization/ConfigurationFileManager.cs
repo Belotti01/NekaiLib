@@ -68,7 +68,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 		return PathOperationResult.Success;
 	}
 
-	private static Result<TSelf, PathOperationResult> _DeserializeInternal(PathString filePath)
+	private static Result<TSelf, PathOperationResult> _DeserializeInternal(PathString filePath, JsonSerializerOptions? options)
 	{
 		if(!filePath.CanBeReadAsFile())
 			return new(PathOperationResult.FailedRead);
@@ -82,7 +82,7 @@ where TSelf : ConfigurationFileManager<TSelf>
 				throw new NullReferenceException("File content is null.");
 			// Always include fields during deserialization. The choice of whether to include them is supposed to have an
 			// effect during serialization, so if they're present in the serialized data, read them.
-			obj = JsonSerializer.Deserialize<TSelf>(content);
+			obj = JsonSerializer.Deserialize<TSelf>(content, options);
 		}
 		catch(Exception ex)
 		{
@@ -98,18 +98,18 @@ where TSelf : ConfigurationFileManager<TSelf>
 		return obj;
 	}
 
-	public static Result<TSelf, PathOperationResult> TryDeserialize(string filePath)
+	public static Result<TSelf, PathOperationResult> TryDeserialize(string filePath, JsonSerializerOptions? options = null)
 	{
 		var result = PathString.TryParse(filePath);
 		if(!result.IsSuccessful)
 			return new(result.Error);
 
-		return TryDeserialize(result.Value);
+		return TryDeserialize(result.Value, options);
 	}
 
-	public static Result<TSelf, PathOperationResult> TryDeserialize(PathString filePath)
+	public static Result<TSelf, PathOperationResult> TryDeserialize(PathString filePath, JsonSerializerOptions? options = null)
 	{
-		var result = _DeserializeInternal(filePath);
+		var result = _DeserializeInternal(filePath, options);
 		if(!result.IsSuccessful)
 			return result;
 
