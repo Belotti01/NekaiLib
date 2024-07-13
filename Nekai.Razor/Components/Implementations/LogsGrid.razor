@@ -1,0 +1,77 @@
+﻿@namespace Nekai.Razor
+@using System.Text.Json.Serialization
+@using System.Text.Json
+@using System.Text.Json.Serialization.Metadata
+@using Microsoft.Extensions.Logging
+@using Nekai.Common
+
+
+<FluentTabs>
+	@foreach(var entry in Logs) {
+		<FluentTab Label="@entry.Key">
+			<FluentDataGrid TGridItem="Log" Items="@entry.Value.AsQueryable()" >
+				<PropertyColumn Title="Timestamp" Width="200px" Property="(x) => x.TimeStamp" Sortable="true" Format="yyyy/MM/dd hh:mm:ss" />
+				<TemplateColumn Title="Level" Width="100px">
+					<p style="@GetLevelColumnStyle(context.Type)">
+						@context.TypeString
+					</p>
+				</TemplateColumn>
+				<PropertyColumn Property="(x) => x.Message" />
+			</FluentDataGrid>
+		</FluentTab>
+	}
+</FluentTabs>
+
+@code {
+	[Parameter]
+	public bool OmitSharedLogs { get; set; }
+	[Parameter]
+	public bool OmitProgramLogs { get; set; }
+
+	public Dictionary<string, IEnumerable<Log>> Logs { get; set; } = [];
+	public string[] LogDirectories { get; set; } = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadLogs();
+	}
+
+	public async Task LoadLogs()
+	{
+		Logs = [];
+
+		if (!OmitSharedLogs)
+		{
+			Logs.Add("Shared", NekaiLogs.DeserializeAll(NekaiData.Directories.SharedLogs));
+		}
+
+		if (OmitProgramLogs)
+			return;
+
+		var directories = Directory.GetDirectories(NekaiData.Directories.ProgramsLogs);
+
+		foreach (string directory in directories)
+		{
+			var dirPath = (PathString?)directory;
+			if (dirPath is null)
+				continue;
+
+			try
+			{
+				Logs.Add(dirPath.GetFileOrDirectoryName().ToString(), NekaiLogs.DeserializeAll(dirPath));
+			}catch(ArgumentException)
+			{
+				NekaiLogs.Shared.Error($"Duplicate directory entry found when filling LogsGrid: '{dirPath}'");
+			}
+		}
+	}
+
+	public string GetLevelColumnStyle(LogLevel level)
+		=> level switch
+		{
+			LogLevel.Error => "color: red",
+			LogLevel.Warning => "color: yellow",
+			LogLevel.Information => "color: blue",
+			_ => ""
+		};
+}
