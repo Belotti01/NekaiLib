@@ -51,13 +51,22 @@ public static class StreamExtensions
 		return builder.ToString();
 	}
 
+	/// <inheritdoc cref="ReadAllText(Stream, Encoding, bool)"/>
+	public static string? ReadAllText(this Stream stream, bool autoDetectEncoding = false)
+	{
+		using TextReader reader = new StreamReader(stream, autoDetectEncoding);
+		return reader.ReadToEnd();
+	}
+
 	/// <summary>
 	/// Read all the content of the <paramref name="stream"/> as text and return it as a <see langword="string"/>.
 	/// </summary>
 	/// <param name="stream"> The stream to read. </param>
-	public static string? ReadAllText(this Stream stream)
+	/// <param name="autoDetectEncoding"> Whether to look for byte order marks at the beginning of the file to detect the encoding type. </param>
+	/// <param name="encoding"> The text encoding to use. </param>
+	public static string? ReadAllText(this Stream stream, Encoding encoding, bool autoDetectEncoding = false)
 	{
-		using TextReader reader = new StreamReader(stream);
+		using TextReader reader = new StreamReader(stream, encoding);
 		return reader.ReadToEnd();
 	}
 }
