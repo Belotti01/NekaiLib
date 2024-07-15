@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -8,7 +9,8 @@ namespace Nekai.Common;
 /// Immutable data storage for key-value pairs.
 /// </summary>
 /// <inheritdoc cref="IImmutableMemoryCache{TKey, TValue}"/>
-public sealed class ImmutableMemoryCache<TKey, TValue> : IImmutableMemoryCache<TKey, TValue>
+public sealed class ImmutableMemoryCache<TKey, TValue> 
+	: IImmutableMemoryCache<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>
 	where TKey : notnull
 {
 	public static ImmutableMemoryCache<TKey, TValue> Empty => new(ImmutableSortedDictionary<TKey, TValue>.Empty);
@@ -78,4 +80,10 @@ public sealed class ImmutableMemoryCache<TKey, TValue> : IImmutableMemoryCache<T
 		Entries = null!;
 		GC.SuppressFinalize(this);
 	}
+
+	public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() 
+		=> Entries.GetEnumerator();
+
+	IEnumerator IEnumerable.GetEnumerator() 
+		=> Entries.GetEnumerator();
 }
