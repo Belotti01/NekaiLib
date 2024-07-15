@@ -6,7 +6,7 @@ public static class StreamExtensions
 	{
 		if(!stream.CanWrite)
 			return false;
-		byte[] bytes = Encoding.UTF8.GetBytes(line + Environment.NewLine);
+		byte[] bytes = Encoding.Default.GetBytes(line + Environment.NewLine);
 		stream.Write(bytes, 0, bytes.Length);
 		return true;
 	}
@@ -42,7 +42,7 @@ public static class StreamExtensions
 			}
 			if(read == '\n')
 			{
-                break;
+				break;
 			}
 			builder.Append((char)read);
 			read = stream.ReadByte();
