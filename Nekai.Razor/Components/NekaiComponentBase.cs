@@ -11,10 +11,15 @@ namespace Nekai.Razor;
 
 public class NekaiComponentBase : ComponentBase
 {
-    /// <summary>
-    /// Classes to apply to the component.
-    /// </summary>
-    [Parameter]
+	public bool IsExecutingBackgroundTask { get; private set; } = false;
+	private Task? _backgroundTask;
+	protected CancellationTokenSource BackgroundTaskCancellationTokenSource { get; } = new();
+	protected CancellationToken BackgroundTaskCancellationToken { get; private set; }
+
+	/// <summary>
+	/// Classes to apply to the component.
+	/// </summary>
+	[Parameter]
 	public string Class { get; set; } = "";
 
 	/// <summary>
@@ -22,4 +27,25 @@ public class NekaiComponentBase : ComponentBase
 	/// </summary>
 	[Parameter]
 	public string Style { get; set; } = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		BackgroundTaskCancellationToken = BackgroundTaskCancellationTokenSource.Token;
+		IsExecutingBackgroundTask = true;
+		_backgroundTask = Task
+			.Run(async () => await ExecuteInBackground(BackgroundTaskCancellationToken), BackgroundTaskCancellationToken)
+			.ContinueWith((t) => IsExecutingBackgroundTask = false);
+	}
+
+	/// <summary>
+	/// Method executed in the background, initiated upon the call to <see cref="OnInitializedAsync"/>.
+	/// </summary>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	protected virtual async Task ExecuteInBackground(CancellationToken cancellationToken)
+	{
+
+	}
 }
