@@ -80,6 +80,9 @@ public static class NekaiLogs
 		}
 	}
 
+	/// <summary>
+	/// Thread-safe instance of <see cref="ILogger"/> that writes exclusively to the Console.
+	/// </summary>
 	public static ILogger Console
 	{
 		get
@@ -128,13 +131,13 @@ public static class NekaiLogs
 		return false;
 	}
 
-	public static List<Log> DeserializeAll(string sourceDirectory, bool recursive = false)
+	public static List<NekaiLog> DeserializeAll(string sourceDirectory, bool recursive = false)
 	{
 		List<PathString> files = Directory.EnumerateFileSystemEntries(sourceDirectory)
 			.Select(x => PathString.Parse(x))
 			.ToList();
 
-		List<Log> logs = [];
+		List<NekaiLog> logs = [];
 
 		foreach(PathString file in files)
 		{
@@ -152,7 +155,7 @@ public static class NekaiLogs
 		return new(logs);
 	}
 
-	public static Log[] Deserialize(PathString filePath)
+	public static NekaiLog[] Deserialize(PathString filePath)
 	{
 		// The runtime-tied file can't be accessed without the FileShare.ReadWrite option.
 
@@ -171,8 +174,8 @@ public static class NekaiLogs
 			return [];
 		}
 
-		Log[] fileLogs = json
-			.Select(x => JsonSerializer.Deserialize<Log>(x))
+		NekaiLog[] fileLogs = json
+			.Select(x => JsonSerializer.Deserialize<NekaiLog>(x))
 			.ExceptNulls()
 			.ToArray();
 		return fileLogs;

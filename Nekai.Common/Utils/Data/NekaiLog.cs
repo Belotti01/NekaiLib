@@ -12,8 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Nekai.Common;
 
-[JsonSerializable(typeof(Log))]
-public class Log : JsonSerializableObject<Log>
+[JsonSerializable(typeof(NekaiLog))]
+public class NekaiLog : JsonSerializableObject<NekaiLog>
 {
 	[JsonPropertyName("@t")]
 	public DateTime TimeStamp { get; set; }
@@ -25,6 +25,8 @@ public class Log : JsonSerializableObject<Log>
 	public string? TR { get; set; }
 	[JsonPropertyName("@sp")]
 	public string? SP { get; set; }
+	[JsonPropertyName("MachineName")]
+	public string? MachineName { get; set; }
 
 	public LogLevel Type
 	{

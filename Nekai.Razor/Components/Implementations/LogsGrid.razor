@@ -9,7 +9,8 @@
 <FluentTabs>
 	@foreach(var entry in Logs) {
 		<FluentTab Label="@entry.Key">
-			<FluentDataGrid TGridItem="Log" Items="@entry.Value.AsQueryable()" >
+			<FluentDataGrid TGridItem="NekaiLog" Items="@entry.Value.AsQueryable()" >
+				<PropertyColumn Title="Machine" Width="200px" Property="(x) => x.MachineName" />
 				<PropertyColumn Title="Timestamp" Width="200px" Property="(x) => x.TimeStamp" Sortable="true" Format="yyyy/MM/dd hh:mm:ss" />
 				<TemplateColumn Title="Level" Width="100px">
 					<p style="@GetLevelColumnStyle(context.Type)">
@@ -28,7 +29,7 @@
 	[Parameter]
 	public bool OmitProgramLogs { get; set; }
 
-	public Dictionary<string, IEnumerable<Log>> Logs { get; set; } = [];
+	public Dictionary<string, IEnumerable<NekaiLog>> Logs { get; set; } = [];
 	public string[] LogDirectories { get; set; } = [];
 
 	protected override async Task OnInitializedAsync()

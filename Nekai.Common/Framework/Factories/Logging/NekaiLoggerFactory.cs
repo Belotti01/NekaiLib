@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Serilog;
+using Serilog.Core.Enrichers;
 
 namespace Nekai.Common;
 
@@ -56,6 +57,8 @@ public sealed class NekaiLoggerFactory
 					shared: true
 				);
 			}
+			
+			serilogConfig.Enrich.WithMachineName();
 		}
 
 		ILogger logger = serilogConfig.CreateLogger();

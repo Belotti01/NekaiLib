@@ -28,6 +28,8 @@ public class Program
 		var info = NekaiProcessNetworkInfo.ForCurrentProcess(ProtocolType.Tcp, 9883);
 		var data = NekaiData.ManualTesting.ExtractObjectData(info);
 		NekaiConsole.WriteLine(data);
+
+		NekaiLogs.Program.Warning("Test log.");
 	}
 
 	public static void RunBenchmarks()
