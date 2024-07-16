@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Serilog;
 using Serilog.Core;
+using ILogger = Serilog.ILogger;
 
 namespace Nekai.Common;
 
@@ -14,6 +15,7 @@ public static class NekaiLogs
 	private static readonly object _lock = new();
 	private static ILogger? _sharedLogger;
 	private static ILogger? _currentProgramLogger;
+	private static ILogger? _consoleLogger;
 
 	/// <summary>
 	/// Factory used to generate the <see cref="NekaiLogs"/>' <see cref="ILogger"/> instances.
@@ -75,6 +77,23 @@ public static class NekaiLogs
 					return Logger.None;
 			}
 			return _currentProgramLogger;
+		}
+	}
+
+	public static ILogger Console
+	{
+		get
+		{
+			if(_consoleLogger is not null)
+				return _consoleLogger;
+
+			lock(_lock)
+			{
+				if(!_TryInstantiateGlobalLogger(ref _consoleLogger, null))
+					// Logger creation failed. Return a void logger, and retry on the next call.
+					return Logger.None;
+			}
+			return _consoleLogger;
 		}
 	}
 
