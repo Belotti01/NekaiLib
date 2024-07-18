@@ -20,11 +20,7 @@ public sealed class NekaiLoggerFactory
 		LoggerConfiguration serilogConfig = new();
 		if(config.LogToConsole)
 		{
-			serilogConfig.WriteTo.Console(
-				restrictedToMinimumLevel: config.MinimumConsoleLogLevel,
-				// The Console will always use the string formatter
-				outputTemplate: config.StringFormat
-			);
+			serilogConfig.WriteTo.Sink<NekaiConsoleLogEventSink>(config.MinimumConsoleLogLevel);
 		}
 
 		if(config.LogToFile)

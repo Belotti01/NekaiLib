@@ -10,7 +10,7 @@
 	@foreach(var entry in Logs) {
 		<FluentTab Label="@entry.Key">
 			<FluentDataGrid TGridItem="NekaiLog" Items="@entry.Value.AsQueryable()" >
-				<PropertyColumn Title="Machine" Width="200px" Property="(x) => x.MachineName" />
+				<PropertyColumn Title="Machine" Width="2z00px" Property="(x) => x.MachineName" />
 				<PropertyColumn Title="Timestamp" Width="200px" Property="(x) => x.TimeStamp" Sortable="true" Format="yyyy/MM/dd hh:mm:ss" />
 				<TemplateColumn Title="Level" Width="100px">
 					<p style="@GetLevelColumnStyle(context.Type)">
