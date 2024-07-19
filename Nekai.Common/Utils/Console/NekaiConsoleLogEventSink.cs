@@ -9,8 +9,12 @@ using Serilog.Events;
 
 namespace Nekai.Common;
 
+/// <summary>
+/// Console logging sink that uses NekaiConsole instead of .NET's Console class.
+/// </summary>
 public class NekaiConsoleLogEventSink : ILogEventSink
 {
+	/// <inheritdoc />
 	public void Emit(LogEvent logEvent)
 	{
 		var message = logEvent.RenderMessage();

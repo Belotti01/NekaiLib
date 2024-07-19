@@ -25,11 +25,15 @@ public class Program
 	public static async Task RunManualTestsAsync()
 	{
 		NekaiConsole.SlowPrintMode = true;
-		var info = NekaiProcessNetworkInfo.ForCurrentProcess(ProtocolType.Tcp, 9883);
-		var data = NekaiData.ManualTesting.ExtractObjectData(info);
-		NekaiConsole.WriteLine(data);
 
-		NekaiLogs.Program.Warning("Test log.");
+		ConsoleLoadingBuilder b = new()
+		{
+			Character = '-',
+			Prefix = "[",
+			Postfix = "]"
+		};
+
+		b.Run();
 	}
 
 	public static void RunBenchmarks()

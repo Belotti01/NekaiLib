@@ -2,6 +2,8 @@
 
 public class ConsoleLoadingBuilder
 {
+	public string Prefix { get; set; } = "";
+	public string Postfix { get; set; } = "";
 	public char Character { get; set; } = '.';
 	public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(1);
 	private int _maxCharacters = 3;
@@ -19,20 +21,23 @@ public class ConsoleLoadingBuilder
 
 		var loadingPosition = Console.GetCursorPosition();
 
-		int index = 0;
+		int index = Prefix.Length;
 
-		string startingLoadingBar = Character + new string(' ', MaxCharacters - 1);
+		string startingLoadingBar = Prefix + Character + new string(' ', MaxCharacters - 1) + Postfix;
+
+		// Prepares the postfix in place, otherwise it would appear only after the first MaxCharacters iterations.
+		NekaiConsole.WriteAtPosition(startingLoadingBar, loadingPosition.Left + Prefix.Length, loadingPosition.Top);
 
 		while(!token.IsCancellationRequested)
 		{
 			if(index > MaxCharacters)
 			{
 				index = 1;
-				NekaiConsole.WriteAtPosition(startingLoadingBar, loadingPosition.Left, loadingPosition.Top);
+				NekaiConsole.WriteAtPosition(startingLoadingBar, loadingPosition.Left + Prefix.Length, loadingPosition.Top);
 			}
 			else
 			{
-				NekaiConsole.WriteAtPosition(new string(Character, index), loadingPosition.Left, loadingPosition.Top, Color);
+				NekaiConsole.WriteAtPosition(Prefix + new string(Character, index), loadingPosition.Left + Prefix.Length, loadingPosition.Top, Color);
 			}
 			index++;
 
@@ -42,7 +47,7 @@ public class ConsoleLoadingBuilder
 
 	public void Run(CancellationToken token = default)
 	{
-		RunAsync(token)
-			.RunSynchronously();
+		var task = RunAsync(token);
+		task.Wait();
 	}
 }
