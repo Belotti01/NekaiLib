@@ -44,9 +44,11 @@ public class PathString
 	public static implicit operator PathString(ReadOnlySpan<char> path)
 		=> new(path.ToString());
 
-	/// <summary> Validate the <paramref name="path"/> and wrap it as a <see cref="PathString"/> if successful. Returns <see langword="null"/>
-	/// if the path validation fails. </summary>
+	/// <summary> Validate the <paramref name="path"/> and wrap it as a <see cref="PathString"/> if successful. Throws <see cref="InvalidCastException"/>
+	/// if the parsing fails. </summary>
 	/// <param name="path"> The <see langword="string"/> to convert. </param>
+	/// <exception cref="InvalidCastException"> Thrown when the <see langword="string"/> can't be parsed to a <see cref="PathString"/>. </exception>
+	/// <remarks> It's recommended to use the safer <see cref="TryParse(string?, bool)"/> instead. </remarks>
 	public static explicit operator PathString(string path) {
 		var result = TryParse(path);
 		if(result.IsSuccessful)
