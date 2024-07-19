@@ -48,6 +48,6 @@ public class ConsoleLoadingBuilder
 	public void Run(CancellationToken token = default)
 	{
 		var task = RunAsync(token);
-		task.Wait();
+		task.Wait(token);
 	}
 }
