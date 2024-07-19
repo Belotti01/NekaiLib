@@ -33,7 +33,8 @@ public class Program
 			Postfix = "]"
 		};
 
-		b.Run();
+		b.RunAsync();
+		NekaiConsole.WriteLine("Test");
 	}
 
 	public static void RunBenchmarks()
