@@ -47,10 +47,13 @@ public class PathString
 	/// <summary> Validate the <paramref name="path"/> and wrap it as a <see cref="PathString"/> if successful. Returns <see langword="null"/>
 	/// if the path validation fails. </summary>
 	/// <param name="path"> The <see langword="string"/> to convert. </param>
-	public static explicit operator PathString?(string? path)
-		=> TryParse(path, null, out var result)
-		? result
-		: null;
+	public static explicit operator PathString(string path) {
+		var result = TryParse(path);
+		if(result.IsSuccessful)
+			return result.Value;
+
+		throw new InvalidCastException($"String casting to PathString failed. {result.Error.GetMessage()}");
+	}
 
 	/// <inheritdoc cref="string.this[int]"/>
 	public char this[int index] => Path[index];
@@ -100,6 +103,7 @@ public class PathString
 	}
 
 	// For more straight-forward "manual" parsing, outside of deserialization libraries.
+	/// <inheritdoc />
 	public static Result<PathString, PathOperationResult> TryParse([NotNullWhen(true)] string? s, bool keepPathRelative = false)
 	{
 		var result = NekaiPath.ValidatePath(s);
