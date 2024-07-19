@@ -2,6 +2,12 @@
 
 public class ConsoleLoadingBuilder
 {
+	/// <summary> The fallback cancellation token's source. </summary>
+	protected CancellationTokenSource _defaultCancellationTokenSource = new();
+	/// <summary> The fallback cancellation token when none is set. </summary>
+	protected CancellationToken _defaultCancellationToken => _defaultCancellationTokenSource.Token;
+
+
 	/// <summary> The loading bar's prefix. </summary>
 	public string Prefix { get; set; } = "";
 	/// <summary> The loading bar's postfix. </summary>
@@ -24,9 +30,9 @@ public class ConsoleLoadingBuilder
 	/// Asynchronously build, print, and keep updating the loading bar until the <paramref name="token"/> emits cancellation.
 	/// </summary>
 	/// <param name="token"> The token used to stop the updates. </param>
-	public async Task RunAsync(CancellationToken token = default)
+	public async Task RunAsync(CancellationToken? token = null)
 	{
-		if(MaxCharacters == 0 || token.IsCancellationRequested)
+		if(MaxCharacters == 0 || (token?.IsCancellationRequested ?? _defaultCancellationToken.IsCancellationRequested))
 			return;
 
 		var loadingPosition = Console.GetCursorPosition();
@@ -40,7 +46,7 @@ public class ConsoleLoadingBuilder
 		// Set the pointer to the next line, as to avoid printing over the loading bar.
 		NekaiConsole.WriteLine();
 
-		while(!token.IsCancellationRequested)
+		while(!(token?.IsCancellationRequested ?? _defaultCancellationToken.IsCancellationRequested))
 		{
 			if(index > MaxCharacters)
 			{
@@ -53,7 +59,7 @@ public class ConsoleLoadingBuilder
 			}
 			index++;
 
-			await Task.Delay(Interval, token);
+			await Task.Delay(Interval, token ?? _defaultCancellationToken);
 		}
 	}
 
@@ -61,9 +67,21 @@ public class ConsoleLoadingBuilder
 	/// Build, print, and keep updating the loading bar until the <paramref name="token"/> emits cancellation.
 	/// </summary>
 	/// <param name="token"> The token used to stop the updates. </param>
-	public void Run(CancellationToken token = default)
+	public void Run(CancellationToken? token = null)
 	{
 		var task = RunAsync(token);
-		task.Wait(token);
+		task.Wait(token ?? _defaultCancellationToken);
 	}
+
+	/// <summary>
+	/// Requests the end of the loading bar updates.
+	/// </summary>
+	public void Cancel()
+		=> _defaultCancellationTokenSource.Cancel();
+
+	/// <summary>
+	/// Asynchronously requests the end of the loading bar updates.
+	/// </summary>
+	public async Task CancelAsync()
+		=> await _defaultCancellationTokenSource.CancelAsync();
 }
