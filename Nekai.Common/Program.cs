@@ -26,15 +26,10 @@ public class Program
 	{
 		NekaiConsole.SlowPrintMode = true;
 
-		ConsoleLoadingBuilder b = new()
-		{
-			Character = '-',
-			Prefix = "[",
-			Postfix = "]"
-		};
-
-		b.RunAsync();
-		NekaiConsole.WriteLine("Test");
+		NekaiLogs.Console.Error("Error");
+		NekaiLogs.Console.Warning("Warning");
+		NekaiLogs.Console.Information("Info");
+		NekaiLogs.Console.Fatal("Fatal");
 	}
 
 	public static void RunBenchmarks()

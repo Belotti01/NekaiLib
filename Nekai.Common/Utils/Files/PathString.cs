@@ -519,11 +519,11 @@ public class PathString
 	/// <returns> <see langword="true"/> if this path points to the same directory or file as <paramref name="other"/>;
 	/// <see langword="false"/> otherwise. </returns>
 	public bool Equals(string? other)
-		=> Path.Equals(other);      // TODO: Check OS for case-sensitivity and use the proper comparer.
+		=> Path.Equals(other, StringComparison.CurrentCulture);
 
 	/// <inheritdoc cref="string.CompareTo(string?)"/>
 	public int CompareTo(string? other)
-		=> Path.CompareTo(other);  // TODO: Check OS for case-sensitivity and use the proper comparer.
+		=> Path.CompareTo(other);
 
 	public override bool Equals(object? obj)
 	{
@@ -555,11 +555,11 @@ public class PathString
 
 	/// <inheritdoc cref="Equals(string?)"/>
 	public bool Equals(ReadOnlySpan<char> other)
-		=> Path.AsSpan() == other;      // TODO: Check OS for case-sensitivity and use the proper comparer.
+		=> Path.AsSpan().Equals(other, StringComparison.CurrentCulture);
 
 	/// <inheritdoc cref="System.MemoryExtensions.SequenceCompareTo{T}(ReadOnlySpan{T}, ReadOnlySpan{T})"/>
 	public int CompareTo(ReadOnlySpan<char> other)
-		=> Path.AsSpan().CompareTo(other, StringComparison.Ordinal);   // TODO: Check OS for case-sensitivity and use the proper comparer.
+		=> Path.AsSpan().CompareTo(other, StringComparison.CurrentCulture);
 
 	public bool Equals(PathString? other)
 		=> string.Equals(Path, other?.Path);

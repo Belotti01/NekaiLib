@@ -39,7 +39,7 @@ public static partial class NekaiData
 
 		private static PathString? _GetLocalDirectoryPath()
 		{
-			// It may be beneficial in the future to add checks of the last modified date of the files in <path> and
+			// TODO: It may be beneficial in the future to add checks of the last modified date of the files in <path> and
 			// <_DefaultLocalConfigurationDirectory>, and overwrite the first if the second is newer.
 
 			// Ensure that the fixed filepath is valid
@@ -79,9 +79,10 @@ public static partial class NekaiData
 			{
 				File.WriteAllText(_GlobalConfigurationFilepath, _DefaultLocalConfigurationDirectory);
 			}
-			catch
+			catch(Exception ex)
 			{
-				// TODO: ... well sh1t
+				// All attempts failed - the configuration can't be accessed nor created anew.
+				Exceptor.ThrowCritical(AppExitCode.SerializationError, ex.Message);
 			}
 
 			return localPath;

@@ -25,6 +25,9 @@ public static class NekaiLogs
 	/// <summary>
 	/// Thread-safe instance of <see cref="ILogger"/> that serializes logs into <see cref="NekaiData.Directories.SharedLogs"/>.
 	/// </summary>
+	/// <remarks>
+	/// This is used internally by the Nekai libraries. For other programs it is recommended to use the <see cref="Program"/> logger instead.
+	/// </remarks>
 	public static ILogger Shared
 	{
 		get

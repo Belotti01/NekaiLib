@@ -3,6 +3,8 @@ using System.Runtime.CompilerServices;
 
 namespace Nekai.Common;
 
+// TODO: Move Guid to V7 once it's officially supported in .NET.
+
 /// <summary>
 /// Auto-generated GUID wrapper. Useful to implicitly automate the GUID generation during initialization of ID-bounded objects.
 /// </summary>

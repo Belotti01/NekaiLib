@@ -1,9 +1,12 @@
 ﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core.Enrichers;
+using ILogger = Serilog.ILogger;
 
 namespace Nekai.Common;
 
+// TODO: Implement ILoggerFactory.
 public sealed class NekaiLoggerFactory
 {
 	// More simplified methods can ba added (TryCreateConsoleLogger, TryCreateFileLogger, etc)
@@ -53,7 +56,7 @@ public sealed class NekaiLoggerFactory
 					shared: true
 				);
 			}
-			
+
 			serilogConfig.Enrich.WithMachineName();
 		}
 
