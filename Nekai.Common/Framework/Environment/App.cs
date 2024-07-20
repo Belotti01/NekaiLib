@@ -13,9 +13,21 @@ public static partial class CurrentEnvironment
 		}
 
 		/// <inheritdoc cref="GCMemoryInfo.TotalCommittedBytes"/>
-		public static long GetUsedMemory()
+		public static long GetUsedHeapMemory()
 		{
 			return GC.GetGCMemoryInfo().TotalCommittedBytes;
+		}
+
+		/// <inheritdoc cref="GC.GetTotalMemory(bool)"/>
+		public static long GetFreeHeapMemory()
+		{
+			return GC.GetTotalMemory(false);
+		}
+
+		/// <inheritdoc cref="GCMemoryInfo.HeapSizeBytes"/>
+		public static long GetTotalHeapMemory()
+		{
+			return GC.GetGCMemoryInfo().HeapSizeBytes;
 		}
 
 		/// <summary>
