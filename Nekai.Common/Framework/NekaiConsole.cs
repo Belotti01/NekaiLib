@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-
+﻿
 namespace Nekai.Common;
 
 /// <summary>

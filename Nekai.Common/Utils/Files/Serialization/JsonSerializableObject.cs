@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using Microsoft.Extensions.Options;
 using Nekai.Common.Reflection;
 
 namespace Nekai.Common;
