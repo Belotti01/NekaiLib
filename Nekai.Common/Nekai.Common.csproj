@@ -1,35 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-	  <LangVersion>latest</LangVersion>
-	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
-	  <SignAssembly>False</SignAssembly>
-	  <DelaySign>False</DelaySign>
-	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	  <Title>Nekai.Common</Title>
-	  <Authors>Nekai</Authors>
-	  <AssemblyVersion>0.24.0721.2</AssemblyVersion>
-	  <FileVersion>0.24.0721.2</FileVersion>
-	  <OutputType>Library</OutputType>
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  <Version>8.0.1</Version>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+	    <LangVersion>latest</LangVersion>
+	    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	    <SignAssembly>False</SignAssembly>
+	    <DelaySign>False</DelaySign>
+	    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	    <Title>Nekai.Common</Title>
+	    <Authors>Nekai</Authors>
+	    <AssemblyVersion>0.24.0721.3</AssemblyVersion>
+	    <FileVersion>0.24.0721.3</FileVersion>
+	    <OutputType>Library</OutputType>
+	    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	    <Version>8.0.1</Version>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Deterministic>True</Deterministic>
-  </PropertyGroup>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <Deterministic>True</Deterministic>
-  </PropertyGroup>
+    </PropertyGroup>
+	
+    <PropertyGroup>
+	    <PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
+    <ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\LICENSE" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+  
+	<ItemGroup>
+        <None Include="..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <PackageReference Include="CommunityToolkit.Common" Version="8.2.2" />
     <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.2" />
     <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.2.2" />
@@ -42,30 +52,30 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
-  </ItemGroup>
+    </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
+    </ItemGroup>
 	
-  <ItemGroup>
+    <ItemGroup>
     <Compile Update="NekaiResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>NekaiResources.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>NekaiResources.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
+    </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <EmbeddedResource Update="NekaiResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>NekaiResources.Designer.cs</LastGenOutput>
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>NekaiResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
+    </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <Using Include="DotNext" />
     <Using Include="System.Diagnostics.Contracts" />
-  </ItemGroup>
+    </ItemGroup>
 
 </Project>
