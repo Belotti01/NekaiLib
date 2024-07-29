@@ -6,7 +6,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 	<OutputType>library</OutputType>
+	  <Version>8.0.1</Version>
   </PropertyGroup>
+	
+	<PropertyGroup>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<AssemblyVersion>0.24.0721.1</AssemblyVersion>
+		<FileVersion>0.24.0721.1</FileVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
+		<None Include="..\LICENSE" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

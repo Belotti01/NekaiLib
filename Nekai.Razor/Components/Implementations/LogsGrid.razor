@@ -1,19 +1,16 @@
 ﻿@namespace Nekai.Razor
-@using System.Text.Json.Serialization
-@using System.Text.Json
-@using System.Text.Json.Serialization.Metadata
 @using Microsoft.Extensions.Logging
 @using Nekai.Common
 
 
 <FluentTabs>
-	@foreach(var entry in Logs) {
+	@foreach(var entry in _Logs) {
 		<FluentTab Label="@entry.Key">
 			<FluentDataGrid TGridItem="NekaiLog" Items="@entry.Value.AsQueryable()" >
-				<PropertyColumn Title="Machine" Width="2z00px" Property="(x) => x.MachineName" />
+				<PropertyColumn Title="Machine" Width="200px" Property="(x) => x.MachineName" />
 				<PropertyColumn Title="Timestamp" Width="200px" Property="(x) => x.TimeStamp" Sortable="true" Format="yyyy/MM/dd hh:mm:ss" />
 				<TemplateColumn Title="Level" Width="100px">
-					<p style="@GetLevelColumnStyle(context.Type)">
+					<p style="@_GetLevelColumnStyle(context.Type)">
 						@context.TypeString
 					</p>
 				</TemplateColumn>
@@ -29,27 +26,26 @@
 	[Parameter]
 	public bool OmitProgramLogs { get; set; }
 
-	public Dictionary<string, IEnumerable<NekaiLog>> Logs { get; set; } = [];
-	public string[] LogDirectories { get; set; } = [];
+	private Dictionary<string, IEnumerable<NekaiLog>> _Logs { get; set; } = [];
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await LoadLogs();
+		_LoadLogs();
 	}
 
-	public async Task LoadLogs()
+	private void _LoadLogs()
 	{
-		Logs = [];
+		_Logs = [];
 
 		if (!OmitSharedLogs)
 		{
-			Logs.Add("Shared", NekaiLogs.DeserializeAll(NekaiData.Directories.SharedLogs));
+			_Logs.Add("Shared", NekaiLogs.DeserializeAll(NekaiData.Directories.SharedLogs));
 		}
 
 		if (OmitProgramLogs)
 			return;
 
-		var directories = Directory.GetDirectories(NekaiData.Directories.ProgramsLogs);
+		var directories = NekaiData.Directories.ProgramsLogs.EnumerateDirectories();
 
 		foreach (string directory in directories)
 		{
@@ -59,7 +55,7 @@
 
 			try
 			{
-				Logs.Add(dirPath.GetFileOrDirectoryName().ToString(), NekaiLogs.DeserializeAll(dirPath));
+				_Logs.Add(dirPath.GetFileOrDirectoryName().ToString(), NekaiLogs.DeserializeAll(dirPath));
 			}catch(ArgumentException)
 			{
 				NekaiLogs.Shared.Error($"Duplicate directory entry found when filling LogsGrid: '{dirPath}'");
@@ -67,9 +63,10 @@
 		}
 	}
 
-	public string GetLevelColumnStyle(LogLevel level)
+	private string _GetLevelColumnStyle(LogLevel level)
 		=> level switch
 		{
+			LogLevel.Critical => "color: red",
 			LogLevel.Error => "color: red",
 			LogLevel.Warning => "color: yellow",
 			LogLevel.Information => "color: blue",
