@@ -412,7 +412,7 @@ public class PathString
 		try
 		{
 			return File.ReadAllText(Path, encoding ?? Encoding.Default);
-		}catch { }
+		} catch { }
 		return null;
 	}
 
@@ -501,6 +501,44 @@ public class PathString
 			: System.IO.Path.GetFileNameWithoutExtension(span);
 	}
 
+	/// <inheritdoc cref="Directory.EnumerateFiles(string, string, SearchOption)"/>
+	public IEnumerable<string> EnumerateFiles(SearchOption searchOption = SearchOption.TopDirectoryOnly, string searchPattern = "*")
+	{
+		if(IsExistingFile())
+			return [ Path ];
+
+		if(!IsExistingDirectory())
+			return [];
+
+		var files = Directory.EnumerateFiles(Path, searchPattern, searchOption);
+		
+		return files;
+	}
+
+	/// <inheritdoc cref="Directory.EnumerateDirectories(string, string, SearchOption)"/>
+	public IEnumerable<string> EnumerateDirectories(SearchOption searchOption = SearchOption.TopDirectoryOnly, string searchPattern = "*")
+	{
+		if(!IsExistingDirectory())
+			return [];
+
+		var directories = Directory.EnumerateDirectories(Path, searchPattern, searchOption);
+
+		return directories;
+	}
+
+	/// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string, SearchOption)"/>
+	public IEnumerable<string> EnumerateFileSystemEntries(SearchOption searchOption = SearchOption.TopDirectoryOnly, string searchPattern = "*")
+	{
+		if(IsExistingFile())
+			return [ Path ];
+
+		if(!IsExistingDirectory())
+			return [];
+
+		var entries = Directory.EnumerateFileSystemEntries(Path, searchPattern, searchOption);
+
+		return entries;
+	}
 
 	/// <summary>
 	/// Extract the directory name from this path.

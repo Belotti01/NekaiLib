@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nekai.Common.Extensions;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -19,8 +20,7 @@ public class NekaiConsoleLogEventSink : ILogEventSink
 	{
 		var message = logEvent.RenderMessage();
 
-		var timeFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
-		var timeString = logEvent.Timestamp.ToString(timeFormat);
+		var timeString = logEvent.Timestamp.ToUniversalSortableString();
 
 		string output = $"[{timeString}] {message}";
 		var outputColor = logEvent.Level switch

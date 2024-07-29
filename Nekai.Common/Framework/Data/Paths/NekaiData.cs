@@ -5,7 +5,7 @@ public static partial class NekaiData
 	/// <summary> To avoid deleting temporary files of which the lock has been temporarily released, but are still in use,
 	/// keep them if they've been accessed recently. </summary>
 	/// <remarks> Currently set to 3 minutes. </remarks>
-	private static readonly TimeSpan _minimumTempFileAgeForDeletion = TimeSpan.FromMinutes(3);
+	private static readonly TimeSpan _minimumTempFileAgeForDeletion = TimeSpan.FromMinutes(5);
 
 	public static Result<int, PathOperationResult> ClearOldTempFiles()
 	{
