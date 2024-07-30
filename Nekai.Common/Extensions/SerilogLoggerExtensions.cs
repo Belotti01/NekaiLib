@@ -35,7 +35,15 @@ public static class SerilogLoggerExtensions
 	{
 		if(NekaiApp.HasDebugger)
 			return ex.ToString();
-		return ex.Message;
+		
+		string result = ex.Message;
+		while(ex.InnerException is not null)
+		{
+			ex = ex.InnerException;
+			result += " -> " + ex.Message;
+		}
+
+		return result;
 	}
 
 	private static void _ThrowIfDebug(ILogger logger, string? message, LogEventLevel level, params object?[] propertyValues)

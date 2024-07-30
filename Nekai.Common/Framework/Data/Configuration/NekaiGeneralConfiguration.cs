@@ -53,7 +53,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 			if(deserializationResult.IsSuccessful)
 				return deserializationResult.Value;
 
-			Debug.Fail("General configuration file exists, but deserialization failed. Creating a new instance...");
+			NekaiLogs.Shared.Error("General configuration file exists, but deserialization failed. Creating a new instance...");
 		}
 
 		// If file is not found or something goes wrong, load the default values instead.
