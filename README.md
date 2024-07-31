@@ -10,3 +10,5 @@ Simplifies implementation of the FluentUI components library, and builds compone
 
 ### Nekai.Analyzers
 Extends Nekai.Common with its own best-practices.
+
+![FrameworkStructure](https://github.com/user-attachments/assets/0fb0b684-ac83-4ce4-81a2-6720ec1bea0b)
