@@ -171,12 +171,6 @@ public static class NekaiLogs
 			line = buffer.ReadLine();
 		}
 
-		if(json is null)
-		{
-			Shared.Warning($"Logs file {filePath} could not be deserialized.");
-			return [];
-		}
-
 		NekaiLog[] fileLogs = json
 			.Select(x => JsonSerializer.Deserialize<NekaiLog>(x))
 			.ExceptNulls()
