@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Configuration;
+using System.Diagnostics;
 using System.Net;
 
 namespace Nekai.Common;
@@ -77,5 +78,38 @@ public static class NekaiApp
 			Exceptor.ThrowIfDebug($"An unhandled Exception was caught while closing the application: {ex.Message}", ex);
 		}
 		_OnProcessExitHandledInternal = null;
+	}
+	
+	public static Configuration ReadConfiguration(ConfigurationUserLevel level = ConfigurationUserLevel.PerUserRoamingAndLocal)
+	{
+		return ConfigurationManager
+			.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+	}
+
+	/// <inheritdoc cref="GCMemoryInfo.TotalCommittedBytes"/>
+	public static long GetUsedHeapMemory()
+	{
+		return GC.GetGCMemoryInfo().TotalCommittedBytes;
+	}
+
+	/// <inheritdoc cref="GC.GetTotalMemory(bool)"/>
+	public static long GetFreeHeapMemory()
+	{
+		return GC.GetTotalMemory(false);
+	}
+
+	/// <inheritdoc cref="GCMemoryInfo.HeapSizeBytes"/>
+	public static long GetTotalHeapMemory()
+	{
+		return GC.GetGCMemoryInfo().HeapSizeBytes;
+	}
+
+	/// <summary>
+	/// Check whether the memory usage of the last GC invocation is above the "High-load" threshold.
+	/// </summary>
+	public static bool IsMemoryUnderPressure()
+	{
+		var memoryInfo = GC.GetGCMemoryInfo();
+		return memoryInfo.MemoryLoadBytes > memoryInfo.HighMemoryLoadThresholdBytes;
 	}
 }

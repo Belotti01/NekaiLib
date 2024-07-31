@@ -10,50 +10,50 @@ public static partial class NekaiData
 		private static readonly Lazy<string> _localConfiguration = new(_LocalNekaiDirectoryLoader._Load);
 
 		/// <summary> Framework configuration directory. </summary>
-		public static PathString LocalConfiguration => _CreateLocal();
+		public static PathString LocalConfiguration => _CreateLocalConfigDirectory();
 
 		/// <summary> Folder to use to store temporary files. </summary>
-		public static PathString Temp => _Create(Path.GetTempPath(), "Nekai");
+		public static PathString Temp => _CreateDirectory(Path.GetTempPath(), "Nekai");
 
 		/// <summary> Directory for UI personalization data. </summary>
-		public static PathString UI => _CreateLocal("UI");
+		public static PathString UI => _CreateLocalConfigDirectory("UI");
 
 		/// <summary> Folder to store color palettes into. </summary>
-		public static PathString ColorPalettes { get; private set; } = _Create(UI, "Colors");
+		public static PathString ColorPalettes { get; private set; } = _CreateDirectory(UI, "Colors");
 
 		/// <summary> Folder to store themes into. </summary>
-		public static PathString Themes => _Create(UI, "Themes");
+		public static PathString Themes => _CreateDirectory(UI, "Themes");
 
 		/// <summary> Directory containing the log folders. </summary>
-		public static PathString Logs => _CreateLocal("Logs");
+		public static PathString Logs => _CreateLocalConfigDirectory("Logs");
 
 		/// <summary> Folder for log files shared across programs. </summary>
-		public static PathString SharedLogs => _Create(Logs, "Shared");
+		public static PathString SharedLogs => _CreateDirectory(Logs, "Shared");
 
 		/// <summary> Folder for log files scoped to single programs. </summary>
-		public static PathString ProgramsLogs => _Create(Logs, "Programs");
+		public static PathString ProgramsLogs => _CreateDirectory(Logs, "Programs");
 
 		/// <summary> Folder for log files scoped to the current program. </summary>
-		public static PathString CurrentProgramLogs => _Create(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(NekaiApp.Name));
+		public static PathString CurrentProgramLogs => _CreateDirectory(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(NekaiApp.Name));
 
 		/// <summary> View information of the currently active program. </summary>
-		public static PathString CurrentProgramViews => _CreateProgram("Views");
+		public static PathString CurrentProgramViews => _CreateProgramDirectory("Views");
 
 		/// <summary> Storage for data specific to the currently active program. </summary>
-		public static PathString CurrentProgramData => _CreateProgram("Data");
+		public static PathString CurrentProgramData => _CreateProgramDirectory("Data");
 
 		/// <summary> Configurations folder of the current program. </summary>
-		public static PathString CurrentProgramConfiguration => _CreateProgram("Configuration");
+		public static PathString CurrentProgramConfiguration => _CreateProgramDirectory("Configuration");
 
 
 
-		private static PathString _CreateProgram(params string[] relativePath)
-			=> _Create(relativePath.Prepend(_CreateLocal("ProgramData", NekaiApp.Name)).ToArray());
+		private static PathString _CreateProgramDirectory(params string[] relativePath)
+			=> _CreateDirectory(relativePath.Prepend(_CreateLocalConfigDirectory("ProgramData", NekaiApp.Name)).ToArray());
 
-		private static PathString _CreateLocal(params string[] relativePath)
-			=> _Create(relativePath.Prepend(_localConfiguration.Value).ToArray());
+		private static PathString _CreateLocalConfigDirectory(params string[] relativePath)
+			=> _CreateDirectory(relativePath.Prepend(_localConfiguration.Value).ToArray());
 
-		private static PathString _Create(params string[] fullPath)
+		private static PathString _CreateDirectory(params string[] fullPath)
 		{
 			string pathString = Path.Combine(fullPath);
 			var result = PathString.TryParse(pathString);

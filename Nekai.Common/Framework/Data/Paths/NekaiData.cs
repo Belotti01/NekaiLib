@@ -2,6 +2,9 @@
 
 public static partial class NekaiData
 {
+	/// <inheritdoc cref="NekaiGeneralConfiguration"/>
+	public static NekaiGeneralConfiguration Configuration => NekaiGeneralConfiguration.Singleton;
+	
 	/// <summary> To avoid deleting temporary files of which the lock has been temporarily released, but are still in use,
 	/// keep them if they've been accessed recently. </summary>
 	/// <remarks> Currently set to 3 minutes. </remarks>

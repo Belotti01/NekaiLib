@@ -11,6 +11,7 @@ namespace Nekai.Razor;
 
 public class NekaiComponentBase : ComponentBase
 {
+	/// <summary> Whether the <see cref="ExecuteInBackground"/> task is being executed. </summary>
 	public bool IsExecutingBackgroundTask { get; private set; } = false;
 	private Task? _backgroundTask;
 	protected CancellationTokenSource BackgroundTaskCancellationTokenSource { get; } = new();
@@ -36,7 +37,7 @@ public class NekaiComponentBase : ComponentBase
 		IsExecutingBackgroundTask = true;
 		_backgroundTask = Task
 			.Run(async () => await ExecuteInBackground(BackgroundTaskCancellationToken), BackgroundTaskCancellationToken)
-			.ContinueWith((t) => IsExecutingBackgroundTask = false);
+			.ContinueWith((t) => IsExecutingBackgroundTask = false, BackgroundTaskCancellationToken);
 	}
 
 	/// <summary>
@@ -44,8 +45,8 @@ public class NekaiComponentBase : ComponentBase
 	/// </summary>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
-	protected virtual async Task ExecuteInBackground(CancellationToken cancellationToken)
+	protected virtual Task ExecuteInBackground(CancellationToken cancellationToken)
 	{
-
+		return Task.CompletedTask;
 	}
 }
