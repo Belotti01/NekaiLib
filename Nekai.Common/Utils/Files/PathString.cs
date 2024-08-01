@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using System.Text;
 
 namespace Nekai.Common;
 
@@ -53,7 +52,7 @@ public class PathString
 		if(result.IsSuccessful)
 			return result.Value;
 
-		throw new InvalidCastException($"String casting to PathString failed. {result.Error.GetMessage()}");
+		throw new InvalidCastException($"String casting to PathString failed: {result.Error.GetMessage()}");
 	}
 
 	/// <inheritdoc cref="string.this[int]"/>
@@ -62,13 +61,19 @@ public class PathString
 	/// <summary> The <see langword="string"/> representation of this <see cref="PathString"/>. </summary>
 	public string Path { get; }
 
+	/// <summary> Instance of <see cref="PathString"/> that represents an empty string. </summary>
 	public static PathString Empty { get; } = new("");
 
+	/// <inheritdoc cref="string.Length"/>
 	public int Length => Path.Length;
+	/// <summary> Whether the <see cref="Path"/> represents an empty string. </summary>
 	public bool IsEmpty => Path.AsSpan().IsEmpty;
+	/// <inheritdoc cref="System.IO.Path.IsPathRooted(System.ReadOnlySpan{char})"/>
 	public bool IsAbsolute => System.IO.Path.IsPathRooted(Path.AsSpan());
+	/// Whether the <see cref="Path"/> is not rooted.
 	public bool IsRelative => !IsAbsolute;
 
+	/// <summary> Whether the <see cref="Path"/> only represents a root directory. </summary>
 	public bool IsRootOnly
 	{
 		get
@@ -104,7 +109,7 @@ public class PathString
 	}
 
 	// For more straight-forward "manual" parsing, outside of deserialization libraries.
-	/// <inheritdoc />
+	/// <inheritdoc cref="IParsable{TSelf}.TryParse"/>
 	public static Result<PathString, PathOperationResult> TryParse([NotNullWhen(true)] string? s, bool keepPathRelative = false)
 	{
 		var result = NekaiPath.ValidatePath(s);
@@ -342,10 +347,10 @@ public class PathString
 		if(!IsExistingFile())
 			return new(PathOperationResult.DoesNotExist);
 
-		DateTime lastAccessUTC;
+		DateTime lastAccessUtc;
 		try
 		{
-			lastAccessUTC = File.GetLastAccessTimeUtc(Path);
+			lastAccessUtc = File.GetLastAccessTimeUtc(Path);
 		}
 		catch(Exception ex)
 		{
@@ -353,7 +358,7 @@ public class PathString
 			return new(NekaiPath.GetResultFromException(ex));
 		}
 
-		bool wasLastAccessInRange = DateTime.UtcNow <= lastAccessUTC + time;
+		bool wasLastAccessInRange = DateTime.UtcNow <= lastAccessUtc + time;
 		return wasLastAccessInRange;
 	}
 
@@ -391,6 +396,9 @@ public class PathString
 	/// <returns> Whether the operation was successful or not. </returns>
 	public bool CanBeReadAsFile()
 	{
+		if(IsExistingDirectory())
+			return false;
+		
 		try
 		{
 			using FileStream stream = File.Open(Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -412,7 +420,11 @@ public class PathString
 		try
 		{
 			return File.ReadAllText(Path, encoding ?? Encoding.Default);
-		} catch { }
+		}
+		catch(Exception ex)
+		{
+			NekaiLogs.Shared.Error("Couldn't access contents of file '{path}': {exception}", Path, ex.Message);
+		}
 		return null;
 	}
 
@@ -423,7 +435,10 @@ public class PathString
 		{
 			return await File.ReadAllTextAsync(Path, encoding ?? Encoding.Default);
 		}
-		catch { }
+		catch(Exception ex)
+		{
+			NekaiLogs.Shared.Error("Couldn't access contents of file '{path}': {exception}", Path, ex.Message);
+		}
 		return null;
 	}
 
@@ -434,7 +449,10 @@ public class PathString
 		{
 			return await File.ReadAllLinesAsync(Path, encoding ?? Encoding.Default);
 		}
-		catch { }
+		catch(Exception ex)
+		{
+			NekaiLogs.Shared.Error("Couldn't access contents of file '{path}': {exception}", Path, ex.Message);
+		}
 		return null;
 	}
 
@@ -483,7 +501,10 @@ public class PathString
 		{
 			return File.ReadAllLines(Path, encoding ?? Encoding.Default);
 		}
-		catch { }
+		catch(Exception ex)
+		{
+			NekaiLogs.Shared.Error("Couldn't access contents of file '{path}': {exception}", Path, ex.Message);
+		}
 		return null;
 	}
 
@@ -560,7 +581,7 @@ public class PathString
 
 	/// <inheritdoc cref="string.CompareTo(string?)"/>
 	public int CompareTo(string? other)
-		=> Path.CompareTo(other);
+		=> String.Compare(Path, other, StringComparison.CurrentCulture);
 
 	public override bool Equals(object? obj)
 	{

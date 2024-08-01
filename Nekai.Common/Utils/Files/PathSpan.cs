@@ -45,9 +45,14 @@ public readonly ref struct PathSpan
 	// To avoid allocating a new string each step during iteration, work with spans instead.
 	public PathSpan GetContainingFolder()
 	{
-		int lastSeparator = Path.LastIndexOfAny('/', '\\');
+		if(IsRootOnly)
+			return this;
+		
+		// Remove the / or \ character at the end of the Path.
+		var path = System.IO.Path.TrimEndingDirectorySeparator(Path);
+		int lastSeparator = NekaiPath.LastIndexOfDirectorySeparatorChar(path);
 
-		if(lastSeparator == -1 || IsRootOnly)
+		if(lastSeparator == -1)
 			return this;    // The path is already the root folder.
 
 		return new PathSpan(Path[..lastSeparator]);
