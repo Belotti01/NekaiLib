@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-	<OutputType>library</OutputType>
 	  <Version>8.0.1</Version>
   </PropertyGroup>
 	
@@ -27,8 +26,10 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorAnimate" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.9.1" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.9.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
   </ItemGroup>
 
   <ItemGroup>
