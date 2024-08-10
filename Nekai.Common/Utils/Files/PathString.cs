@@ -274,23 +274,20 @@ public class PathString
 		return PathOperationResult.Success;
 	}
 
-	public Result<PathString, PathOperationResult> TryAppend(string relativePath)
-	{
-		if(string.IsNullOrWhiteSpace(relativePath))
-			return new(PathOperationResult.PathIsEmpty);
-
-		string newPath = System.IO.Path.Combine(Path, relativePath);
-		// Don't use the constructor here, since the length and characters of the new path need to be validated.
-		return TryParse(newPath);
-	}
-
 	public Result<PathString, PathOperationResult> TryAppend(params string[] pathSteps)
 	{
 		if(pathSteps.Length == 0)
 			return new(PathOperationResult.PathIsEmpty);
 
-		string relativePath = System.IO.Path.Combine(pathSteps);
-		return TryAppend(relativePath);
+		try
+		{
+			string relativePath = System.IO.Path.Combine(pathSteps);
+			return this + relativePath;
+		}
+		catch(Exception ex)
+		{
+			return new(PathOperationResult.InvalidPath);
+		}
 	}
 
 	/// <summary>
@@ -593,6 +590,21 @@ public class PathString
 	public ReadOnlySpan<char> GetContainingDirectoryName()
 	{
 		return System.IO.Path.GetDirectoryName(Path.AsSpan());
+	}
+
+	public PathString Append(PathString relativePath)
+		=> this + relativePath;
+
+	public Result<PathString, PathOperationResult> TryAppend(string relativePath)
+	{
+		try
+		{
+			return this + relativePath;
+		}
+		catch(InvalidOperationException)
+		{
+			return new(PathOperationResult.InvalidPath);
+		}
 	}
 
 	/// <summary>
