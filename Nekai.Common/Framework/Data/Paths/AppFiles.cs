@@ -7,7 +7,7 @@ public static partial class NekaiData
 	/// </summary>
 	public static class Files
 	{
-		public static string LogSettingsFile => Path.Combine(Directories.SharedLogs, "Logger_Settings.json");
-		public static string GeneralSettingsFile => Path.Combine(Directories.LocalConfiguration, "Settings.json");
+		public static PathString LogSettingsFile => Directories.SharedLogs + "Logger_Settings.json";
+		public static PathString GeneralSettingsFile => Directories.LocalConfiguration + "Settings.json";
 	}
 }

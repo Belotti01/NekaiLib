@@ -14,7 +14,7 @@ namespace Nekai.Common;
 public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConfiguration>
 {
 	/// <summary> The file containing the serialized configuration. </summary>
-	private static string _FilePath => NekaiData.Files.GeneralSettingsFile;
+	private static PathString _FilePath => NekaiData.Files.GeneralSettingsFile;
 
 	/// <summary>
 	/// Unique instance of this class.
@@ -41,12 +41,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 
 	private static NekaiGeneralConfiguration _CreateSingleton()
 	{
-		var result = PathString.TryParse(_FilePath);
-		if(!result.IsSuccessful)
-			Exceptor.ThrowCritical(AppExitCode.FixedPathError, result.Error.GetMessage());
-		
-		var path = result.Value;
-		if(path.CanBeReadAsFile())
+		if(_FilePath.CanBeReadAsFile())
 		{
 			// File is accessible, deserialize it.
 			var deserializationResult = TryDeserialize(_FilePath);
