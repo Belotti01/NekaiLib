@@ -6,42 +6,44 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.Logging
 
-@inject SignInManager<IdentityUser<Guid>> SignInManager
-@inject ILogger<Login> Logger
-@inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
+@inject SignInManager<IdentityUser<Guid>> _SignInManager
+@inject ILogger<Login> _Logger
+@inject NavigationManager _NavigationManager
+@inject IdentityRedirectManager _RedirectManager
 
 <PageTitle>Log in</PageTitle>
 
 <h1>Log in</h1>
 <FluentGrid>
     <FluentGridItem xs="8" sm="4">
-        <StatusMessage Message="@errorMessage"/>
-        <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-            <DataAnnotationsValidator/>
+        <StatusMessage Message="@_errorMessage"/>
+        <FluentEditForm Model="_Input" OnValidSubmit="LoginUser" FormName="login">
+            <DataAnnotationsValidator />
             <h2>Use a local account to log in.</h2>
             <hr/>
             <FluentValidationSummary class="text-danger" role="alert"/>
+            
             <FluentStack Orientation="Orientation.Vertical">
-                <FluentTextField Name="Input.Email" @bind-Value="Input.Email" AutoComplete="username" Required="true" Placeholder="name@example.com" Label="Email" Style="width: 100%"/>
-                <FluentValidationMessage For="() => Input.Email" class="text-danger"/>
-                <FluentTextField type="password" Name="Input.Password" @bind-Value="Input.Password" AutoComplete="current-password" Required="true" Placeholder="password" Label="Password" Style="width: 100%"/>
-                <FluentValidationMessage For="() => Input.Password" class="text-danger"/>
-                <FluentCheckbox Name="Input.RememberMe" @bind-Value="Input.RememberMe" Label="Remember me"/>
-                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
+                <FluentTextField Name="Input.Email" @bind-Value="_Input.Email" AutoComplete="username" Required="true" Placeholder="name@example.com" Label="Email" Style="width: 100%"/>
+                <FluentValidationMessage For="() => _Input.Email" class="text-danger"/>
+                <FluentTextField type="password" Name="Input.Password" @bind-Value="_Input.Password" AutoComplete="current-password" Required="true" Placeholder="password" Label="Password" Style="width: 100%"/>
+                <FluentValidationMessage For="() => _Input.Password" class="text-danger"/>
+                <FluentCheckbox Name="Input.RememberMe" @bind-Value="_Input.RememberMe" Label="Remember me"/>
+                
+                <FluentButton Method="post" Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
                 <div>
                     <p>
                         <FluentAnchor Appearance="Appearance.Hypertext" Href="Account/ForgotPassword">Forgot your password?</FluentAnchor>
                     </p>
                     <p>
-                        <FluentAnchor Appearance="Appearance.Hypertext" Href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</FluentAnchor>
+                        <FluentAnchor Appearance="Appearance.Hypertext" Href="@(_NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = _ReturnUrl }))">Register as a new user</FluentAnchor>
                     </p>
                     <p>
                         <FluentAnchor Appearance="Appearance.Hypertext" Href="Account/ResendEmailConfirmation">Resend email confirmation</FluentAnchor>
                     </p>
                 </div>
             </FluentStack>
-        </EditForm>
+        </FluentEditForm>
     </FluentGridItem>
     <FluentGridItem xs="12" sm="8">
         <h3>Use another service to log in.</h3>
@@ -51,23 +53,23 @@
 </FluentGrid>
 
 @code {
-    private string? errorMessage;
+    private string? _errorMessage;
 
     [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
+    private HttpContext _HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private InputModel _Input { get; set; } = new();
 
     [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+    private string? _ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if(HttpMethods.IsGet(HttpContext.Request.Method))
+        if(HttpMethods.IsGet(_HttpContext.Request.Method))
         {
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await _HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
         }
     }
 
@@ -75,30 +77,31 @@
     {
         // This doesn't count login failures towards account lockout
         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        var result = await _SignInManager.PasswordSignInAsync(_Input.Email, _Input.Password, _Input.RememberMe, lockoutOnFailure: false);
         if(result.Succeeded)
         {
-            Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            _Logger.LogInformation("User {user} logged in.", _Input.Email);
+            _RedirectManager.RedirectTo(_ReturnUrl);
         }
         else if(result.RequiresTwoFactor)
         {
-            RedirectManager.RedirectTo(
-            "Account/LoginWith2fa",
-            new()
-            {
-                ["returnUrl"] = ReturnUrl,
-                ["rememberMe"] = Input.RememberMe
-            });
+            _RedirectManager.RedirectTo(
+                "Account/LoginWith2fa",
+                new()
+                {
+                    ["returnUrl"] = _ReturnUrl,
+                    ["rememberMe"] = _Input.RememberMe
+                }
+            );
         }
         else if(result.IsLockedOut)
         {
-            Logger.LogWarning("User account locked out.");
-            RedirectManager.RedirectTo("Account/Lockout");
+            _Logger.LogWarning("User account {user} locked out.", _Input.Email);
+            _RedirectManager.RedirectTo("Account/Lockout");
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            _errorMessage = "Error: Invalid login attempt.";
         }
     }
 
@@ -115,5 +118,4 @@
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
-
 }

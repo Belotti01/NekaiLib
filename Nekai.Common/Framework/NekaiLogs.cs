@@ -123,7 +123,7 @@ public static class NekaiLogs
 			var result = Factory.TryCreate(config);
 			if(result.IsSuccessful)
 			{
-				logger = result.Value;
+				logger = result.Value; 
 				return true;
 			}
 		}
@@ -134,9 +134,9 @@ public static class NekaiLogs
 		return false;
 	}
 
-	public static List<NekaiLog> DeserializeAll(string sourceDirectory, bool recursive = false)
+	public static List<NekaiLog> DeserializeAll(PathString sourceDirectory, bool recursive = false)
 	{
-		List<PathString> files = Directory.EnumerateFileSystemEntries(sourceDirectory)
+		List<PathString> files = sourceDirectory.EnumerateFileSystemEntries()
 			.Select(x => PathString.Parse(x))
 			.ToList();
 
@@ -162,13 +162,13 @@ public static class NekaiLogs
 	{
 		// The runtime-tied file can't be accessed without the FileShare.ReadWrite option.
 
-		using var buffer = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         List<string> json = [];
-		var line = buffer.ReadLine();
+		using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		var line = stream.ReadLine();
 		while(line is not null)
 		{
 			json.Add(line);
-			line = buffer.ReadLine();
+			line = stream.ReadLine();
 		}
 
 		NekaiLog[] fileLogs = json

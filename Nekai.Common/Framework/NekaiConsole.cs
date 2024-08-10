@@ -16,7 +16,7 @@ public static class NekaiConsole
 	/// <remarks>
 	/// Defaults to 30ms.
 	/// </remarks>
-	public static readonly TimeSpan SlowPrintDelay = TimeSpan.FromMilliseconds(20);
+	public static TimeSpan SlowPrintDelay = TimeSpan.FromMilliseconds(20);
 	
 	private static readonly object _lock = new();
 
@@ -157,7 +157,7 @@ public static class NekaiConsole
 	public static ConsoleLoadingBuilder CreateDotLoader()
 		=> new();
 
-	/// <summary> Non-locking nternal wrapper of the <see cref="Console.Write(object)"/> operation. </summary>
+	/// <summary> Non-locking internal wrapper of the <see cref="Console.Write(object)"/> operation. </summary>
 	private static void _Write(object? text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black)
 	{
 		var prevForeColor = Console.ForegroundColor;

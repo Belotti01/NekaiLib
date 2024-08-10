@@ -48,7 +48,7 @@ public static class NekaiApp
 	/// </summary>
 	/// <remarks>
 	/// Internal event, used to free the resources used by the framework that might be required by previous handlers.
-	/// Avoid any dependence to objects outside of the scope of the handler, since they might already have been disposed.
+	/// Avoid any dependence to objects outside the scope of the handler, since they might already have been disposed.
 	/// </remarks>
 	internal static event EventHandler? _OnProcessExitHandledInternal;
 
