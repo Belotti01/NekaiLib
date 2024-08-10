@@ -11,14 +11,19 @@ namespace Nekai.Common;
 /// </summary>
 public class ErrorString
 {
-	public static implicit operator string(ErrorString error) => error.String;
+	public static implicit operator string(ErrorString error) => error.Error;
 	public static implicit operator ErrorString(string error) => new(error);
-	public static implicit operator ErrorString(Exception ex) => new(ex.Message);
+	public static implicit operator ErrorString(Exception ex) => new(ex);
 
-	public string String { get; set; }
+	public string Error { get; set; }
 
 	public ErrorString(string error)
 	{
-		String = error;
+		Error = error;
+	}
+
+	public ErrorString(Exception exception)
+	{
+		Error = exception.GetFullMessage();
 	}
 }
