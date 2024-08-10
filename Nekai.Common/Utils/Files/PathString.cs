@@ -54,13 +54,30 @@ public class PathString
 
 		throw new InvalidCastException($"String casting to PathString failed: {result.Error.GetMessage()}");
 	}
-	
+
 	/// <summary>
 	/// Append the relative path <paramref name="relativePath"/> to the <paramref name="path"/>.
 	/// </summary>
 	/// <param name="path">The starting path.</param>
 	/// <param name="relativePath">The relative path to append.</param>
 	public static PathString operator +(PathString path, string relativePath)
+	{
+		try
+		{
+			return (PathString)System.IO.Path.Combine(path, relativePath);
+		}
+		catch(InvalidCastException ex)
+		{
+			throw new InvalidOperationException($"The {nameof(relativePath)} is not a valid path string.", ex);
+		}
+	}
+
+	/// <summary>
+	/// Append the relative path <paramref name="relativePath"/> to the <paramref name="path"/>.
+	/// </summary>
+	/// <param name="path">The starting path.</param>
+	/// <param name="relativePath">The relative path to append.</param>
+	public static PathString operator +(PathString path, PathString relativePath)
 		=> (PathString)System.IO.Path.Combine(path, relativePath);
 
 	/// <inheritdoc cref="string.this[int]"/>
