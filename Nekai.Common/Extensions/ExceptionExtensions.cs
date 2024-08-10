@@ -12,7 +12,10 @@ public static class ExceptionExtensions
 
 		while((currentException = exception.InnerException) is not null)
 		{
-			result += " - " + currentException.Message;
+			if(result.EndsWith('.'))
+				result += ' ' + currentException.Message;
+			else
+				result += ". " + currentException.Message;
 		}
 
 		return result;

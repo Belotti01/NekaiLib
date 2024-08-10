@@ -7,13 +7,13 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using Microsoft.Extensions.Logging
 
-@inject UserManager<IdentityUser<Guid>> UserManager
-@inject IUserStore<IdentityUser<Guid>> UserStore
-@inject SignInManager<IdentityUser<Guid>> SignInManager
-@inject IEmailSender<IdentityUser<Guid>> EmailSender
-@inject ILogger<Register> Logger
-@inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
+@inject UserManager<IdentityUser<Guid>> _UserManager
+@inject IUserStore<IdentityUser<Guid>> _UserStore
+@inject SignInManager<IdentityUser<Guid>> _SignInManager
+@inject IEmailSender<IdentityUser<Guid>> _EmailSender
+@inject ILogger<Register> _Logger
+@inject NavigationManager _NavigationManager
+@inject IdentityRedirectManager _RedirectManager
 
 <PageTitle>Register</PageTitle>
 
@@ -46,7 +46,7 @@
 </FluentGrid>
 
 @code {
-    private IEnumerable<IdentityError>? identityErrors;
+    private IEnumerable<IdentityError>? _identityErrors;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
@@ -54,30 +54,30 @@
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
-    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+    private string? Message => _identityErrors is null ? null : $"Error: {string.Join(", ", _identityErrors.Select(error => error.Description))}";
 
     public async Task RegisterUser(EditContext editContext)
     {
         var user = CreateUser();
 
-        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        await _UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-        var result = await UserManager.CreateAsync(user, Input.Password);
+        var result = await _UserManager.CreateAsync(user, Input.Password);
 
         if(!result.Succeeded)
         {
-            identityErrors = result.Errors;
+            _identityErrors = result.Errors;
             return;
         }
 
-        Logger.LogInformation("User created a new account with password.");
+        _Logger.LogInformation("User created a new account with password.");
 
-        var userId = await UserManager.GetUserIdAsync(user);
-        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+        var userId = await _UserManager.GetUserIdAsync(user);
+        var code = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-        NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+        var callbackUrl = _NavigationManager.GetUriWithQueryParameters(
+        _NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
         new Dictionary<string, object?>
         {
             ["userId"] = userId,
@@ -85,11 +85,11 @@
             ["returnUrl"] = ReturnUrl
         });
 
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+        await _EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
 
-        if(UserManager.Options.SignIn.RequireConfirmedAccount)
+        if(_UserManager.Options.SignIn.RequireConfirmedAccount)
         {
-            RedirectManager.RedirectTo(
+            _RedirectManager.RedirectTo(
             "Account/RegisterConfirmation",
             new()
             {
@@ -98,8 +98,8 @@
             });
         }
 
-        await SignInManager.SignInAsync(user, isPersistent: false);
-        RedirectManager.RedirectTo(ReturnUrl);
+        await _SignInManager.SignInAsync(user, isPersistent: false);
+        _RedirectManager.RedirectTo(ReturnUrl);
     }
 
     private IdentityUser<Guid> CreateUser()
@@ -117,11 +117,11 @@
 
     private IUserEmailStore<IdentityUser<Guid>> GetEmailStore()
     {
-        if(!UserManager.SupportsUserEmail)
+        if(!_UserManager.SupportsUserEmail)
         {
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
-        return (IUserEmailStore<IdentityUser<Guid>>)UserStore;
+        return (IUserEmailStore<IdentityUser<Guid>>)_UserStore;
     }
 
     private sealed class InputModel
