@@ -44,18 +44,16 @@ public static class NekaiSmtp
 			await client.SendMailAsync(message, cancellationToken);
 			return NetworkOperationResult.Success;
 		}
-		catch(InvalidOperationException ex)
-		{
-			return NetworkOperationResult.BadFormat;
-		}
-		catch(SmtpException ex)
-		{
-			_LogSmtpFailure();
-			return NetworkOperationResult.ServerError;
-		}
 		catch(Exception ex)
 		{
-			return NetworkOperationResult.BadFormat;
+			_LogSmtpFailure(ex.GetFullMessage());
+			return ex switch
+			{
+				InvalidOperationException => NetworkOperationResult.BadFormat,
+				SmtpFailedRecipientException => NetworkOperationResult.InvalidTarget,
+				SmtpException => NetworkOperationResult.ServerError,
+				_ => NetworkOperationResult.BadFormat
+			};
 		}
 		finally
 		{
@@ -79,18 +77,16 @@ public static class NekaiSmtp
 			await client.SendMailAsync(from, recipients, subject, body, cancellationToken);
 			return NetworkOperationResult.Success;
 		}
-		catch(InvalidOperationException ex)
-		{
-			return NetworkOperationResult.BadFormat;
-		}
-		catch(SmtpException ex)
-		{
-			_LogSmtpFailure(ex.GetFullMessage());
-			return NetworkOperationResult.ServerError;
-		}
 		catch(Exception ex)
 		{
-			return NetworkOperationResult.BadFormat;
+			_LogSmtpFailure(ex.GetFullMessage());
+			return ex switch
+			{
+				InvalidOperationException => NetworkOperationResult.BadFormat,
+				SmtpFailedRecipientException => NetworkOperationResult.InvalidTarget,
+				SmtpException => NetworkOperationResult.ServerError,
+				_ => NetworkOperationResult.BadFormat
+			};
 		}
 		finally
 		{
