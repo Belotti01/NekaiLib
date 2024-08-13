@@ -59,6 +59,7 @@ public class FileBackupManager : IDisposable
 		}
 		catch(Exception ex)
 		{
+			NekaiLogs.Shared.Error("Failed backup operation for file '{path}' into '{backupPath}': {message}", FilePath, BackupFilePath?.Path, ex.GetFullMessage());
 			return new(NekaiPath.GetResultFromException(ex));
 		}
 	}
@@ -72,28 +73,23 @@ public class FileBackupManager : IDisposable
 			throw new FileNotFoundException("The file to backup does not exist.");
 
 		// If a backup file already exists, delete it, but only if the new backup file creation succeeds.
-		string? oldBackupFilePath = BackupFilePath;
+		PathString? oldBackupFilePath = BackupFilePath;
 
 		BackupFilename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{Filename}.bak";
-		var backupFileResult = PathString.TryParse(BackupFilePath);
-		if(!backupFileResult.IsSuccessful)
-			throw new FormatException("Invalid backup file name.");
+		PathString backupFilePath = BackupFilePath!;
 
-		var backupFilePath = backupFileResult.Value;
 		File.Copy(FilePath, backupFilePath.Path, true);
 
-		if(oldBackupFilePath is not null)
-		{
-			// Delete the old backup file.
-			var duplicateDeletionResult = backupFilePath.EnsureDeletion();
-			if(!duplicateDeletionResult.IsSuccessful())
-			{
-				Debug.Fail("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
-				// Write a log entry, it might be useful to identify permission errors and such.
-				NekaiLogs.Shared.Warning("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
-				// Non-blocking error, but might result in useless disk usage. Continue anyway.
-			}
-		}
+		if(oldBackupFilePath is null)
+			return backupFilePath;
+		
+		// Delete the old backup file.
+		var duplicateDeletionResult = oldBackupFilePath.EnsureDeletion();
+		if(duplicateDeletionResult.IsSuccessful())
+			return backupFilePath;
+		
+		// Write a log entry, it might be useful to identify permission errors and such.
+		NekaiLogs.Shared.Warning("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
 		return backupFilePath;
 	}
 
