@@ -75,6 +75,10 @@ public static class NekaiSmtp
 			_LogSmtpFailure(ex.GetFullMessage());
 			return NetworkOperationResult.ServerError;
 		}
+		catch(Exception ex)
+		{
+			return NetworkOperationResult.BadFormat;
+		}
 	}
 
 	private static void _LogSmtpFailure(string? message = null)
