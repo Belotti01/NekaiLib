@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mail;
 
@@ -8,11 +9,15 @@ public static class NekaiSmtp
 	/// <summary>
 	/// Create an instance of <see cref="SmtpClient"/> using the stored SMTP configuration.
 	/// </summary>
-	public static SmtpClient CreateClientInstance()
+	public static bool TryCreateClientInstance([NotNullWhen(true)] out SmtpClient? client)
 	{
 		var config = NekaiGeneralConfiguration.Singleton.Smtp;
+		client = null;
 		
-		SmtpClient client = new()
+		if(string.IsNullOrWhiteSpace((config.Url)) || config.Port == 0)
+			return false;
+		
+		client = new()
 		{
 			Host = config.Url,
 			Port = config.Port,
@@ -23,7 +28,7 @@ public static class NekaiSmtp
 			UseDefaultCredentials = config.UseDefaultCredentials
 		};
 
-		return client;
+		return true;
 	}
 	
 	/// <summary> Request to configured SMTP server to send an email. </summary>
@@ -31,9 +36,11 @@ public static class NekaiSmtp
 	/// <param name="cancellationToken"> The token used to cancel the operation. </param>
 	public static async Task<NetworkOperationResult> SendMailAsync(MailMessage message, CancellationToken cancellationToken = default)
 	{
+		if(!TryCreateClientInstance(out var client))
+			return NetworkOperationResult.NotConnected;
+
 		try
 		{
-			using var client = CreateClientInstance();
 			await client.SendMailAsync(message, cancellationToken);
 			return NetworkOperationResult.Success;
 		}
@@ -50,6 +57,10 @@ public static class NekaiSmtp
 		{
 			return NetworkOperationResult.BadFormat;
 		}
+		finally
+		{
+			client.Dispose();
+		}
 	}
 
 	/// <summary> Request to configured SMTP server to send an email. </summary>
@@ -60,9 +71,11 @@ public static class NekaiSmtp
 	/// <param name="cancellationToken"> The token used to cancel the operation. </param>
 	public static async Task<NetworkOperationResult> SendMailAsync(string from, string recipients, string subject, string body, CancellationToken cancellationToken = default)
 	{
+		if(!TryCreateClientInstance(out var client))
+			return NetworkOperationResult.NotConnected;
+		
 		try
 		{
-			using var client = CreateClientInstance();
 			await client.SendMailAsync(from, recipients, subject, body, cancellationToken);
 			return NetworkOperationResult.Success;
 		}
@@ -78,6 +91,10 @@ public static class NekaiSmtp
 		catch(Exception ex)
 		{
 			return NetworkOperationResult.BadFormat;
+		}
+		finally
+		{
+			client.Dispose();
 		}
 	}
 
