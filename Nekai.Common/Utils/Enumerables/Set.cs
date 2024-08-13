@@ -6,7 +6,7 @@ namespace Nekai.Common;
 /// Superset of <see cref="HashSet{T}"/> that implements set operation syntax.
 /// </summary>
 /// <inheritdoc cref="HashSet{T}"/>
-public class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
+public sealed class Set<T> : HashSet<T>, IEquatable<IEnumerable<T>>,
 	// Properly implements operator interfaces
 	IEqualityOperators<Set<T>, IEnumerable<T>, bool>,
 	IAdditionOperators<Set<T>, T, Set<T>>,

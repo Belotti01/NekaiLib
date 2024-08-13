@@ -10,7 +10,7 @@ namespace Nekai.Common;
 /// Wrapper of a <see cref="List{T}"/> that locks access to achieve thread-safety.
 /// </summary>
 /// <typeparam name="T">The Type of the elements of the list.</typeparam>
-public class ConcurrentList<T> : IList<T>, IReadOnlyList<T>
+public sealed class ConcurrentList<T> : IList<T>, IReadOnlyList<T>
 {
 	private readonly object _lock = new();
 	private readonly List<T> _internalList;

@@ -3,11 +3,14 @@
 /// <summary>
 /// Thread-locking StringBuilder specialized for CSS classes. Avoids duplicate strings and
 /// avoids double values for classes of the same type with <see cref="AppendIfUnique"/>.
-/// "Append" methods are made to return <see langword="this"/> for more readable usage.
 /// </summary>
 public sealed class StringSetBuilder
 {
 	private HashSet<string> _Set { get; } = [];
+	/// <summary>
+	/// The strings' separator. Defaults to " ". 
+	/// </summary>
+	public string Separator { get; set; } = " ";
 
 	/// <summary>
 	/// Appends a string to the result if it is not already present.
@@ -84,7 +87,7 @@ public sealed class StringSetBuilder
 		string result;
 		lock(this)
 		{
-			result = string.Join(" ", _Set);
+			result = string.Join(Separator, _Set);
 		}
 		return result;
 	}
