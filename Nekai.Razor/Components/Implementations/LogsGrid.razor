@@ -6,16 +6,18 @@
 <FluentTabs>
 	@foreach(var entry in _Logs) {
 		<FluentTab Label="@entry.Key">
-			<FluentDataGrid TGridItem="NekaiLog" Items="@entry.Value.AsQueryable()" >
-				<PropertyColumn Title="Machine" Width="200px" Property="(x) => x.MachineName" />
-				<PropertyColumn Title="Timestamp" Width="200px" Property="(x) => x.TimeStamp" Sortable="true" Format="yyyy/MM/dd hh:mm:ss" />
-				<TemplateColumn Title="Level" Width="100px">
+			<FluentDataGrid TGridItem="NekaiLog" Items="@entry.Value.AsQueryable()" ResizableColumns Pagination="@_Paginations[@entry.Key]">
+				<PropertyColumn Title="Machine" Width="10vw" Property="(x) => x.MachineName" />
+				<PropertyColumn IsDefaultSortColumn InitialSortDirection="SortDirection.Descending" Title="Timestamp" Width="10vw" Property="(x) => x.TimeStamp" Sortable="true" Format="yyyy/MM/dd hh:mm:ss" />
+				<TemplateColumn Title="Level" Width="5vw">
 					<p style="@_GetLevelColumnStyle(context.Type)">
 						@context.TypeString
 					</p>
 				</TemplateColumn>
 				<PropertyColumn Property="(x) => x.Message" />
+				
 			</FluentDataGrid>
+			<FluentPaginator State="@_Paginations[@entry.Key]"/>
 		</FluentTab>
 	}
 </FluentTabs>
@@ -27,6 +29,7 @@
 	public bool OmitProgramLogs { get; set; }
 
 	private Dictionary<string, IEnumerable<NekaiLog>> _Logs { get; set; } = [];
+	private Dictionary<string, PaginationState> _Paginations { get; set; } = [];
 
 	protected override void OnInitialized()
 	{
@@ -40,6 +43,7 @@
 		if (!OmitSharedLogs)
 		{
 			_Logs.Add("Shared", NekaiLogs.DeserializeAll(NekaiData.Directories.SharedLogs));
+			_Paginations.Add("Shared", new PaginationState() { ItemsPerPage = 25 });
 		}
 
 		if (OmitProgramLogs)
@@ -55,7 +59,12 @@
 
 			try
 			{
-				_Logs.Add(dirPath.GetFileOrDirectoryName().ToString(), NekaiLogs.DeserializeAll(dirPath));
+				var logs = NekaiLogs.DeserializeAll(dirPath);
+				if(logs.Count == 0)
+					continue;
+				var name = dirPath.GetFileOrDirectoryName().ToString();
+				_Paginations.Add(name, new PaginationState() { ItemsPerPage = 25 });
+				_Logs.Add(name, logs);
 			}catch(ArgumentException)
 			{
 				NekaiLogs.Shared.Error($"Duplicate directory entry found when filling LogsGrid: '{dirPath}'");
