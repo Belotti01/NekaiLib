@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Security;
 using System.Text.Json.Serialization;
 
@@ -6,11 +8,12 @@ namespace Nekai.Common;
 [JsonSerializable(typeof(NekaiSmtpConfiguration))]
 public class NekaiSmtpConfiguration : JsonSerializableObject<NekaiSmtpConfiguration>
 {
+	[Url]
 	public string Url { get; set; } = "localhost";
-	public int Port { get; set; } = 587;
-	public bool UseTls { get; set; } = true;
+	[Range(IPEndPoint.MinPort, IPEndPoint.MaxPort)]
+	public int Port { get; set; } = 587;	// Defaults to the SSMTP port.
 	public bool UseSsl { get; set; }
-	public string UserName { get; set; }
-	public SecureString Password { get; set; }
 	public bool UseDefaultCredentials { get; set; }
+	public string? UserName { get; set; }
+	public SecureString? Password { get; set; }
 }
