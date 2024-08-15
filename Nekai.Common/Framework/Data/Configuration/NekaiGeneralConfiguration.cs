@@ -14,7 +14,7 @@ namespace Nekai.Common;
 public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConfiguration>
 {
 	/// <summary> The file containing the serialized configuration. </summary>
-	private static PathString _FilePath => NekaiData.Files.GeneralSettingsFile;
+	public static PathString _FilePath => NekaiData.Files.GeneralSettingsFile;
 
 	/// <summary>
 	/// Unique instance of this class.
@@ -24,7 +24,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 	private static readonly Lazy<NekaiGeneralConfiguration> _instanceInitializer = new(_CreateSingleton);
 
 	/// <summary> The default display language. </summary>
-	public DisplayLanguage? DefaultLanguage { get; set; }
+	public DisplayLanguage DefaultLanguage { get; set; } = DisplayLanguage.EnglishUsa;
 	/// <summary> The SMTP settings for sending emails. </summary>
 	public NekaiSmtpConfiguration Smtp { get; set; }
 	/// <summary> Whether to use dark color tones for the UI when possible. </summary>
@@ -33,7 +33,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 	public NekaiGeneralConfiguration()
 		: base(_FilePath)
 	{
-		if(DefaultLanguage is null)
+		if(DefaultLanguage == DisplayLanguage.Default)
 		{
 			// Fallback to the OS language if none is set in the configuration.
 			TryLoadOSLanguage();

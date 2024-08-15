@@ -25,7 +25,7 @@ public class NekaiConsoleLogEventSink : ILogEventSink
 		string output = $"[{timeString}] {message}";
 		var outputColor = logEvent.Level switch
 		{
-			LogEventLevel.Fatal => ConsoleColor.Black,
+			LogEventLevel.Fatal => ConsoleColor.Black,	// With red background.
 			LogEventLevel.Error => ConsoleColor.Red,
 			LogEventLevel.Warning => ConsoleColor.Yellow,
 			LogEventLevel.Information => ConsoleColor.Cyan,

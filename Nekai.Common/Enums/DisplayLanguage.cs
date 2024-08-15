@@ -5,6 +5,7 @@
 /// </summary>
 public enum DisplayLanguage
 {
+	Default,
 	EnglishUsa,
 	EnglishUk,
 	Italian
@@ -21,6 +22,7 @@ public static class DisplayLanguageExtensions
 	{
 		return language switch
 		{
+			DisplayLanguage.Default => "eng",
 			DisplayLanguage.Italian => "ita",
 			DisplayLanguage.EnglishUsa => "eng",
 			DisplayLanguage.EnglishUk => "eng",
