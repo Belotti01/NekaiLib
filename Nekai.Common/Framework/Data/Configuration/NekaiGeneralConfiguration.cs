@@ -26,7 +26,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 	/// <summary> The default display language. </summary>
 	public DisplayLanguage DefaultLanguage { get; set; } = DisplayLanguage.EnglishUsa;
 	/// <summary> The SMTP settings for sending emails. </summary>
-	public NekaiSmtpConfiguration Smtp { get; set; }
+	public NekaiSmtpConfiguration? Smtp { get; set; } = new();
 	/// <summary> Whether to use dark color tones for the UI when possible. </summary>
 	public bool PreferDarkMode { get; set; } = true;
 
@@ -46,13 +46,18 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 		{
 			// File is accessible, deserialize it.
 			var deserializationResult = TryDeserialize(_FilePath);
-			if(deserializationResult.IsSuccessful)
-				return deserializationResult.Value;
+			if(!deserializationResult.IsSuccessful)
+			{
+				NekaiLogs.Shared.Error("General configuration file exists, but deserialization failed. Creating a new instance...");
+				return new();
+			}
 
-			NekaiLogs.Shared.Error("General configuration file exists, but deserialization failed. Creating a new instance...");
+			var config = deserializationResult.Value;
+			config.Smtp ??= new();	// If the file doesn't have the SMTP fields.
+			return deserializationResult.Value;
 		}
 
-		// If file is not found or something goes wrong, load the default values instead.
+		// If the file is not found or something goes wrong, load the default values instead.
 		return new();
 	}
 

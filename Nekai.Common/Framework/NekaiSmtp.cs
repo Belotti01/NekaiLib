@@ -14,6 +14,9 @@ public static class NekaiSmtp
 		var config = NekaiGeneralConfiguration.Singleton.Smtp;
 		client = null;
 		
+		if(config is null)
+			return false;
+		
 		if(string.IsNullOrWhiteSpace((config.Url)) || config.Port == 0)
 			return false;
 		
