@@ -1,0 +1,127 @@
+﻿@namespace Nekai.Razor
+
+@typeparam TUser where TUser : NekaiUser
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Logging
+
+@inject UserManager<TUser> _UserManager
+@inject IUserStore<TUser> _UserStore
+@inject SignInManager<TUser> _SignInManager
+@inject IEmailSender<TUser> _EmailSender
+@inject ILogger<NekaiUserRegister<TUser>> _Logger
+@inject NavigationManager _NavigationManager
+@inject IdentityRedirectManager _RedirectManager
+
+<p class="text-danger">@_ErrorMessage</p>
+<EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+    <DataAnnotationsValidator/>
+    <FluentValidationSummary class="text-danger" role="alert"/>
+    <FluentStack Orientation="Orientation.Vertical">
+        <FluentTextField Name="Input.Email" @bind-Value="Input.Email" AutoComplete="username" Required="true" Placeholder="name@example.com" Label="Email" Style="width: 100%"/>
+        <FluentValidationMessage For="() => Input.Email" class="text-danger"/>
+        
+        <FluentTextField type="password" Name="Input.Password" @bind-Value="Input.Password" AutoComplete="current-password" Required="true" Placeholder="password" Label="Password" Style="width: 100%"/>
+        <FluentValidationMessage For="() => Input.Password" class="text-danger"/>
+        
+        <FluentTextField type="password" Name="Input.ConfirmPassword" @bind-Value="Input.ConfirmPassword" AutoComplete="new-password" Required="true" Placeholder="password" Label="Confirm Password" Style="width: 100%"/>
+        <FluentValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
+        
+        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%">Register</FluentButton>
+    </FluentStack>
+</EditForm>
+
+@code {
+    private IEnumerable<IdentityError>? _identityErrors;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? _ErrorMessage => _identityErrors is null ? null : $"Error: {string.Join(", ", _identityErrors.Select(error => error.Description))}";
+
+    public async Task RegisterUser(EditContext editContext)
+    {
+        var user = _CreateUser();
+
+        await _UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        var mailStore = (IUserEmailStore<TUser>)_UserStore;
+        await mailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        var result = await _UserManager.CreateAsync(user, Input.Password);
+
+        if(!result.Succeeded)
+        {
+            _identityErrors = result.Errors;
+            return;
+        }
+
+        _Logger.LogInformation("User created a new account with password.");
+
+        var userId = await _UserManager.GetUserIdAsync(user);
+        var code = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+        var callbackUrl = _NavigationManager.GetUriWithQueryParameters(
+        _NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+        new Dictionary<string, object?>
+        {
+            ["userId"] = userId,
+            ["code"] = code,
+            ["returnUrl"] = ReturnUrl
+        });
+
+        await _EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+
+        if(_UserManager.Options.SignIn.RequireConfirmedAccount)
+        {
+            _RedirectManager.RedirectTo(
+            "Account/RegisterConfirmation",
+            new()
+            {
+                ["email"] = Input.Email,
+                ["returnUrl"] = ReturnUrl
+            });
+        }
+
+        await _SignInManager.SignInAsync(user, isPersistent: false);
+        _RedirectManager.RedirectTo(ReturnUrl);
+    }
+
+    private TUser _CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<TUser>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(TUser)}'. " +
+                                                $"Ensure that '{nameof(TUser)}' is not an abstract class and has a parameterless constructor.");
+        }
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = "";
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = "";
+    }
+
+}

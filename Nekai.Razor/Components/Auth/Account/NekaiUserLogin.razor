@@ -1,0 +1,118 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Logging
+
+@namespace Nekai.Razor
+
+@typeparam TUser where TUser : NekaiUser
+
+@inject SignInManager<TUser> _SignInManager
+@inject ILogger<NekaiUserLogin<TUser>> _Logger
+@inject NavigationManager _NavigationManager
+@inject IdentityRedirectManager _RedirectManager
+
+<p class="text-danger">@_errorMessage</p>
+<FluentEditForm Model="_Input" OnValidSubmit="LoginUser" FormName="login">
+    <DataAnnotationsValidator />
+    <FluentValidationSummary class="text-danger" role="alert"/>
+    
+    <FluentStack Orientation="Orientation.Vertical" Width="100%">
+        <FluentTextField Name="Input.Email" @bind-Value="_Input.Email" AutoComplete="username" Required="true" Placeholder="name@example.com" Label="Email" Style="width: 100%"/>
+        <FluentValidationMessage For="() => _Input.Email" class="text-danger"/>
+        
+        <FluentTextField type="password" Name="Input.Password" @bind-Value="_Input.Password" AutoComplete="current-password" Required="true" Placeholder="password" Label="Password" Style="width: 100%"/>
+        <FluentValidationMessage For="() => _Input.Password" class="text-danger"/>
+        
+        <FluentCheckbox Name="Input.RememberMe" @bind-Value="_Input.RememberMe" Label="Remember me"/>
+        
+        <FluentButton Loading="@_loggingIn" Method="post" Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
+        <div>
+            <p>
+                <FluentAnchor Appearance="Appearance.Hypertext" Href="Account/ForgotPassword">Forgot your password?</FluentAnchor>
+            </p>
+            <p>
+                <FluentAnchor Appearance="Appearance.Hypertext" Href="@(_NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = _ReturnUrl }))">Register as a new user</FluentAnchor>
+            </p>
+            <p>
+                <FluentAnchor Appearance="Appearance.Hypertext" Href="Account/ResendEmailConfirmation">Resend email confirmation</FluentAnchor>
+            </p>
+        </div>
+    </FluentStack>
+</FluentEditForm>
+
+@code {
+    private bool _loggingIn;
+    private string? _errorMessage;
+
+    [Parameter]
+    public bool LockOutOnInvalidLogin { get; set; }
+    [CascadingParameter]
+    private HttpContext? _HttpContext { get; set; }
+    [SupplyParameterFromForm]
+    private InputModel _Input { get; set; } = new();
+    [SupplyParameterFromQuery]
+    private string? _ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(_HttpContext is not null && HttpMethods.IsGet(_HttpContext.Request.Method))
+        {
+            // Clear the existing external cookie to ensure a clean login process
+            await _HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
+    }
+
+    public async Task LoginUser()
+    {
+        if(_loggingIn)
+            return;
+
+        _loggingIn = true;
+        // This doesn't count login failures towards account lockout
+        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        var result = await _SignInManager.PasswordSignInAsync(_Input.Email, _Input.Password, _Input.RememberMe, lockoutOnFailure: LockOutOnInvalidLogin);
+        if(result.Succeeded)
+        {
+            _Logger.LogInformation("User {user} logged in.", _Input.Email);
+            _RedirectManager.RedirectTo(_ReturnUrl);
+        }
+        else if(result.RequiresTwoFactor)
+        {
+            _RedirectManager.RedirectTo(
+                "Account/LoginWith2fa",
+                new()
+                {
+                    ["returnUrl"] = _ReturnUrl,
+                    ["rememberMe"] = _Input.RememberMe
+                }
+            );
+        }
+        else if(result.IsLockedOut)
+        {
+            _Logger.LogWarning("User account {user} locked out.", _Input.Email);
+            _RedirectManager.RedirectTo("Account/Lockout");
+        }
+        else
+        {
+            _errorMessage = "Error: Invalid login attempt.";
+        }
+        
+        _loggingIn = false;
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = "";
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+    }
+}
