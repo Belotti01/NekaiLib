@@ -2,6 +2,10 @@
 @inherits NekaiComponentBase
 
 <NekaiDesignTheme @bind-Mode="@_ThemeMode" />
+<FluentDialogProvider @rendermode="@InteractiveServer"/>
+<FluentTooltipProvider />
+<FluentMessageBarProvider />
+<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomEnd"/>
 
 <FluentMainLayout Class="@Class" Style="@Style" HeaderHeight="@HeaderHeight">
     <Header>
@@ -14,15 +18,15 @@
 
         @if(HeaderContent is not null)
         {
-            <div class="w-100">
+            <FluentSpacer />
+            <div>
                 @HeaderContent
             </div>
-            <FluentSpacer />
         }
 
         @if(ThemeToggle)
         {
-            <FluentButton OnClick="@_ToggleThemeMode" Name="Theme mode toggle" Icon="@_ThemeModeToggleIcon" />
+            <FluentButton Appearance="@Appearance.Outline" OnClick="@_ToggleThemeMode" Name="Theme mode toggle" IconEnd="@_ThemeModeToggleIcon"></FluentButton>
         }
     </Header>
 
@@ -31,7 +35,7 @@
     </NavMenuContent>
 
     <Body>
-        <div class="mt-2 ms-2" style="min-height: 80vh">
+        <div class="m-2" style="min-height: 80vh">
             @Body
         </div>
     </Body>
@@ -60,9 +64,9 @@
     private DesignThemeModes _ThemeMode { get; set; }
     private Icon _ThemeModeToggleIcon => _ThemeMode switch
     {
-        DesignThemeModes.System => new Icons.Filled.Size16.Laptop(),
-        DesignThemeModes.Light => new Icons.Filled.Size16.WeatherSunny(),
-        _ => new Icons.Filled.Size16.WeatherMoon()
+        DesignThemeModes.System => new Icons.Filled.Size24.Laptop(),
+        DesignThemeModes.Light => new Icons.Filled.Size24.WeatherSunny(),
+        _ => new Icons.Filled.Size24.WeatherMoon()
     };
 
     private void _ToggleThemeMode(MouseEventArgs args)
