@@ -56,7 +56,7 @@ public static partial class NekaiData
 				{
 					// Fetched from global config file - validate it
 					result = _CheckAndCreateDirectory(rawLocalPath.Trim(), out localPath);
-					if(result != PathOperationResult.Success)
+					if(result == PathOperationResult.Success)
 						return localPath;
 				}
 			}

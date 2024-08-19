@@ -27,10 +27,6 @@ where TSelf : JsonSerializableObject<TSelf>
 		new(JsonSerializerDefaults.General)
 		{
 			WriteIndented = true,
-			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-			AllowTrailingCommas = true,
-			IgnoreReadOnlyFields = false,
-			IgnoreReadOnlyProperties = false,
 			IncludeFields = false
 		};
 

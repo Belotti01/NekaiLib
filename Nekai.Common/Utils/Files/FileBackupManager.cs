@@ -34,6 +34,7 @@ public class FileBackupManager : IDisposable
 		FilePath = PathString.Parse(filepath);
 		string backupDirectory = Path.Combine(NekaiData.Directories.Temp, Environment.ProcessId.ToString());
 		BackupDirectory = PathString.Parse(backupDirectory);
+		BackupDirectory.EnsureExistsAsDirectory();
 	}
 
 	public FileBackupManager(string filepath, string backupDirectory)
