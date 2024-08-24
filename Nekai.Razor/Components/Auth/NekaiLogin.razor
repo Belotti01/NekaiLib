@@ -1,0 +1,33 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Logging
+@using Nekai.Razor.Components.Auth.Account
+
+@namespace Nekai.Razor
+
+@typeparam TUser where TUser : NekaiUser
+
+@if(_requesting2FaLogin)
+{
+    <NekaiUser2faLogin TUser="TUser" />
+}
+else if(_isLockedOut)
+{
+    <NekaiUserLockedOut />
+}
+else if(_forgotPasswordCompleted)
+{
+    <NekaiUserForgotPasswordConfirmation />
+}
+else if(_forgotPassword)
+{
+    <NekaiUserForgotPassword TUser="TUser" @bind-ResetConfirmed="@_forgotPasswordCompleted"/>
+}
+else
+{
+    <NekaiUserLoginFragment TUser="TUser" @bind-ForgotPasswordRequested="@_forgotPassword" @bind-Is2faRequested="@_requesting2FaLogin" @bind-IsLockedOut="@_isLockedOut" />
+}
+
+@code {
+    private bool _requesting2FaLogin, _isLockedOut, _forgotPassword, _forgotPasswordCompleted;
+
+}

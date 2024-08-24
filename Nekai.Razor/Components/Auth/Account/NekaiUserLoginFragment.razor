@@ -9,7 +9,7 @@
 @typeparam TUser where TUser : NekaiUser
 
 @inject SignInManager<TUser> _SignInManager
-@inject ILogger<NekaiUserLogin<TUser>> _Logger
+@inject ILogger<NekaiUserLoginFragment<TUser>> _Logger
 @inject NavigationManager _NavigationManager
 @inject IdentityRedirectManager _RedirectManager
 
@@ -30,10 +30,7 @@
         <FluentButton Loading="@_loggingIn" Method="post" Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
         <div>
             <p>
-                <FluentAnchor Appearance="Appearance.Hypertext" Href="Account/ForgotPassword">Forgot your password?</FluentAnchor>
-            </p>
-            <p>
-                <FluentAnchor Appearance="Appearance.Hypertext" Href="@(_NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = _ReturnUrl }))">Register as a new user</FluentAnchor>
+                <FluentAnchor Appearance="Appearance.Hypertext" OnClick="@(() => ForgotPasswordRequested = true)">Forgot your password?</FluentAnchor>
             </p>
             <p>
                 <FluentAnchor Appearance="Appearance.Hypertext" Href="Account/ResendEmailConfirmation">Resend email confirmation</FluentAnchor>
@@ -45,15 +42,27 @@
 @code {
     private bool _loggingIn;
     private string? _errorMessage;
-
+    [Parameter]
+    public bool Is2faRequested { get; set; }
+    [Parameter]
+    public bool ForgotPasswordRequested { get; set; }
+    [Parameter]
+    public bool IsLockedOut { get; set; }
+    [Parameter]
+    public EventCallback<bool> Is2faRequestedChanged { get; set; }
+    [Parameter]
+    public EventCallback<bool> ForgotPasswordRequestedChanged { get; set; }
+    [Parameter]
+    public EventCallback<bool> IsLockedOutChanged { get; set; }
+    
     [Parameter]
     public bool LockOutOnInvalidLogin { get; set; }
     [CascadingParameter]
     private HttpContext? _HttpContext { get; set; }
     [SupplyParameterFromForm]
     private InputModel _Input { get; set; } = new();
-    [SupplyParameterFromQuery]
-    private string? _ReturnUrl { get; set; }
+    [SupplyParameterFromQuery, Parameter]
+    public string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,18 +85,11 @@
         if(result.Succeeded)
         {
             _Logger.LogInformation("User {user} logged in.", _Input.Email);
-            _RedirectManager.RedirectTo(_ReturnUrl);
+            _RedirectManager.RedirectTo(ReturnUrl);
         }
         else if(result.RequiresTwoFactor)
         {
-            _RedirectManager.RedirectTo(
-                "Account/LoginWith2fa",
-                new()
-                {
-                    ["returnUrl"] = _ReturnUrl,
-                    ["rememberMe"] = _Input.RememberMe
-                }
-            );
+            Is2faRequested = true;
         }
         else if(result.IsLockedOut)
         {

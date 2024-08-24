@@ -1,0 +1,39 @@
+@namespace Nekai.Razor
+@using Nekai.Common
+
+<FluentEditForm Model="_Config">
+    <FluentValidationSummary Model="context"/>
+    
+    <FluentTabs>
+        <FluentTab Label="General">
+            <FluentCard>
+                <NekaiColumn VerticalGap="2">
+                    <FluentCombobox Label="Default Language:" TOption="@DisplayLanguage" @bind-SelectedOption="@_Config.DefaultLanguage" Items="@(Enum.GetValues<DisplayLanguage>().Select(x => x))"/>
+                    <FluentCheckbox Label="Prefer Dark Mode:" @bind-Value="@_Config.PreferDarkMode"/>
+                </NekaiColumn>
+            </FluentCard>
+        </FluentTab>
+
+        <FluentTab Label="SMTP">
+            <FluentCard>
+                <NekaiColumn VerticalGap="2">
+                    <FluentTextField Label="SMTP Server:" @bind-Value="@_Config.Smtp.Url" TextFieldType="TextFieldType.Url"/>
+                    <FluentNumberField Label="Port:" @bind-Value="@_Config.Smtp.Port"/>
+                    <FluentCheckbox Label="Use SSL:" @bind-Value="@_Config.Smtp.UseSsl"/>
+                    <FluentCheckbox Label="Use Default Credentials:" @bind-Value="@_Config.Smtp.UseDefaultCredentials"/>
+                </NekaiColumn>
+            </FluentCard>
+        </FluentTab>
+    </FluentTabs>
+
+    <FluentButton OnClick="_SaveChanges">Save</FluentButton>
+</FluentEditForm>
+
+@code {
+    private NekaiGeneralConfiguration _Config => NekaiGeneralConfiguration.Singleton;
+
+    private async Task _SaveChanges()
+    {
+        _Config.TrySerialize();
+    }
+}
