@@ -15,6 +15,9 @@ namespace Nekai.Common;
 public abstract class JsonSerializableObject<TSelf> : JsonSerializerContext
 where TSelf : JsonSerializableObject<TSelf>
 {
+	[JsonPropertyName("LastSerialization")]
+	public DateTime LastSerialization { get; private set; } = DateTime.MinValue;
+	
 	/// <summary>
 	/// The path to the file linked to this instance.
 	/// </summary>
@@ -152,6 +155,7 @@ where TSelf : JsonSerializableObject<TSelf>
 		try
 		{
 			using FileStream stream = File.Create(FilePath);
+			LastSerialization = DateTime.Now;
 			JsonSerializer.Serialize(stream, (TSelf)this, Options);
 		}
 		catch(Exception ex)
