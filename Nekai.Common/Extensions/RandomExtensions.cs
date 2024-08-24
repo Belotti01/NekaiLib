@@ -20,10 +20,6 @@ public static class RandomExtensions
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>, or either parameter is not a valid <see cref="char"/> value.</exception>
 	public static char NextChar(this Random random, char min = 'A', char max = 'z')
 	{
-		if(min < char.MinValue)
-			throw new ArgumentOutOfRangeException(nameof(min), "Argument must be a valid char value.");
-		if(max > char.MaxValue)
-			throw new ArgumentOutOfRangeException(nameof(max), "Argument must be a valid char value.");
 		return (char)random.Next(min, max);
 	}
 

@@ -23,6 +23,16 @@ public static class ObjectExtensions
 		return null;
 	}
 
+	/// <summary>
+	/// Returns the result of <see cref="object.ToString"/> if the object is not <see langword="null"/> and no error occurs; otherwise, returns
+	/// an empty <see langword="string"/>.
+	/// </summary>
+	/// <param name="obj"> The object to convert. </param>
+	public static string ToStringOrEmpty(this object? obj)
+	{
+		return obj.ToStringOrNull() ?? "";
+	}
+
 	/// <inheritdoc cref="Intrinsics.IsDefault{T}"/>
 	public static bool IsDefault<T>(this T value)
 		=>  Intrinsics.IsDefault(value);

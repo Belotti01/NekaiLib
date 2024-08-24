@@ -69,4 +69,22 @@ public static class StreamExtensions
 		using TextReader reader = new StreamReader(stream, encoding);
 		return reader.ReadToEnd();
 	}
+
+
+	/// <summary>
+	/// Read all the content of the <paramref name="stream"/> as an array of bytes.
+	/// </summary>
+	/// <param name="stream"> The stream to read. </param>
+	public static ReadOnlyMemory<byte> ReadAllBytes(this Stream stream)
+	{
+		IEnumerable<byte> bytes = [];
+		int frame;
+		
+		while((frame = stream.ReadByte()) != -1)
+		{
+			bytes = bytes.Append((byte)frame);
+		}
+
+		return bytes.ToArray();
+	}
 }
