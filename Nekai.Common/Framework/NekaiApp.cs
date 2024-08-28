@@ -1,6 +1,8 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
 using System.Net;
+using Microsoft.Extensions.Configuration;
+using ConfigurationManager=System.Configuration.ConfigurationManager;
 
 namespace Nekai.Common;
 
@@ -80,10 +82,12 @@ public static class NekaiApp
 		_OnProcessExitHandledInternal = null;
 	}
 	
-	public static Configuration ReadConfiguration(ConfigurationUserLevel level = ConfigurationUserLevel.PerUserRoamingAndLocal)
+	public static IConfiguration ReadAppSettings()
 	{
-		return ConfigurationManager
-			.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+		var builder = new ConfigurationBuilder()
+			.AddJsonFile("appsettings.json");
+		
+		return builder.Build();
 	}
 
 	/// <inheritdoc cref="GCMemoryInfo.TotalCommittedBytes"/>

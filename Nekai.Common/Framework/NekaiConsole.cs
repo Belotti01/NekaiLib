@@ -1,4 +1,6 @@
 ﻿
+using Serilog;
+
 namespace Nekai.Common;
 
 /// <summary>
@@ -6,6 +8,9 @@ namespace Nekai.Common;
 /// </summary>
 public static class NekaiConsole
 {
+	/// <inheritdoc cref="NekaiLogs.Console"/>
+	public static ILogger Logger => NekaiLogs.Console;
+	
 	/// <summary>
 	/// Whether to print out each character one by one, rather than the whole string in one shot.
 	/// </summary>
