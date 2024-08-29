@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Net;
 using Microsoft.Extensions.Configuration;
-using ConfigurationManager=System.Configuration.ConfigurationManager;
 
 namespace Nekai.Common;
 
@@ -17,7 +16,6 @@ public static class NekaiApp
 		= true;
 #else
 		= false;
-
 #endif
 
 	/// <summary> Whether the application is running in DEBUG mode and has a debugger attached. </summary>
@@ -31,14 +29,29 @@ public static class NekaiApp
 	/// <inheritdoc cref="AppDomain.FriendlyName"/>
 	public static string Name => AppDomain.CurrentDomain.FriendlyName;
 
-	/// <summary>
-	/// Load the current host's network information.
-	/// </summary>
+	/// <summary> Load the current host's network information. </summary>
 	public static IPHostEntry LocalHost => Dns.GetHostEntry(LocalHostName);
 
-	/// <summary>
-	/// The network hostname.
-	/// </summary>
+	private static IConfiguration? _appSettings { get; set; }
+	/// <summary> The configuration stored in appsettings.json. </summary>
+	public static IConfiguration AppSettings
+	{
+		// Use a getter instead of a static initializer to avoid throwing an exception upon accessing NekaiApp when no appsettings.json
+		// file exists.
+		get
+		{
+			if(_appSettings is not null)
+				return _appSettings;
+
+			_appSettings = new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json")
+				.Build();
+
+			return _appSettings;
+		}
+	}
+	
+	/// <summary> The network hostname. </summary>
 	public static string LocalHostName => Dns.GetHostName();
 
 	/// <inheritdoc cref="AppDomain.ProcessExit"/>
@@ -80,14 +93,6 @@ public static class NekaiApp
 			Exceptor.ThrowIfDebug($"An unhandled Exception was caught while closing the application: {ex.Message}", ex);
 		}
 		_OnProcessExitHandledInternal = null;
-	}
-	
-	public static IConfiguration ReadAppSettings()
-	{
-		var builder = new ConfigurationBuilder()
-			.AddJsonFile("appsettings.json");
-		
-		return builder.Build();
 	}
 
 	/// <inheritdoc cref="GCMemoryInfo.TotalCommittedBytes"/>
