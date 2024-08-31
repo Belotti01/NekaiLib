@@ -36,9 +36,11 @@ public enum AppExitCode
 	DirectoryCreationError = 25,
 
 	// 30 - 39 | Network errors
-
+	NetworkError = 30,
+	
 	// 40 - 49 | Database errors
-
+	DatabaseError = 40,
+	
 	// 50 - 59 | Security errors
 	UnhautorizedOperation = 50,
 
