@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using System.Diagnostics;
+using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Nekai.Common;
@@ -30,20 +32,37 @@ public static class SerilogLoggerExtensions
 	{
 		logger.Write(level, _FormatForLogging(ex));
 	}
+	
+	[Conditional("DEBUG")]
+	public static void Debug(this ILogger logger, LogEventLevel level, string messageTemplate, params object[] propertyValues)
+	{
+		logger.Write(level, messageTemplate, propertyValues);
+	}
+
+	[Conditional("DEBUG")]
+	public static void DebugInformation(this ILogger logger, string messageTemplate, params object[] propertyValues)
+	{
+		logger.Information(messageTemplate, propertyValues);
+	}
+
+	[Conditional("DEBUG")]
+	public static void DebugWarning(this ILogger logger, string messageTemplate, params object[] propertyValues)
+	{
+		logger.Warning(messageTemplate, propertyValues);
+	}
+
+	[Conditional("DEBUG")]
+	public static void DebugError(this ILogger logger, string messageTemplate, params object[] propertyValues)
+	{
+		logger.Error(messageTemplate, propertyValues);
+	}
 
 	private static string _FormatForLogging(Exception ex)
 	{
 		if(NekaiApp.HasDebugger)
 			return ex.ToString();
-		
-		string result = ex.Message;
-		while(ex.InnerException is not null)
-		{
-			ex = ex.InnerException;
-			result += " -> " + ex.Message;
-		}
 
-		return result;
+		return ex.GetFullMessage();
 	}
 
 	private static void _ThrowIfDebug(ILogger logger, string? message, LogEventLevel level, params object?[] propertyValues)
