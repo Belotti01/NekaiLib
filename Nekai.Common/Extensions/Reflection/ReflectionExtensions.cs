@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using CommunityToolkit.Diagnostics;
 
 // Using a different namespace to keep the autocomplete cleaner when Reflection is not necessary,
 // since most methods here are appliable to any or most Types.
@@ -120,11 +121,15 @@ public static class ReflectionExtensions
 		switch(member.MemberType)
 		{
 			case MemberTypes.Field:
-				((FieldInfo)member).SetValue(obj, value);
+				var field = (FieldInfo)member;
+				field.SetValue(obj, value);
 				break;
 
 			case MemberTypes.Property:
-				((PropertyInfo)member).SetValue(obj, value);
+				var property = ((PropertyInfo)member);
+				if(property.SetMethod is null)
+					return false;
+				property.SetValue(obj, value);
 				break;
 
 			default:
@@ -139,11 +144,13 @@ public static class ReflectionExtensions
 		switch(member.MemberType)
 		{
 			case MemberTypes.Field:
-				((FieldInfo)member).SetValue(obj, value);
+				var field = (FieldInfo)member;
+				field.SetValue(obj, value);
 				break;
 
 			case MemberTypes.Property:
-				((PropertyInfo)member).SetValue(obj, value);
+				var property = ((PropertyInfo)member);
+				property.SetValue(obj, value);
 				break;
 
 			default:
@@ -162,5 +169,23 @@ public static class ReflectionExtensions
 			MemberTypes.Event => ((EventInfo)member).EventHandlerType,
 			_ => throw new NotSupportedException($"Member type not supported for return type retrieval using reflection ({member.MemberType} \"{member.Name}\" of {member.DeclaringType?.Name ?? "<Unknown Source>"}).")
 		} ?? typeof(void);
+	}
+
+	public static void CopyMembersInto<T>(this T source, T target)
+	{
+		if(source is null)
+			ThrowHelper.ThrowArgumentNullException(nameof(source));
+		if(target is null)
+			ThrowHelper.ThrowArgumentNullException(nameof(target));
+		
+		var members = typeof(T).GetMembers();
+
+		foreach(var member in members)
+		{
+			if(!member.TryGetMemberValue(source, out var value))
+				continue;	// Inaccessible member.
+
+			member.TrySetValue(target, value);
+		}
 	}
 }
