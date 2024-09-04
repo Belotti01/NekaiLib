@@ -22,7 +22,7 @@ where TSelf : JsonSerializableObject<TSelf>
 	/// The path to the file linked to this instance.
 	/// </summary>
 	[JsonIgnore]
-	public virtual PathString? FilePath { get; private set; }
+	public virtual PathString? FilePath { get; set; }
 
     // The default serializer options.
     [JsonIgnore]

@@ -13,9 +13,6 @@ namespace Nekai.Common;
 [JsonSerializable(typeof(NekaiGeneralConfiguration))]
 public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConfiguration>
 {
-	/// <summary> The file containing the serialized configuration. </summary>
-	public static PathString _FilePath => NekaiData.Files.GeneralSettingsFile;
-
 	/// <summary>
 	/// Unique instance of this class.
 	/// </summary>
@@ -31,7 +28,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 	public bool PreferDarkMode { get; set; } = true;
 
 	public NekaiGeneralConfiguration()
-		: base(_FilePath)
+		: base()
 	{
 		if(DefaultLanguage == DisplayLanguage.Default)
 		{
@@ -42,10 +39,12 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 
 	private static NekaiGeneralConfiguration _CreateSingleton()
 	{
-		if(_FilePath.CanBeReadAsFile())
+		var singletonFilePath = NekaiData.Files.GeneralSettingsFile;
+		
+		if(singletonFilePath.CanBeReadAsFile())
 		{
 			// File is accessible, deserialize it.
-			var deserializationResult = TryDeserialize(_FilePath);
+			var deserializationResult = TryDeserialize(singletonFilePath);
 			if(!deserializationResult.IsSuccessful)
 			{
 				NekaiLogs.Shared.Error("General configuration file exists, but deserialization failed. Creating a new instance...");
@@ -58,7 +57,11 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 		}
 
 		// If the file is not found or something goes wrong, load the default values instead.
-		return new();
+		NekaiGeneralConfiguration result = new()
+		{
+			FilePath = singletonFilePath
+		};
+		return result;
 	}
 
 	/// <summary>
