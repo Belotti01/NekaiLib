@@ -50,6 +50,9 @@ public enum PathOperationResult
 
 	/// <summary> An unknown error occurred. </summary>
 	UnknownFailure,
+	
+	/// <summary> The object for this operation has been disposed. </summary>
+	ObjectDisposed
 }
 
 public static class PathOperationResultExtensions
@@ -83,6 +86,7 @@ public static class PathOperationResultExtensions
 			PathOperationResult.PathIsDirectory => "The path points to a directory, but a file was expected.",
 			PathOperationResult.BadFormat => "The path or the contents of the file are not in the expected format.",
 			PathOperationResult.FailedRead => "The read operation failed.",
+			PathOperationResult.ObjectDisposed => "The object operating this path has been disposed.",
 			_ => throw new NotImplementedException(),
 		};
 }
