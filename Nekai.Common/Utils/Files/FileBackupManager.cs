@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 
 namespace Nekai.Common;
 
@@ -8,6 +9,8 @@ namespace Nekai.Common;
 /// </summary>
 public class FileBackupManager : IDisposable
 {
+	protected bool _Disposed { get; private set; } = false;
+	
 	public PathString FilePath { get; protected set; }
 	public string Filename => Path.GetFileName(FilePath);
 
@@ -45,6 +48,9 @@ public class FileBackupManager : IDisposable
 
 	public Result<PathString, PathOperationResult> TryBackup()
 	{
+		if(_Disposed)
+			return new(PathOperationResult.ObjectDisposed);
+		
 		if(!File.Exists(FilePath))
 			return new(PathOperationResult.DoesNotExist);
 
@@ -67,6 +73,9 @@ public class FileBackupManager : IDisposable
 
 	public PathString Backup()
 	{
+		if(_Disposed)
+			ThrowHelper.ThrowObjectDisposedException(nameof(FileBackupManager));
+
 		var originalFileResult = PathString.TryParse(FilePath);
 		if(!originalFileResult.IsSuccessful)
 			throw new FormatException("File path is not a valid path.");
@@ -96,6 +105,9 @@ public class FileBackupManager : IDisposable
 
 	public PathOperationResult TryRestore()
 	{
+		if(_Disposed)
+			return PathOperationResult.ObjectDisposed;
+		
 		if(!BackupExists)
 			return PathOperationResult.DoesNotExist;
 
@@ -117,6 +129,10 @@ public class FileBackupManager : IDisposable
 
 	public void Dispose()
 	{
+		if(_Disposed)
+			return;
+		_Disposed = true;
+		
 		if(BackupFilePath is null || !BackupFilePath.IsExistingFile())
 			return;
 
