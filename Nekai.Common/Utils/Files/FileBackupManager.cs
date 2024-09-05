@@ -12,24 +12,24 @@ public class FileBackupManager : IDisposable
 	protected bool _Disposed { get; private set; } = false;
 	
 	public PathString FilePath { get; protected set; }
-	public string Filename => Path.GetFileName(FilePath);
+	public string FileName => Path.GetFileName(FilePath);
 
 	/// <summary> Whether a backup file, if any is created, should be kept even after this instance is disposed. </summary>
 	public bool KeepPersistentBackup { get; set; }
 
 	public PathString BackupDirectory { get; protected set; }
-	public string? BackupFilename { get; protected set; }
+	public string? BackupFileName { get; protected set; }
 
-	[NotNullIfNotNull(nameof(BackupFilename))]
-	public PathString? BackupFilePath => BackupFilename is null
+	[NotNullIfNotNull(nameof(BackupFileName))]
+	public PathString? BackupFilePath => BackupFileName is null
 		? null
-		: PathString.Parse(Path.Combine(BackupDirectory, BackupFilename));
+		: PathString.Parse(Path.Combine(BackupDirectory, BackupFileName));
 
 	/// <summary>
 	/// Whether a backup file was created by this object.
 	/// </summary>
 	// File can be deleted at any time, so check every time rather than using a simple flag.
-	[MemberNotNullWhen(true, nameof(BackupFilename), nameof(BackupFilePath))]
+	[MemberNotNullWhen(true, nameof(BackupFileName), nameof(BackupFilePath))]
 	public bool BackupExists => BackupFilePath?.IsExistingFile() ?? false;
 
 	public FileBackupManager(string filepath)
@@ -85,7 +85,7 @@ public class FileBackupManager : IDisposable
 		// If a backup file already exists, delete it, but only if the new backup file creation succeeds.
 		PathString? oldBackupFilePath = BackupFilePath;
 
-		BackupFilename = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{Filename}.bak";
+		BackupFileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{FileName}.bak";
 		PathString backupFilePath = BackupFilePath!;
 
 		File.Copy(FilePath, backupFilePath.Path, true);
@@ -144,7 +144,7 @@ public class FileBackupManager : IDisposable
 				NekaiLogs.Program.Warning($"Backup file could not be deleted upon disposal of object of type {GetType().Name}; {result.GetMessage()}");
 			}
 		}
-		BackupFilename = null;
+		BackupFileName = null;
 		GC.SuppressFinalize(this);
 	}
 }
