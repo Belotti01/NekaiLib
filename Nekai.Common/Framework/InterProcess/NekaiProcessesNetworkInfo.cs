@@ -20,7 +20,7 @@ public sealed class NekaiProcessesNetworkInfo : JsonSerializableObject<NekaiProc
 	[JsonIgnore]
 	private Task? _serializationTask;
 
-	public NekaiProcessesNetworkInfo(string filePath)
+	public NekaiProcessesNetworkInfo(PathString filePath)
 		: base(filePath) { }
 
 	public async Task UpdateCurrentProcessInfoAsync(ProtocolType protocol, int port)
