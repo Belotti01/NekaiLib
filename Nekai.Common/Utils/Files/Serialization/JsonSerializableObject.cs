@@ -22,7 +22,7 @@ where TSelf : JsonSerializableObject<TSelf>
 	/// The path to the file linked to this instance.
 	/// </summary>
 	[JsonIgnore]
-	public virtual PathString? FilePath { get; set; }
+	public virtual PathString? FilePath { get; private set; }
 
     // The default serializer options.
     [JsonIgnore]
@@ -41,12 +41,10 @@ where TSelf : JsonSerializableObject<TSelf>
 	protected JsonSerializableObject(string? filePath = null, JsonSerializerOptions? options = null)
 		: base(options)
 	{
+		if(filePath is null)
+			return;
+		
 		_TrySetFilePath(filePath);
-	}
-
-	protected JsonSerializableObject(JsonSerializerOptions? options) 
-		: base(options)
-	{
 	}
 
 	private PathOperationResult _TrySetFilePath(string? filePath)
@@ -135,7 +133,7 @@ where TSelf : JsonSerializableObject<TSelf>
 	public PathOperationResult TrySerialize()
 	{
 		if(FilePath is null)
-			throw new NullReferenceException($"Serialization path is null.");
+			return PathOperationResult.PathIsEmpty;
 
 		using FileBackupManager backupManager = new(FilePath);
 

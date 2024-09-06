@@ -27,8 +27,8 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 	/// <summary> Whether to use dark color tones for the UI when possible. </summary>
 	public bool PreferDarkMode { get; set; } = true;
 
-	public NekaiGeneralConfiguration()
-		: base()
+	public NekaiGeneralConfiguration(string? filePath = null)
+		: base(filePath)
 	{
 		if(DefaultLanguage == DisplayLanguage.Default)
 		{
@@ -57,10 +57,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 		}
 
 		// If the file is not found or something goes wrong, load the default values instead.
-		NekaiGeneralConfiguration result = new()
-		{
-			FilePath = singletonFilePath
-		};
+		NekaiGeneralConfiguration result = new(singletonFilePath);
 		return result;
 	}
 
