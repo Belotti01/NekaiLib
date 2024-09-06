@@ -164,6 +164,7 @@ where TSelf : JsonSerializableObject<TSelf>
 				Exceptor.ThrowIfDebug($"Multiple failures while serializing and restoring an instance of {typeof(TSelf).Name} ({ex.Message}).");
 				return restoreResult;
 			}
+			return PathOperationResult.UnknownFailure;
 		}
 
 		return PathOperationResult.Success;
