@@ -66,7 +66,8 @@ public class FileBackupManager : IDisposable
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Shared.Error("Failed backup operation for file '{path}' into '{backupPath}': {message}", FilePath, BackupFilePath?.Path, ex.GetFullMessage());
+			Debug.Fail("Backup operation failed even after checks.");
+			NekaiLogs.Shared.Error("Failed backup operation for file '{path}' into '{backupPath}': {ex}", FilePath, BackupFilePath?.Path, ex.GetFullMessage());
 			return new(NekaiPath.GetResultFromException(ex));
 		}
 	}
@@ -86,8 +87,11 @@ public class FileBackupManager : IDisposable
 		PathString? oldBackupFilePath = BackupFilePath;
 
 		BackupFileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}_{FileName}.bak";
-		PathString backupFilePath = BackupFilePath!;
 
+		Debug.Assert(BackupFilePath is not null, $"{nameof(BackupFilePath)} is null even after assigning {nameof(BackupFileName)}.");
+		Debug.Assert(!NekaiPath.ContainsInvalidPathChars(BackupFilePath), $"{nameof(BackupFilePath)} contains invalid path characters.");
+		
+		PathString backupFilePath = BackupFilePath!;
 		File.Copy(FilePath, backupFilePath.Path, true);
 
 		if(oldBackupFilePath is null)

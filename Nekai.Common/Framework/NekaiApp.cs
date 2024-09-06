@@ -18,6 +18,10 @@ public static class NekaiApp
 		= false;
 #endif
 
+	/// <summary> The general configuration. </summary>
+	/// <remarks> See: <see cref="NekaiGeneralConfiguration.Singleton"/></remarks>
+	public static NekaiGeneralConfiguration Configuration => NekaiGeneralConfiguration.Singleton;
+	
 	/// <summary> Whether the application is running in DEBUG mode and has a debugger attached. </summary>
 	public static bool IsDebugWithDebugger
 		=> IS_DEBUG && HasDebugger;
