@@ -27,7 +27,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 	/// <summary> Whether to use dark color tones for the UI when possible. </summary>
 	public bool PreferDarkMode { get; set; } = true;
 
-	public NekaiGeneralConfiguration(string? filePath = null)
+	public NekaiGeneralConfiguration(PathString? filePath = null)
 		: base(filePath)
 	{
 		if(DefaultLanguage == DisplayLanguage.Default)

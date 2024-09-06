@@ -38,7 +38,7 @@ where TSelf : JsonSerializableObject<TSelf>
 		Debug.Assert(typeof(TSelf).TryGetAttribute<JsonSerializableAttribute>(out _), $"Types inheriting {nameof(JsonSerializableObject<TSelf>)} should be decorated with the {nameof(JsonSerializableAttribute)}.");
 	}
 
-	protected JsonSerializableObject(string? filePath = null, JsonSerializerOptions? options = null)
+	protected JsonSerializableObject(PathString? filePath = null, JsonSerializerOptions? options = null)
 		: base(options)
 	{
 		if(filePath is null)
@@ -47,15 +47,15 @@ where TSelf : JsonSerializableObject<TSelf>
 		_TrySetFilePath(filePath);
 	}
 
-	private PathOperationResult _TrySetFilePath(string? filePath)
+	private PathOperationResult _TrySetFilePath(PathString filePath)
 	{
-		var result = PathString.TryParse(filePath);
-		if(!result.IsSuccessful)
-			return result.Error;
-
-		FilePath = result.Value;
 		// Don't append an extension to the path to avoid confusion when trying to access the file with the same string.
-
+		FilePath = filePath;
+		
+		var result = FilePath.EnsureExistsAsFile();
+		if(!result.IsSuccessful())
+			return result;
+		
 		if(!FilePath.IsExistingFile())
 			return PathOperationResult.DoesNotExist;
 
