@@ -6,21 +6,25 @@ namespace Nekai.Common;
 
 public static class NekaiParsing
 {
+	[Pure]
 	public static T Parse<T>(string value, IFormatProvider? formatProvider = null)
 		where T : IParsable<T>
 	{
 		return T.Parse(value, formatProvider);
 	}
 
+	[Pure]
 	public static bool TryParse<T>(string value, IFormatProvider? formatProvider, [NotNullWhen(true)] out T? parsedValue)
 		where T : IParsable<T>
 	{
 		return T.TryParse(value, formatProvider, out parsedValue);
 	}
 
+	[Pure]
 	public static bool CanParse<T>()
 		=> CanParse(typeof(T));
 
+	[Pure]
 	public static bool CanParse(Type type)
 	{
 		return type.IsEnum
@@ -28,9 +32,11 @@ public static class NekaiParsing
 			|| _TryGetTryParseMethod(type, out _);
 	}
 
+	[Pure]
 	public static T? Parse<T>(string value)
 		=> (T?)Parse(value, typeof(T));
 
+	[Pure]
 	public static object? Parse(string value, Type type)
 	{
 		if(type == typeof(string))
@@ -50,6 +56,7 @@ public static class NekaiParsing
 		throw new InvalidTypeException(type, $"Parsing of string to type '{type.Name}' is not supported.");
 	}
 
+	[Pure]
 	public static bool TryParse<T>(string value, out T? parsedValue)
 	{
 		if(TryParse(value, typeof(T), out object? parsedObject))
@@ -62,6 +69,7 @@ public static class NekaiParsing
 		return false;
 	}
 
+	[Pure]
 	public static bool TryParse(string value, Type type, out object? parsedValue)
 	{
 		if(type == typeof(string))
@@ -97,6 +105,7 @@ public static class NekaiParsing
 		}
 	}
 
+	[Pure]
 	private static bool _TryGetTryParseMethod(Type type, [NotNullWhen(true)] out MethodInfo? tryParseMethod)
 	{
 		// Type parameter TSelf in IParsable<TSelf> does not matter - all is needed is the name of the function.
