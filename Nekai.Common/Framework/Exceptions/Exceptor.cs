@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using Serilog.Events;
 
 namespace Nekai.Common;
@@ -74,13 +75,27 @@ public static partial class Exceptor
 		_Throw(ex);
 	}
 
+	/// <inheritdoc cref="ThrowHelper.ThrowArgumentNullException(string, Exception?)"/>
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
+	public static void ThrowArgumentNull([ConstantExpected] string name, Exception? innerException = null)
+	{
+		ThrowHelper.ThrowArgumentNullException(name, innerException);
+	}
+
+	/// <inheritdoc cref="ThrowHelper.ThrowObjectDisposedException(string, Exception?)"/>
+	[DoesNotReturn, StackTraceHidden, DebuggerStepThrough]
+	public static void ThrowObjectDisposed([ConstantExpected] string name, Exception? innerException = null)
+	{
+		ThrowHelper.ThrowObjectDisposedException(name, innerException);
+	}
+
 	[StackTraceHidden]
 	private static void _ThrowCriticalException(_CriticalException ex)
 	{
 		// Assume that everything is now broken and you need to somehow:
 		// 1) Launch any attached handlers
 		// 2) Dump all the information we have on the error
-		// 3) Safely exit the application
+		// 3) Safely exit the application, if the error has not been handled
 
 		CriticalExceptionData data = new(ex);
 		// Exception handlers might pre-emptively halt execution.
