@@ -43,8 +43,12 @@ where TSelf : JsonSerializableObject<TSelf>
 	{
 		if(filePath is null)
 			return;
-		
-		_TrySetFilePath(filePath);
+
+		var result = _TrySetFilePath(filePath);
+		if(!result.IsSuccessful())
+		{
+			NekaiLogs.Shared.Error("Couldn't set file '{path}' for serialization: {message}", filePath, result.GetMessage());
+		}
 	}
 
 	private PathOperationResult _TrySetFilePath(PathString filePath)
@@ -175,7 +179,7 @@ where TSelf : JsonSerializableObject<TSelf>
 	/// </summary>
 	public override string ToString()
 	{
-		return JsonSerializer.Serialize(this, Options);
+		return JsonSerializer.Serialize((TSelf)this, Options);
 	}
 	
 	/// <inheritdoc/>

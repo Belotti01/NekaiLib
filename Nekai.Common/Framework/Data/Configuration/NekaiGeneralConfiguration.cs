@@ -16,8 +16,10 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 	/// <summary>
 	/// Unique instance of this class.
 	/// </summary>
+	[JsonIgnore]
 	public static NekaiGeneralConfiguration Singleton => _instanceInitializer.Value;
 
+	[JsonIgnore]
 	private static readonly Lazy<NekaiGeneralConfiguration> _instanceInitializer = new(_CreateSingleton);
 
 	/// <summary> The default display language. </summary>
