@@ -67,7 +67,7 @@ public sealed class UniqueValueGenerator<TValue>
 	[Conditional("DEBUG")]
 	internal static void _DebugTestIdGenerator(Func<TValue?, TValue> generator, int iterations = _DEAULT_TEST_ITERATIONS, TValue? previousValue = default)
 	{
-		HashSet<TValue> ids = new(_DEAULT_TEST_ITERATIONS);
+		HashSet<TValue> ids = new(iterations);
 
 		if(previousValue is not null)
 		{

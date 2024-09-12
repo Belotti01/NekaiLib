@@ -19,39 +19,37 @@
     <FluentValidationSummary class="text-danger" role="alert"/>
     
     <FluentStack Orientation="Orientation.Vertical" Width="100%">
-        <FluentTextField Name="Input.Email" @bind-Value="_Input.Email" AutoComplete="username" Required="true" Placeholder="name@example.com" Label="Email" Style="width: 100%"/>
+        <FluentTextField Name="Email" @bind-Value="@Email" AutoComplete="username" Required="true" Placeholder="name@example.com" Label="Email" Style="width: 100%"/>
         <FluentValidationMessage For="() => _Input.Email" class="text-danger"/>
         
-        <FluentTextField type="password" Name="Input.Password" @bind-Value="_Input.Password" AutoComplete="current-password" Required="true" Placeholder="password" Label="Password" Style="width: 100%"/>
+        <FluentTextField type="password" Name="Password" @bind-Value="@_Input.Password" AutoComplete="current-password" Required="true" Placeholder="password" Label="Password" Style="width: 100%"/>
         <FluentValidationMessage For="() => _Input.Password" class="text-danger"/>
         
-        <FluentCheckbox Name="Input.RememberMe" @bind-Value="_Input.RememberMe" Label="Remember me"/>
+        <FluentCheckbox Name="RememberMe" @bind-Value="@_Input.RememberMe" Label="Remember me"/>
         
         <FluentButton Loading="@_loggingIn" Method="post" Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%">Log in</FluentButton>
-        <div>
-            <p>
-                <FluentAnchor Appearance="Appearance.Hypertext" OnClick="@(() => ForgotPasswordRequested = true)">Forgot your password?</FluentAnchor>
-            </p>
-            <p>
-                <FluentAnchor Appearance="Appearance.Hypertext" Href="Account/ResendEmailConfirmation">Resend email confirmation</FluentAnchor>
-            </p>
-        </div>
+        
     </FluentStack>
 </FluentEditForm>
 
 @code {
     private bool _loggingIn;
     private string? _errorMessage;
+
     [Parameter]
-    public bool Is2faRequested { get; set; }
+    public string Email
+    {
+        get => _Input.Email;
+        set => _Input.Email = value;
+    }
     [Parameter]
-    public bool ForgotPasswordRequested { get; set; }
+    public bool Is2FaRequested { get; set; }
     [Parameter]
     public bool IsLockedOut { get; set; }
     [Parameter]
-    public EventCallback<bool> Is2faRequestedChanged { get; set; }
+    public EventCallback<string> EmailChanged { get; set; }
     [Parameter]
-    public EventCallback<bool> ForgotPasswordRequestedChanged { get; set; }
+    public EventCallback<bool> Is2FaRequestedChanged { get; set; }
     [Parameter]
     public EventCallback<bool> IsLockedOutChanged { get; set; }
     
@@ -89,7 +87,7 @@
         }
         else if(result.RequiresTwoFactor)
         {
-            Is2faRequested = true;
+            Is2FaRequested = true;
         }
         else if(result.IsLockedOut)
         {

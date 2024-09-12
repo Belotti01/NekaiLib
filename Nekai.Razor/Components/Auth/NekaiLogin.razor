@@ -8,26 +8,45 @@
 
 @if(_requesting2FaLogin)
 {
+    <h2>2FA Login</h2>
     <NekaiUser2faLogin TUser="TUser" />
 }
 else if(_isLockedOut)
 {
+    <h2>User Locked Out</h2>
     <NekaiUserLockedOut />
 }
 else if(_forgotPasswordCompleted)
 {
+    <h2>Forgot Password Completed</h2>
     <NekaiUserForgotPasswordConfirmation />
 }
 else if(_forgotPassword)
 {
+    <h2>Forgot Password</h2>
     <NekaiUserForgotPassword TUser="TUser" @bind-ResetConfirmed="@_forgotPasswordCompleted"/>
+    
+    <FluentButton Style="width: 100%" Appearance="Appearance.Outline" OnClick="@(() => _forgotPassword = false)">Return to Login</FluentButton>
+}    
+else if(_resendConfirmationEmail)
+{
+    <h2>Resend Confirmation Email</h2>
+    <NekaiResendEmailConfirmation TUser="TUser" @bind-Email="@Email" />
+
+    <FluentButton Style="width: 100%" Appearance="Appearance.Outline" OnClick="@(() => _resendConfirmationEmail = false)">Return to Login</FluentButton>
 }
 else
 {
-    <NekaiUserLoginFragment TUser="TUser" @bind-ForgotPasswordRequested="@_forgotPassword" @bind-Is2faRequested="@_requesting2FaLogin" @bind-IsLockedOut="@_isLockedOut" />
+    <h2>Login</h2>
+    <NekaiUserLoginFragment TUser="TUser" @bind-Email="@Email" @bind-Is2faRequested="@_requesting2FaLogin" @bind-IsLockedOut="@_isLockedOut" />
+    
+    <FluentButton Appearance="Appearance.Outline" OnClick="@(() => _forgotPassword = true)">Forgot your password?</FluentButton>
+    <FluentButton Appearance="Appearance.Outline" OnClick="@(() => _resendConfirmationEmail = true)">Resend email confirmation</FluentButton>
+
 }
-
+    
 @code {
-    private bool _requesting2FaLogin, _isLockedOut, _forgotPassword, _forgotPasswordCompleted;
+    private bool _requesting2FaLogin, _isLockedOut, _forgotPassword, _forgotPasswordCompleted, _resendConfirmationEmail;
 
+    public string Email { get; set; } = "";
 }

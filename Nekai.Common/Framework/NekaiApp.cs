@@ -40,7 +40,7 @@ public static class NekaiApp
 	/// <summary> The configuration stored in appsettings.json. </summary>
 	public static IConfiguration AppSettings
 	{
-		// Use a getter instead of a static initializer to avoid throwing an exception upon accessing NekaiApp when no appsettings.json
+		// Lazy-load to avoid throwing an exception upon accessing NekaiApp when no appsettings.json
 		// file exists.
 		get
 		{

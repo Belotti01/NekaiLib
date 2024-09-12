@@ -1,6 +1,6 @@
 ﻿@namespace Nekai.Razor
 
-@typeparam TUser where TUser : NekaiUser
+@typeparam TUser where TUser : NekaiUser, new()
 
 @using System.ComponentModel.DataAnnotations
 @using System.Text
@@ -21,7 +21,7 @@
 <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
     <DataAnnotationsValidator/>
     <FluentValidationSummary class="text-danger" role="alert"/>
-    <FluentStack Orientation="Orientation.Vertical">
+    <FluentStack Orientation="Orientation.Vertical" Width="100%">
         <FluentTextField Name="Input.Email" @bind-Value="Input.Email" AutoComplete="username" Required="true" Placeholder="name@example.com" Label="Email" Style="width: 100%"/>
         <FluentValidationMessage For="() => Input.Email" class="text-danger"/>
         
@@ -48,7 +48,7 @@
 
     public async Task RegisterUser(EditContext editContext)
     {
-        var user = _CreateUser();
+        TUser user = new();
 
         await _UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var mailStore = (IUserEmailStore<TUser>)_UserStore;
@@ -90,19 +90,6 @@
 
         await _SignInManager.SignInAsync(user, isPersistent: false);
         _RedirectManager.RedirectTo(ReturnUrl);
-    }
-
-    private TUser _CreateUser()
-    {
-        try
-        {
-            return Activator.CreateInstance<TUser>();
-        }
-        catch
-        {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(TUser)}'. " +
-                                                $"Ensure that '{nameof(TUser)}' is not an abstract class and has a parameterless constructor.");
-        }
     }
 
     private sealed class InputModel

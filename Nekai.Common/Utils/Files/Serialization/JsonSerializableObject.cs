@@ -48,7 +48,8 @@ where TSelf : JsonSerializableObject<TSelf>
 		if(!result.IsSuccessful())
 		{
 			NekaiLogs.Shared.Error("Couldn't set file '{path}' for serialization: {message}", filePath, result.GetMessage());
-		}
+			Debug.Fail("Couldn't set filepath for serialization.");
+        }
 	}
 
 	private PathOperationResult _TrySetFilePath(PathString filePath)
@@ -158,16 +159,14 @@ where TSelf : JsonSerializableObject<TSelf>
 		{
 			using FileStream stream = File.Create(FilePath);
 			LastSerialization = DateTime.Now;
+			// Cast is necessary to include the derived class' properties.
 			JsonSerializer.Serialize(stream, (TSelf)this, Options);
 		}
 		catch(Exception ex)
 		{
 			var restoreResult = backupManager.TryRestore();
 			if(!restoreResult.IsSuccessful())
-			{
 				Exceptor.ThrowIfDebug($"Multiple failures while serializing and restoring an instance of {typeof(TSelf).Name} ({ex.Message}).");
-				return restoreResult;
-			}
 			return PathOperationResult.UnknownFailure;
 		}
 
