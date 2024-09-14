@@ -29,8 +29,7 @@ where TSelf : JsonSerializableObject<TSelf>
     protected override JsonSerializerOptions? GeneratedSerializerOptions => 
 		new(JsonSerializerDefaults.General)
 		{
-			WriteIndented = true,
-			IncludeFields = false
+			WriteIndented = true
 		};
 
 	static JsonSerializableObject()
@@ -86,7 +85,7 @@ where TSelf : JsonSerializableObject<TSelf>
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} \"{filePath}\" failed: {ex.Message}");
+			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} \"{filePath}\" failed: {ex.GetFullMessage()}");
 			return new(PathOperationResult.NotAllowed);
         }
 

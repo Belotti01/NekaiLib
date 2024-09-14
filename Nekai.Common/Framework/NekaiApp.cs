@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Net;
 using Microsoft.Extensions.Configuration;
+using ConfigurationManager=Microsoft.Extensions.Configuration.ConfigurationManager;
 
 namespace Nekai.Common;
 
@@ -40,13 +41,18 @@ public static class NekaiApp
 	/// <summary> The configuration stored in appsettings.json. </summary>
 	public static IConfiguration AppSettings
 	{
-		// Lazy-load to avoid throwing an exception upon accessing NekaiApp when no appsettings.json
-		// file exists.
 		get
 		{
 			if(_appSettings is not null)
 				return _appSettings;
 
+			// Avoid throwing an exception - if appsettings.json doesn't exist, return an empty IConfiguration.
+			if(!File.Exists("appsettings.json"))
+			{
+				NekaiLogs.Program.Warning("Attempted to read AppSettings, but no appsettings.json file was found.");
+				return new ConfigurationManager();
+			}
+			
 			_appSettings = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json")
 				.Build();
