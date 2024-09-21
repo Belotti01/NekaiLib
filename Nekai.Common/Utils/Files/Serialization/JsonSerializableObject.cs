@@ -16,7 +16,7 @@ public abstract class JsonSerializableObject<TSelf> : JsonSerializerContext
 where TSelf : JsonSerializableObject<TSelf>
 {
 	[JsonPropertyName("LastSerialization")]
-	public DateTime LastSerialization { get; private set; } = DateTime.MinValue;
+	public DateTime LastSerialization { get; set; } = DateTime.MinValue;
 	
 	/// <summary>
 	/// The path to the file linked to this instance.
@@ -29,9 +29,14 @@ where TSelf : JsonSerializableObject<TSelf>
     protected override JsonSerializerOptions? GeneratedSerializerOptions => 
 		new(JsonSerializerDefaults.General)
 		{
+			IgnoreReadOnlyProperties = true,
+			IgnoreReadOnlyFields = true,
 			WriteIndented = true
 		};
-
+    
+    [JsonIgnore]
+    public new JsonSerializerOptions Options { get => base.Options; }
+    
 	static JsonSerializableObject()
 	{
 		Debug.Assert(typeof(TSelf).TryGetAttribute<JsonSerializableAttribute>(out _), $"Types inheriting {nameof(JsonSerializableObject<TSelf>)} should be decorated with the {nameof(JsonSerializableAttribute)}.");
@@ -75,12 +80,12 @@ where TSelf : JsonSerializableObject<TSelf>
 			return new(PathOperationResult.FailedRead);
 
 		var content = filePath.ReadFileContent();
+		if(content is null)
+			return new(PathOperationResult.FailedRead);
 
 		TSelf? obj;
 		try
 		{
-			if(content is null)
-				throw new NullReferenceException("File content is null.");
 			obj = JsonSerializer.Deserialize<TSelf>(content, options);
 		}
 		catch(Exception ex)

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.Encodings.Web;
 
 namespace Nekai.Common;
 
@@ -69,5 +70,17 @@ public static class StringTransformationExtensions
 		str = tabs + str.ReplaceLineEndings(Environment.NewLine + tabs);
 
 		return str;
+	}
+
+	/// <inheritdoc cref="HtmlEncoder.Encode(string)"/>
+	public static string HtmlEncoded(this string value)
+	{
+		return HtmlEncoder.Default.Encode(value);
+	}
+
+	/// <inheritdoc cref="UrlEncoder.Encode(string)"/>
+	public static string UrlEncoded(this string value)
+	{
+		return UrlEncoder.Default.Encode(value);
 	}
 }

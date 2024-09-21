@@ -14,7 +14,7 @@ namespace Nekai.Common;
 /// <see langword="string"/> representing a file path or directory path.
 /// </summary>
 public class PathString
-	: IParsable<PathString>, IComparable<string>, IEquatable<string>, IEqualityOperators<PathString, string, bool>, IEquatable<PathString>
+	: IParsable<PathString>, IComparable<string>, IEquatable<string>, IEqualityOperators<PathString, string, bool>
 {
 	/// <summary> Extracts the contained path as a <see langword="string"/>. </summary>
 	/// <param name="path"> The path to extract. </param>
@@ -628,12 +628,10 @@ public class PathString
 		if(ReferenceEquals(this, obj))
 			return true;
 
-		return obj switch
-		{
-			string s => Equals(s),
-			// No need to handle PathString and PathSpan differently since they are string wrappers.
-			_ => Equals(obj.ToString())
-		};
+		if(!(obj is string or PathString))
+			return false;
+
+		return Equals(obj.ToString());
 	}
 
 	/// <summary>
@@ -655,7 +653,4 @@ public class PathString
 	/// <inheritdoc cref="System.MemoryExtensions.SequenceCompareTo{T}(ReadOnlySpan{T}, ReadOnlySpan{T})"/>
 	public int CompareTo(ReadOnlySpan<char> other)
 		=> Path.AsSpan().CompareTo(other, StringComparison.CurrentCulture);
-
-	public bool Equals(PathString? other)
-		=> string.Equals(Path, other?.Path);
 }
