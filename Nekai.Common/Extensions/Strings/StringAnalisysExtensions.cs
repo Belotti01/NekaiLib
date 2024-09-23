@@ -74,13 +74,29 @@ public static class StringAnalisysExtensions
 		return -1;
 	}
 
+	/// <summary>
+	/// Whether the whole <see langword="string"/> can be parsed into a numeric value.
+	/// </summary>
+	/// <param name="str"> The <see langword="string"/> to parse. </param>
 	public static bool IsNumeric(this ReadOnlySpan<char> str)
 	{
-		return decimal.TryParse(str, out _);
+		int dotCount = ReadOnlySpanExtensions.Count(str, '.');
+
+		return dotCount switch
+		{
+			0 => str.IsInteger(),
+			1 => str.All(x => char.IsNumber(x) || x == '.'),
+			_ => false
+		};
 	}
 
+
+	/// <summary>
+	/// Whether the whole <see langword="string"/> can be parsed into an integer value.
+	/// </summary>
+	/// <param name="str"> The <see langword="string"/> to parse. </param>
 	public static bool IsInteger(this ReadOnlySpan<char> str)
 	{
-		return int.TryParse(str, out _);
+		return str.All(char.IsNumber);
 	}
 }
