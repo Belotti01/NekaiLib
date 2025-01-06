@@ -43,4 +43,8 @@ public static class SpanEnumerationExtensions
 		}
 		return false;
 	}
+
+	public static bool ContainsAny<T>(this ReadOnlySpan<T> span, params T[] values)
+		where T : struct
+		=> span.ContainsAny(values.AsSpan());
 }

@@ -5,8 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Nekai.Common;
 
-[JsonSerializable(typeof(NekaiSmtpConfiguration))]
-public class NekaiSmtpConfiguration : JsonSerializableObject<NekaiSmtpConfiguration>
+public class NekaiSmtpConfiguration
 {
 	[Url]
 	public string Url { get; set; } = "localhost";

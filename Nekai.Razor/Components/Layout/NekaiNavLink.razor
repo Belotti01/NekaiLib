@@ -1,5 +1,4 @@
 ﻿@namespace Nekai.Razor
-@inherits NekaiComponentBase
 
 <FluentNavLink Class="@Class" Style="@Style" Href="@Href" Icon="@Icon" Disabled="@Disabled" Match="@Match" Target="@Target.ToTargetString()">
 	@ChildContent
@@ -23,6 +22,10 @@
 	/// <summary> Whether the link should be matched against the whole URL, or any prefix of the URL. </summary>
 	[Parameter]
 	public bool MatchAll { get; set; }
+	[Parameter]
+	public string Class { get; set; }
+	[Parameter]
+	public string Style { get; set; }
 
 	public NavLinkMatch Match => MatchAll ? NavLinkMatch.All : NavLinkMatch.Prefix;
 }

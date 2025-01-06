@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
-namespace Nekai.Common.Extensions;
+namespace Nekai.Common;
 
 public static class IServiceCollectionExtensions
 {

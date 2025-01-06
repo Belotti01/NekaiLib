@@ -3,6 +3,13 @@
 public static class RandomExtensions
 {
 	/// <summary>
+	/// Generate a random character.
+	/// </summary>
+	/// <inheritdoc cref="NextChar(Random, char, char)"/>
+	public static char NextChar(this Random random)
+		=> random.NextChar(char.MinValue, char.MaxValue);
+	
+	/// <summary>
 	/// Generate a random character of value lower or equal to <paramref name="max"/>.
 	/// </summary>
 	/// <inheritdoc cref="NextChar(Random, char, char)"/>
@@ -18,7 +25,7 @@ public static class RandomExtensions
 	/// <param name="max"> The inclusive upper bound of the generated <see cref="char"/>. </param>
 	/// <returns>A random <see cref="char"/> within the <paramref name="min"/> to <paramref name="max"/> range (inclusive). </returns>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="min"/> is greater than <paramref name="max"/>, or either parameter is not a valid <see cref="char"/> value.</exception>
-	public static char NextChar(this Random random, char min = 'A', char max = 'z')
+	public static char NextChar(this Random random, char min, char max)
 	{
 		return (char)random.Next(min, max);
 	}

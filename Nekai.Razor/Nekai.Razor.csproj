@@ -30,8 +30,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.9.3" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.9.3" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
-    <PackageReference Include="Nekai.Common" Version="8.2.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,12 +38,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Components\Containers\NekaiFlex.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Components\Containers\NekaiRow.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
+    <ProjectReference Include="..\Nekai.Common\Nekai.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Animations\NekaiThreeDotsLoader.razor" />
+    <UpToDateCheckInput Remove="Components\Implementations\LogsGrid.razor" />
+    <UpToDateCheckInput Remove="Components\Implementations\NekaiSettingsForm.razor" />
   </ItemGroup>
 
 

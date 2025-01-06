@@ -96,6 +96,6 @@ public static class NekaiSmtp
 
 	private static void _LogSmtpFailure(string? message = null)
 	{
-		NekaiLogs.Shared.Error("The SMTP server '{server}:{port}' failed to send an email. {message}", NekaiGeneralConfiguration.Singleton.Smtp.Url, NekaiGeneralConfiguration.Singleton.Smtp.Port, message);
+		NekaiLogs.Shared.Error("The SMTP server '{server}:{port}' failed to send an email. {message}", NekaiApp.Configuration.Smtp.Url, NekaiApp.Configuration.Smtp.Port, message);
 	}
 }
