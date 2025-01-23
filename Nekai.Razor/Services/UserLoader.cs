@@ -10,6 +10,7 @@ where TUser : class
 	
 	public async Task<AuthenticationState> GetAuthStateAsync()
 	{
+		// Lazy-loaded.
 		_authState ??= await auth.GetAuthenticationStateAsync();
 		return _authState;
 	}

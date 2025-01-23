@@ -1,4 +1,5 @@
-﻿@namespace Nekai.Razor
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Icons.Filled
+@namespace Nekai.Razor
 
 <NekaiDesignTheme @bind-Mode="@_ThemeMode" />
 <FluentDialogProvider @rendermode="@InteractiveServer"/>
@@ -66,9 +67,9 @@
     private DesignThemeModes _ThemeMode { get; set; }
     private Icon _ThemeModeToggleIcon => _ThemeMode switch
     {
-        DesignThemeModes.System => new Icons.Filled.Size24.Laptop(),
-        DesignThemeModes.Light => new Icons.Filled.Size24.WeatherSunny(),
-        _ => new Icons.Filled.Size24.WeatherMoon()
+        DesignThemeModes.System => new Size24.Laptop(),
+        DesignThemeModes.Light => new Size24.WeatherSunny(),
+        _ => new Size24.WeatherMoon()
     };
 
     private void _ToggleThemeMode(MouseEventArgs args)

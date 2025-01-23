@@ -7,7 +7,7 @@ namespace Nekai.Common;
 public static class NekaiParsing
 {
 	[Pure]
-	public static T Parse<T>(string value, IFormatProvider? formatProvider = null)
+	public static T Parse<T>(string value, IFormatProvider? formatProvider)
 		where T : IParsable<T>
 	{
 		return T.Parse(value, formatProvider);

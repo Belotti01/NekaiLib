@@ -13,10 +13,13 @@ public static class NekaiSmtp
 	{
 		var config = NekaiGeneralConfiguration.Singleton.Smtp;
 		client = null;
-		
+
 		if(string.IsNullOrWhiteSpace((config.Url)) || config.Port == 0)
+		{
+			NekaiLogs.Shared.Error("SMTP Url and Port are not set.");
 			return false;
-		
+		}
+
 		client = new()
 		{
 			Host = config.Url,

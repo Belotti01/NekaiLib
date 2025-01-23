@@ -18,9 +18,6 @@ public static class AuthenticationExtensions
 		var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
 		var userIdString = claim?.Value;
 
-		if(userIdString is null)
-			return default;
-
 		return userIdString;
 	}
 
