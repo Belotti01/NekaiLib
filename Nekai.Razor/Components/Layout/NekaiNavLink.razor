@@ -1,31 +1,30 @@
-﻿@namespace Nekai.Razor
+@namespace Nekai.Razor
+@using Serilog.Parsing
+@inherits NekaiComponentBase
 
-<FluentNavLink Class="@Class" Style="@Style" Href="@Href" Icon="@Icon" Disabled="@Disabled" Match="@Match" Target="@Target.ToTargetString()">
-	@ChildContent
-</FluentNavLink>
+<NavLink style="@Style" class="@Class" href="@Href" Match="@Match" ActiveClass="active">
+    @if(Icon is not null)
+    {
+        <MaterialIcon Class="me-2" Size="IconSize.Default">@Icon</MaterialIcon>
+    }
+    @ChildContent
+</NavLink>
 
 @code {
-	[Parameter]
-	public RenderFragment? ChildContent { get; set; }
-	/// <summary> The URL linked to this component. </summary>
-	[Parameter]
-	public string Href { get; set; } = "";
-	/// <inheritdoc cref="FluentNavBase.Icon"/>
-	[Parameter]
-	public Icon? Icon { get; set; }
-	/// <summary> Specified where to open the URL when clicked. </summary>
-	[Parameter]
-	public Target Target { get; set; }
-	/// <inheritdoc cref="FluentNavBase.Disabled"/>
-	[Parameter]
-	public bool Disabled { get; set; }
-	/// <summary> Whether the link should be matched against the whole URL, or any prefix of the URL. </summary>
-	[Parameter]
-	public bool MatchAll { get; set; }
-	[Parameter]
-	public string Class { get; set; }
-	[Parameter]
-	public string Style { get; set; }
-
-	public NavLinkMatch Match => MatchAll ? NavLinkMatch.All : NavLinkMatch.Prefix;
+    [Parameter, EditorRequired]
+    public string Href { get; set; } = "";
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public bool MatchAll { get; set; }
+    [Parameter]
+    public string? Icon { get; set; }
+    
+    public NavLinkMatch Match => MatchAll ? NavLinkMatch.All : NavLinkMatch.Prefix;
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " flex-row list-group-item list-group-item-action ";
+    }
 }

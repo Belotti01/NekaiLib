@@ -1,0 +1,33 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div id="@Id" class="@Class @LabelPosition.ToFlexClass() form-check form-switch" style="@Style" aria-label="@AriaLabel">
+    <input id="@_switchId" class="form-check-input" type="checkbox" role="switch" aria-labelledby="@_labelId" required="@Required"
+           @bind:event="onchange" @bind:set="@(async(x) => await ChangeChecked(x))" @bind:get="@Value"/>
+    <NekaiLabel Id="@_labelId.ToString()" For="@_switchId.ToString()">
+        @ChildContent
+    </NekaiLabel>
+</div>
+
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public Position LabelPosition { get; set; } 
+    [Parameter]
+    public bool Required { get; set; }
+    [Parameter]
+    public bool Value { get; set; }
+    [Parameter]
+    public EventCallback<bool> ValueChanged { get; set; }
+
+    private readonly Guid _switchId = Guid.NewGuid();
+    private readonly Guid _labelId = Guid.NewGuid();
+
+    protected async Task ChangeChecked(bool value)
+    {
+        Value = value;
+        await ValueChanged.InvokeAsync(value);
+    }
+}

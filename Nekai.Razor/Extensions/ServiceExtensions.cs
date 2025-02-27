@@ -8,9 +8,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity;
+using Nekai.Common;
 
 namespace Nekai.Razor;
 
 public static class ServiceExtensions
 {
+
+	public static IServiceCollection AddNekaiServices(this IServiceCollection services)
+	{
+		return services.AddScoped<SettingsManager>();
+	}
+	
 }

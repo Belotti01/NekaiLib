@@ -1,0 +1,36 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<NekaiInput Class="@Class" Style="@Style">
+    <input id="@Id" class="@_inputClass" type="checkbox" aria-label="@AriaLabel" required="@Required"
+           @bind:get="@Value" @bind:set="@OnChange" @bind:event="onchange"/>
+</NekaiInput>
+
+@code {
+    [Parameter]
+    public bool Value { get; set; }
+    [Parameter]
+    public EventCallback<bool> ValueChanged { get; set; } 
+    [Parameter]
+    public bool Required { get; set; }
+    
+    private string _inputClass = "";
+
+    public override void ApplyThemeColors()
+    {
+        // Set the theming to the components rather than the containing div.
+        var themeClasses = GetThemeColorsClasses();
+        _inputClass = "form-check-input " + themeClasses;
+    }
+
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " form-check";
+    }
+
+    private async Task OnChange(bool obj)
+    {
+        await ValueChanged.InvokeAsync(Value = obj);
+    }
+}

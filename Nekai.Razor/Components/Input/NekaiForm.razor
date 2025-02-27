@@ -1,0 +1,28 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<EditForm FormName="@FormName" Model="@Model" Enhance class="@Class" style="@Style" aria-label="@AriaLabel"
+          OnSubmit="OnSubmit" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit">
+    @ChildContent
+</EditForm>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public object? Model { get; set; }
+    [Parameter]
+    public EventCallback<EditContext> OnSubmit { get; set; }
+    [Parameter]
+    public EventCallback<EditContext> OnValidSubmit { get; set; }
+    [Parameter]
+    public EventCallback<EditContext> OnInvalidSubmit { get; set; }
+    [Parameter]
+    public string? FormName { get; set; }
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " needs-validation";
+    }
+}

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Nekai.Razor;
 
-public class HalcyonUserLoader<TUser>(AuthenticationStateProvider auth, UserManager<TUser> userManager)
+public class UserLoader<TUser>(AuthenticationStateProvider auth, UserManager<TUser> userManager)
 where TUser : class
 {
 	private AuthenticationState? _authState;

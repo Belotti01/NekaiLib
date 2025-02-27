@@ -607,6 +607,15 @@ public class PathString
 		}
 	}
 
+	public FileAttributes GetAttributes()
+	{
+		if(!IsExistingFile())
+			return FileAttributes.None;
+
+		using var handle = File.OpenHandle(Path);
+		return File.GetAttributes(handle);
+	}
+
 	/// <summary>
 	/// Check whether this path is virtually equivalent to <paramref name="other"/>.
 	/// </summary>

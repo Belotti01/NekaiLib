@@ -1,18 +1,17 @@
 @namespace Nekai.Razor
 @inherits NekaiComponentBase
 
-<div class="@Class" style="@Style" aria-label="@AriaLabel">
+<div id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
     @ChildContent
 </div>
 
 @code {
     [Parameter]
-    public Display Display { get; set; }
-    [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
     public override void AfterClassSet()
     {
-        Class += ' ' + Display.ToClassString();
+        base.AfterClassSet();
+        Class += " input-group";
     }
 }

@@ -1,0 +1,39 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
+    <NekaiButton Class="dropdown-toggle" Color="@Color" Outline="@Outline" Rounding="@Rounding" Size="@Size" Value="@Label">
+        @Label
+    </NekaiButton>
+    <ul class="dropdown-menu" role="menu">
+        @ChildContent
+    </ul>
+</div>
+
+
+@code {
+    [Parameter]
+    public bool OpenOnHover { get; set; }
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public string Label { get; set; } = "";
+    [Parameter]
+    public Sizing Size { get; set; }
+    [Parameter]
+    public ButtonTheme Color { get; set; }
+    [Parameter]
+    public Outline Outline { get; set; } 
+    [Parameter]
+    public Rounding Rounding { get; set; } 
+    [Parameter]
+    public bool Required { get; set; }
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " dropdown";
+        if(OpenOnHover)
+            Class += " dropdown-hover";
+    }
+}

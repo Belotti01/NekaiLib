@@ -1,0 +1,44 @@
+@using System.Numerics
+
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+@typeparam T where T : INumber<T>, IMinMaxValue<T>
+
+<input  id="@Id" class="@Class" style="@Style" type="number" min="@Min" max="@Max" step="@Step" aria-label="@AriaLabel" placeholder="@Placeholder" required="@Required"
+        @bind:event="@(Immediate ? "oninput" : "onchange")" @bind:get="@Value" @bind:set="@_UpdateValue"/>
+
+@code {
+    [Parameter]
+    public T Value { get; set; } = T.Zero;
+    [Parameter]
+    public EventCallback<T> ValueChanged { get; set; }
+    [Parameter]
+    public bool Immediate { get; set; }
+    [Parameter]
+    public string Placeholder { get; set; } = "";
+    [Parameter]
+    public bool FloatingLabel { get; set; }
+    [Parameter]
+    public T Min { get; set; } = T.MinValue;
+    [Parameter]
+    public T Max { get; set; } = T.MaxValue;
+    [Parameter]
+    public T Step { get; set; } = T.One; 
+    [Parameter]
+    public bool Required { get; set; }
+        
+    private async Task _UpdateValue(T obj)
+    {
+        Value = obj;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " form-control";
+        if(FloatingLabel)
+            Class += " form-floating";
+    }
+}

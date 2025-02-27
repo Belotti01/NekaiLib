@@ -1,84 +1,46 @@
-﻿@using Microsoft.FluentUI.AspNetCore.Components.Icons.Filled
-@namespace Nekai.Razor
+﻿@namespace Nekai.Razor
+@inherits NekaiComponentBase
 
-<NekaiDesignTheme @bind-Mode="@_ThemeMode" />
-<FluentDialogProvider @rendermode="@InteractiveServer"/>
-<FluentTooltipProvider @rendermode="@InteractiveServer" />
-<FluentMessageBarProvider @rendermode="@InteractiveServer" />
-<FluentToastProvider MaxToastCount="5" Position="ToastPosition.BottomEnd" @rendermode="@InteractiveServer"/>
+<div class="container">
+    <header id="layout-header" class="row">
+        <div class="col-10 my-3">
+            @HeaderContent
+        </div>
+    </header>
 
-<FluentMainLayout Class="@Class" Style="@Style" HeaderHeight="@HeaderHeight">
-    <Header>
-        @if(Title is not null) {
-            <FluentLabel Typo="Typography.H1">
-                @Title
-            </FluentLabel>
-        }
-        <FluentSpacer />
-
-        @if(HeaderContent is not null)
-        {
-            <div>
-                @HeaderContent
+    <div class="row align-items-start container mx-auto">
+        @* Only show the collapse button if the display is small, when the NavMenu spans the whole width of the screen. *@
+        <nav id="layout-sidebar-container" class="@($"navbar col-sm-12 col-md-{NavMenuColSpan} row")">
+            <div class="d-md-none list-group col-12">
+                <NekaiCollapseButton TargetId="layout-sidebar" Class="list-group-item list-group-item-action d-flex align-content-center justify-content-center">
+                    <MaterialIcon Alignment="VerticalAlignment.Middle">menu</MaterialIcon>
+                </NekaiCollapseButton>
             </div>
-        }
+            <nav id="layout-sidebar" class="sticky-top collapse show list-group col-12">
+                @NavMenu
+            </nav>
+        </nav>
 
-        @if(ThemeToggle)
-        {
-            <FluentButton @rendermode="@InteractiveServer" Appearance="default" OnClick="@_ToggleThemeMode" Name="Theme mode toggle" IconEnd="@_ThemeModeToggleIcon"></FluentButton>
-        }
-    </Header>
-
-    <NavMenuContent>
-        @NavMenu
-    </NavMenuContent>
-
-    <Body>
-    <div class="m-2" style="min-height: 80vh">
-        @Body
+        <main class="col-md-10 col-sm-12">
+            <div class="container">
+                @Body
+            </div>
+        </main>
     </div>
-    </Body>
-</FluentMainLayout>
+</div>
 
 @code {
-    /// <summary> The main content for the layout. </summary>
+    /// <summary> The main content. </summary>
     [Parameter]
     public RenderFragment? Body { get; set; }
     /// <summary> The content of the navigation column. </summary>
     [Parameter]
     public RenderFragment? NavMenu { get; set; }
-    /// <summary> The content displayed at the end of the header. </summary>
+    /// <summary> The content displayed at the top of the page. </summary>
     [Parameter]
     public RenderFragment? HeaderContent { get; set; }
-    /// <summary> The title to display in the header. </summary>
+    /// <summary> The amount of display columns (in range 0 to 12) to span the
+    /// navigation sidebar for. Defaults to 2. </summary>
     [Parameter]
-    public string? Title { get; set; }
-    /// <summary> The height of the header. </summary>
-    [Parameter]
-    public int? HeaderHeight { get; set; }
-    /// <summary> Whether to display a toggle for light/dark mode. </summary>
-    [Parameter]
-    public bool ThemeToggle { get; set; }
-    [Parameter]
-    public string Class { get; set; } = "";
-    [Parameter]
-    public string Style { get; set; } = "";
-
-    private DesignThemeModes _ThemeMode { get; set; }
-    private Icon _ThemeModeToggleIcon => _ThemeMode switch
-    {
-        DesignThemeModes.System => new Size24.Laptop(),
-        DesignThemeModes.Light => new Size24.WeatherSunny(),
-        _ => new Size24.WeatherMoon()
-    };
-
-    private void _ToggleThemeMode(MouseEventArgs args)
-    {
-        _ThemeMode = _ThemeMode switch
-        {
-            DesignThemeModes.System => DesignThemeModes.Light,
-            DesignThemeModes.Light => DesignThemeModes.Dark,
-            _ => DesignThemeModes.System
-        };
-    }
+    public int NavMenuColSpan { get; set; } = 2;
 }

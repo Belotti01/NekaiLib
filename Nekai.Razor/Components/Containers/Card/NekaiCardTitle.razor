@@ -1,0 +1,11 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div id="@Id" class="@Class card-title" style="@Style" aria-label="@AriaLabel">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

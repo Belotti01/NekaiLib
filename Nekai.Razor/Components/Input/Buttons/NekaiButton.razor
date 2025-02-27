@@ -1,0 +1,51 @@
+@namespace Nekai.Razor
+@using System.Text
+@inherits NekaiComponentBase
+
+<button id="@Id" onclick="@OnClick" class="@Class" value="@Value" type="@Type.ToString()" style="@Style" disabled="@Disabled" aria-disabled="@Disabled" aria-label="@AriaLabel" aria-pressed="@Active">
+    @ChildContent
+</button>
+
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public ButtonTheme Color { get; set; }
+    [Parameter]
+    public Rounding Rounding { get; set; }
+    [Parameter]
+    public Outline Outline { get; set; }
+    [Parameter]
+    public Sizing Size { get; set; }
+    [Parameter]
+    public bool Disabled { get; set; }
+    [Parameter]
+    public ButtonType Type { get; set; }
+    [Parameter]
+    public string Value { get; set; } = ""; 
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+    [Parameter]
+    public bool Active { get; set; }
+
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+
+        StringBuilder classBuilder = new(Class);
+        classBuilder
+            .Append(" btn ")
+            .Append(Color.AsClass())
+            .Append(' ').Append(Rounding.AsClass())
+            .Append(' ').Append(Size.AsButtonClass())
+            .Append(' ').Append(Outline.AsButtonClass())
+        ;
+        if(Active)
+            classBuilder.Append(" active");
+        if(Disabled)
+            classBuilder.Append(" disabled");
+
+        Class = classBuilder.ToString();
+    }
+}

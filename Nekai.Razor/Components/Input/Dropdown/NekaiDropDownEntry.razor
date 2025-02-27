@@ -1,0 +1,15 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<li id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
+    <a class="dropdown-item" href="@Href">
+        @ChildContent
+    </a>
+</li>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public string Href { get; set; } = "#";
+}

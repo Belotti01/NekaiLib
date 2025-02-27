@@ -1,0 +1,86 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+@typeparam T
+
+<table id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
+    @if(Caption is not null)
+    {
+        <caption>@Caption</caption>
+    }
+    
+    <thead>
+        <tr>
+            @Header
+        </tr>
+    </thead>
+    
+    <tbody>
+        @if(Items.Any())
+        {
+            foreach(var item in Items)
+            {
+                <tr>
+                    @RowTemplate?.Invoke(item)
+                </tr>
+            }
+        }
+        else
+        {
+            @EmptyDisplay
+        }
+    </tbody>
+    
+    <tfoot>
+        <tr>
+            @Footer
+        </tr>
+    </tfoot>
+</table>
+
+
+@code {
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+    [Parameter]
+    public RenderFragment? EmptyDisplay { get; set; }
+    [Parameter]
+    public RenderFragment<T>? RowTemplate { get; set; }
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+    [Parameter]
+    public RenderFragment? Caption { get; set; }
+    [Parameter]
+    public IEnumerable<T> Items { get; set; } = [];
+    [Parameter]
+    public bool StripedRows { get; set; }
+    [Parameter]
+    public bool StripedColumns { get; set; }
+    [Parameter]
+    public bool HighlightOnHover { get; set; }
+    [Parameter]
+    public bool Borderless { get; set; }
+    [Parameter]
+    public bool Compact { get; set; }
+    [Parameter]
+    public VerticalAlignment Alignment { get; set; }
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+
+        Class += " table";
+        if(Compact)
+            Class += " table-sm";
+        if(StripedRows)
+            Class += " table-striped";
+        if(StripedColumns)
+            Class += " table-striped-columns";
+        if(HighlightOnHover)
+            Class += " table-hover";
+        if(Borderless)
+            Class += " table-borderless";
+
+        Class += ' ' + Alignment.ToCLass();
+    }
+}

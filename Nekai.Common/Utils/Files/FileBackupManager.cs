@@ -124,8 +124,7 @@ public class FileBackupManager : IDisposable
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Shared.Error("Could not restore backup file:");
-			NekaiLogs.Shared.Error(ex);
+			NekaiLogs.Shared.Error("Could not restore backup file: {ex}", ex);
 
 			return NekaiPath.GetResultFromException(ex);
 		}

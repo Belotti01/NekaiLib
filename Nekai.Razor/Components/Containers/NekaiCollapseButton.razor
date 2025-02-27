@@ -1,0 +1,24 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<button class="navbar-toggler @Class" type="button" data-bs-toggle="collapse" data-bs-target="#@TargetId" aria-controls="@TargetId" aria-expanded="false" aria-label="@AriaLabel"
+        @bind:event="onclick" @bind:get="@Expanded" @bind:set="@ChangeExpanded">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter, EditorRequired]
+    public string TargetId { get; set; } = "";
+    [Parameter]
+    public bool Expanded { get; set; }
+    [Parameter]
+    public EventCallback<bool> ExpandedChanged { get; set; }
+
+    protected async Task ChangeExpanded(bool toState)
+    {
+        Expanded = toState;
+        await ExpandedChanged.InvokeAsync(toState);
+    }
+}

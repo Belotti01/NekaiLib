@@ -1,0 +1,63 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<table id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
+    @if(Caption is not null)
+    {
+        <caption>@Caption</caption>
+    }
+    
+    <thead>
+        @THead
+    </thead>
+    
+    <tbody>
+        @TBody
+    </tbody>
+    
+    <tfoot>
+        @TFoot
+    </tfoot>
+</table>
+
+@code {
+    [Parameter]
+    public RenderFragment? THead { get; set; }
+    [Parameter]
+    public RenderFragment? TBody { get; set; }
+    [Parameter]
+    public RenderFragment? TFoot { get; set; }
+    [Parameter]
+    public RenderFragment? Caption { get; set; }
+    [Parameter]
+    public bool StripedRows { get; set; }
+    [Parameter]
+    public bool StripedColumns { get; set; }
+    [Parameter]
+    public bool HighlightOnHover { get; set; }
+    [Parameter]
+    public bool Borderless { get; set; }
+    [Parameter]
+    public bool Compact { get; set; }
+    [Parameter]
+    public VerticalAlignment Alignment { get; set; }
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+
+        Class += " table";
+        if(Compact)
+            Class += " table-sm";
+        if(StripedRows)
+            Class += " table-striped";
+        if(StripedColumns)
+            Class += " table-striped-columns";
+        if(HighlightOnHover)
+            Class += " table-hover";
+        if(Borderless)
+            Class += " table-borderless";
+
+        Class += ' ' + Alignment.ToCLass();
+    }
+}

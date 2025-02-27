@@ -1,0 +1,35 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div id="@Id" class="@Class card" style="@Style" aria-label="@AriaLabel">
+    <div class="card-header">
+        @Header
+    </div>
+    
+    <div class="card-body">
+        @Body
+    </div>
+    
+    <div class="card-footer">
+        @Footer
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+    [Parameter]
+    public RenderFragment? Body { get; set; }
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+    [Parameter]
+    public Rounding Rounding { get; set; }
+
+    public override void ApplyThemeColors()
+    {
+        base.ApplyThemeColors();
+
+        Class += ' ' + BackgroundColor.AsTextBackgroundClass();
+        Class += ' ' + Rounding.AsClass();
+    }
+}

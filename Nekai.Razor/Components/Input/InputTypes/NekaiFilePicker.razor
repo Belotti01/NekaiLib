@@ -1,0 +1,19 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<input id="@Id" class="@Class" style="@Style" type="file" aria-label="@AriaLabel" 
+       @bind:get="@Value" @bind:set="@ChangePickedFile" @bind:event="onchange"/>
+
+
+@code {
+    [Parameter]
+    public string? Value { get; set; }
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    protected async Task ChangePickedFile(string? file)
+    {
+        Value = file;
+        await ValueChanged.InvokeAsync(file);
+    }
+}
