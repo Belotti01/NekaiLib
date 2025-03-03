@@ -26,4 +26,12 @@ public static class ButtonSizeExtensions
 			Sizing.Small => "form-select-sm",
 			_ => ""
 		};
+
+	public static string AsControlClass(this Sizing size)
+		=> size switch
+		{
+			Sizing.Large => "form-control-lg",
+			Sizing.Small => "form-control-sm",
+			_ => ""
+		};
 }

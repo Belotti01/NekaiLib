@@ -46,6 +46,7 @@ public class NekaiComponentBase : ComponentBase
 		string classes = TextColor.AsTextColorClass();
 		classes += ' ' + BorderColor.AsBorderColorClass();
 		classes += ' ' + BackgroundColor.AsBackgroundColorClass();
+		classes += ' ' + BackgroundColor.AsTextBackgroundClass();
 
 		return classes.TrimEnd();
 	}

@@ -19,12 +19,15 @@
     public bool MatchAll { get; set; }
     [Parameter]
     public string? Icon { get; set; }
+    [Parameter]
+    public bool InSideBar { get; set; }
     
     public NavLinkMatch Match => MatchAll ? NavLinkMatch.All : NavLinkMatch.Prefix;
     
     public override void AfterClassSet()
     {
         base.AfterClassSet();
-        Class += " flex-row list-group-item list-group-item-action ";
+        Class += " nav-link";
+        Class += " list-group-item list-group-item-action";
     }
 }

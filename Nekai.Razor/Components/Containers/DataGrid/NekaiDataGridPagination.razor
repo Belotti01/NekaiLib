@@ -1,0 +1,123 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+@typeparam T
+
+<nav id="@Id" class="@Class d-inline-flex flex-row" style="@Style" aria-label="@AriaLabel">
+    <ul class="pagination my-1">
+
+        <li class="page-item">
+            <btn type="button" aria-label="First page" class="page-link" onclick="@(() => SetPageAsync(1))">
+                <MaterialIcon>first_page</MaterialIcon>
+            </btn>
+        </li>
+        
+        <li class="page-item">
+            <btn type="button"  aria-label="Previous page" class="page-link" onclick="@(() => SetPageAsync((Grid?.PageNumber ?? 1) - 1))">
+                <MaterialIcon>chevron_left</MaterialIcon>
+            </btn>
+        </li>
+
+        @for(int i = FirstShownPage; i <= LastShownPage; i++)
+        {
+            int currentPage = i + 1;
+            <li class="page-item">
+                @if(CurrentPage == currentPage && PageInputBox)
+                {
+                    <button aria-label="Page number field" type="button" class="@(_GetPageButtonClass(currentPage))">
+                        <NekaiNumberBox Size="@Sizing.Small" T="int" Value="@currentPage" Min="1" Max="TotalPageCount" ValueChanged="@SetPageAsync" />
+                    </button>
+                }
+                else
+                {
+                    <button aria-label="@($"Page {currentPage}")" type="button" class="@(_GetPageButtonClass(currentPage))" onclick="@(() => SetPageAsync(currentPage))">
+                        @(currentPage)
+                    </button>
+                }
+            </li>
+        }
+
+        <li class="page-item">
+            <btn type="button"  aria-label="Next page" class="page-link" onclick="@(() => SetPageAsync((Grid?.PageNumber ?? 1) + 1))">
+                <MaterialIcon>chevron_right</MaterialIcon>
+            </btn>
+        </li>
+
+        <li class="page-item">
+            <btn type="button" aria-label="Last page" class="page-link" onclick="@(() => SetPageAsync(TotalPageCount))">
+                <MaterialIcon>last_page</MaterialIcon>
+            </btn>
+        </li>
+    </ul>
+    
+    @if(PageSizes.Length > 1)
+    {
+        <div>
+            <NekaiSelect Id="page-size-select" Size="Sizing.Small" T="int" Value="@_PageSize" ValueChanged="@_ChangePageSizeAsync">
+                @foreach(var size in PageSizes)
+                {
+                    <NekaiSelectOption Value="@size">
+                        @size
+                    </NekaiSelectOption>
+                }
+            </NekaiSelect>
+        </div>
+    }
+</nav>
+
+@code {
+    [Parameter, EditorRequired]
+    public int[] PageSizes { get; set; } = [];
+    [Parameter]
+    public bool PageInputBox { get; set; }
+    [Parameter]
+    public int DefaultPageSize { get; set; } = int.MaxValue;
+    
+    private int _PageSize { get; set; } = -1;
+
+    public int CurrentPage => Grid?.PageNumber ?? 1;
+    public int TotalPageCount => Grid is null
+        ? 0
+        : (int)double.Ceiling((double)Grid.ItemsCount / _PageSize);
+    public int FirstShownPage => int.Max(0, CurrentPage - 3);
+    public int LastShownPage => int.Min(TotalPageCount - 1, CurrentPage + 1);
+    
+    [CascadingParameter(Name = "grid")]
+    public NekaiDataGrid<T>? Grid { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(_PageSize < 0 && Grid is not null)   // Only when loading for the first time.
+        {
+            _PageSize = DefaultPageSize;
+            await Grid.ShowPageAsync(1, _PageSize);
+        }
+    }
+
+    public async Task SetPageAsync(int pageNumber)
+    {
+        pageNumber = int.Clamp(pageNumber, 1, TotalPageCount);
+        
+        if(Grid is null)
+            return;
+
+        await Grid.ShowPageAsync(pageNumber, _PageSize);
+    }
+
+    private string _GetPageButtonClass(int pageNumber)
+    {
+        return pageNumber != CurrentPage 
+            ? "page-link mt-1" 
+            : "page-link active";
+    }
+
+    private async Task _ChangePageSizeAsync(int size)
+    {
+        _PageSize = size;
+        if(Grid is null)
+            return;
+        // Reload the page
+        await SetPageAsync(CurrentPage);
+
+    }
+}

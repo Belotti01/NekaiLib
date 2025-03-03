@@ -19,7 +19,7 @@ else
     [Parameter]
     public string? Src { get; set; }
     [Parameter]
-    public string Alt { get; set;}
+    public string? Alt { get; set;}
     [Parameter]
     public Breakpoint Size { get; set; } = Breakpoint.None;
     [Parameter]
@@ -30,18 +30,10 @@ else
         base.AfterClassSet();
         Class += " avatar";
         
-        if(Size == Breakpoint.None)
-            return;
-        Class += " avatar-" + Size.ToString().ToLower();
+        if(Size != Breakpoint.None)
+            Class += " avatar-" + Size.ToString().ToLower();
 
-        if(Rounding == Rounding.Circle)
-            return;
-        Class += " rounding-" + (int)Rounding;
-    }
-
-    public override void ApplyThemeColors()
-    {
-        base.ApplyThemeColors();
-        Class += ' ' + BackgroundColor.AsTextBackgroundClass();
+        if(Rounding != Rounding.Circle)
+            Class += " rounding-" + (int)Rounding;
     }
 }

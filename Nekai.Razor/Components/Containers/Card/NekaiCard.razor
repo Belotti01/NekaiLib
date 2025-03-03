@@ -2,17 +2,26 @@
 @inherits NekaiComponentBase
 
 <div id="@Id" class="@Class card" style="@Style" aria-label="@AriaLabel">
-    <div class="card-header">
-        @Header
-    </div>
+    @if(Header is not null)
+    {
+        <div class="card-header">
+            @Header
+        </div>
+    }
     
-    <div class="card-body">
-        @Body
-    </div>
-    
-    <div class="card-footer">
-        @Footer
-    </div>
+    @if(Body is not null)
+    {
+        <div class="card-body">
+            @Body
+        </div>
+    }
+
+    @if(Footer is not null)
+    {
+        <div class="card-footer">
+            @Footer
+        </div>
+    }
 </div>
 
 @code {
@@ -29,7 +38,6 @@
     {
         base.ApplyThemeColors();
 
-        Class += ' ' + BackgroundColor.AsTextBackgroundClass();
         Class += ' ' + Rounding.AsClass();
     }
 }

@@ -2,26 +2,33 @@
 @inherits NekaiComponentBase
 
 <div class="container">
-    <header id="layout-header" class="row">
-        <div class="col-10 my-3">
-            @HeaderContent
-        </div>
-    </header>
+    @if(HeaderContent is not null)
+    {
+        <header id="layout-header" class="row">
+            <nav class="navbar">
+                <div class="navbar-nav w-100 d-inline-flex flex-row align-items-baseline">
+                    @HeaderContent
+                </div>
+            </nav>
+        </header>
+    }
 
     <div class="row align-items-start container mx-auto">
         @* Only show the collapse button if the display is small, when the NavMenu spans the whole width of the screen. *@
-        <nav id="layout-sidebar-container" class="@($"navbar col-sm-12 col-md-{NavMenuColSpan} row")">
-            <div class="d-md-none list-group col-12">
-                <NekaiCollapseButton TargetId="layout-sidebar" Class="list-group-item list-group-item-action d-flex align-content-center justify-content-center">
-                    <MaterialIcon Alignment="VerticalAlignment.Middle">menu</MaterialIcon>
-                </NekaiCollapseButton>
+        @if(NavMenu is not null) {
+            <div id="layout-sidebar-container" class="@($"navbar col-sm-12 col-md-{NavMenuColSpan} row")">
+                <div class="d-md-none list-group col-12">
+                    <NekaiCollapseButton TargetId="layout-sidebar" Class="list-group-item list-group-item-action d-flex align-content-center justify-content-center">
+                        <MaterialIcon Alignment="VerticalAlignment.Middle">menu</MaterialIcon>
+                    </NekaiCollapseButton>
+                </div>
+                <nav id="layout-sidebar" class="sticky-top collapse show">
+                    @NavMenu
+                </nav>
             </div>
-            <nav id="layout-sidebar" class="sticky-top collapse show list-group col-12">
-                @NavMenu
-            </nav>
-        </nav>
-
-        <main class="col-md-10 col-sm-12">
+        }
+        
+        <main class=@($"col-md-{(NavMenu is null ? 12 : (12 - NavMenuColSpan))} col-sm-12 layout-main")>
             <div class="container">
                 @Body
             </div>

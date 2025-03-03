@@ -1,0 +1,55 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+@typeparam T
+
+<th id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
+    <NekaiButton Class="container" OnClick="@SortAsync">
+        @ChildContent 
+        <MaterialIcon Alignment="VerticalAlignment.Bottom">@Icon</MaterialIcon>
+    </NekaiButton>
+</th>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public Func<T, object>? SortBy { get; set; }
+
+    protected string Icon { get; set; } = "";
+    
+    [CascadingParameter(Name = "grid")]
+    public NekaiDataGrid<T>? Grid { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        // Check if this is still the currently sorted by column.
+        if(Grid.CurrentSorting != SortBy)
+        {
+            await UpdateSortingIconAsync(Sorting.None);
+        }
+    }
+
+    protected async Task SortAsync()
+    {
+        if(Grid is null)
+            return;
+        
+        var sortOrder = await Grid.SortByAsync(SortBy);
+        await UpdateSortingIconAsync(sortOrder);
+    }
+
+    public async Task UpdateSortingIconAsync(Sorting sortOrder)
+    {
+        if(SortBy is null)
+        {
+            // Not sortable = No icon.
+            // The icon hasn't changed - don't redraw.
+            return; 
+        }
+        
+        Icon = sortOrder.ToIcon();
+        await InvokeAsync(StateHasChanged);
+    }
+}

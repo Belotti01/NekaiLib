@@ -1,9 +1,11 @@
 @namespace Nekai.Razor
 @inherits NekaiComponentBase
 
-<div id="@Id" class="@Class avatar-stack" style="@Style" aria-label="@AriaLabel">
+@typeparam T
+
+<td id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
     @ChildContent
-</div>
+</td>
 
 @code {
     [Parameter]

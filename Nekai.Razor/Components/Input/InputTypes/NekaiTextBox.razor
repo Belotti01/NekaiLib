@@ -17,6 +17,8 @@
     public bool Required { get; set; }
     [Parameter]
     public InputType Type { get; set; } = InputType.Text;
+    [Parameter]
+    public Sizing Size { get; set; }
     
     private async Task _UpdateValue(string obj)
     {
@@ -28,5 +30,6 @@
     {
         base.AfterClassSet();
         Class += " form-control";
+        Class += ' ' + Size.AsControlClass();
     }
 }

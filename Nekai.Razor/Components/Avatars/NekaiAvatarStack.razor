@@ -1,0 +1,24 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div id="@Id" class="@Class avatar-stack" style="@Style" aria-label="@AriaLabel">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public bool Reversed { get; set; }
+
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+
+        Class += " avatar-stack";
+        if(Reversed)
+            return;     // Reversed by default.
+
+        Class += " justify-content-start flex-row";
+    }
+}

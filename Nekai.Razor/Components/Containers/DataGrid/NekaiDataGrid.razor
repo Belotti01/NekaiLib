@@ -1,0 +1,177 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+@attribute [CascadingTypeParameter(nameof(T))]
+@typeparam T
+
+<CascadingValue IsFixed Value="@this" Name="Grid">
+@if(TopPagination)
+{
+    @Pagination
+}
+
+<table id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
+        @if(Headers is not null)
+        {
+            <thead>
+            @Headers
+            </thead>
+        }
+
+        <tbody>
+        @if(ItemsCount == 0)
+        {
+            @EmptyContent
+        }
+        else
+        {
+            @foreach(var item in CurrentPageSortedItems)
+            {
+                <tr>
+                    @RowTemplate?.Invoke(item)
+                </tr>
+            }
+        }
+        </tbody>
+
+        @if(Footer is not null)
+        {
+            <tfoot>
+            @Footer
+            </tfoot>
+        }
+</table>
+
+@if(BottomPagination)
+{
+    @Pagination
+}
+</CascadingValue>
+
+@code {
+    public int ItemsCount => Items.TryGetNonEnumeratedCount(out var count)
+        ? count
+        : Items.Count();
+
+
+    public IEnumerable<T> CurrentPageSortedItems
+    {
+        get
+        {
+            if(PageSize <= 0)   // No pagination.
+                return SortedItems;
+
+            int skipAmount = PageSize * (PageNumber - 1);
+            return SortedItems.Skip(skipAmount).Take(PageSize);
+        }
+    }
+    
+    public IEnumerable<T> SortedItems
+    {
+        get
+        {
+            if(CurrentSorting is null)
+                return Items;
+            
+            return SortByAscending
+                ? Items.OrderBy(CurrentSorting)
+                : Items.OrderByDescending(CurrentSorting);
+        }
+    }
+
+    [Parameter]
+    public IEnumerable<T> Items { get; set; } = [];
+    [Parameter]
+    public RenderFragment? EmptyContent { get; set; }
+    [Parameter]
+    public RenderFragment<T>? RowTemplate { get; set; }
+    [Parameter]
+    public RenderFragment? Headers { get; set; }
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+    [Parameter]
+    public RenderFragment? Pagination { get; set; }
+    [Parameter]
+    public bool StripedRows { get; set; }
+    [Parameter]
+    public bool StripedColumns { get; set; }
+    [Parameter]
+    public bool HighlightOnHover { get; set; }
+    [Parameter]
+    public bool Borderless { get; set; }
+    [Parameter]
+    public bool Bordered { get; set; }
+    [Parameter]
+    public bool Compact { get; set; }
+    [Parameter]
+    public VerticalAlignment Alignment { get; set; }
+    [Parameter]
+    public bool TopPagination { get; set; }
+    [Parameter]
+    public bool BottomPagination { get; set; }
+    
+    public Func<T, object>? CurrentSorting { get; private set; }
+    public bool SortByAscending { get; private set; } = true;
+    public int PageSize { get; private set; } = -1; // <= 0 = no pagination.
+    public int PageNumber { get; private set; } = 1;
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+
+        Class += " table";
+        if(Compact)
+            Class += " table-sm";
+        if(StripedRows)
+            Class += " table-striped";
+        if(StripedColumns)
+            Class += " table-striped-columns";
+        if(HighlightOnHover)
+            Class += " table-hover";
+        if(Borderless)
+            Class += " table-borderless";
+        if(Bordered)
+            Class += "table-bordered";
+
+        Class += ' ' + Alignment.ToCLass();
+    }
+
+    public async Task<Sorting> SortByAsync(Func<T, object>? sorting)
+    {
+        var sortOrder = await _UpdateSortingColumnAndOrderAsync(sorting);
+        await InvokeAsync(StateHasChanged);
+        return sortOrder;
+    }
+    
+    public async Task<Sorting> _UpdateSortingColumnAndOrderAsync(Func<T, object>? sorting)
+    {
+        if(CurrentSorting == sorting)
+        {
+            if(SortByAscending)
+            {
+                // Sort in descending order instead.
+                SortByAscending = false;
+                return Sorting.Descending;
+            }
+            
+            // Return to default state.
+            CurrentSorting = null;
+            SortByAscending = true;
+            return Sorting.None;
+        }
+        
+        // Apply new sorting column and default to ascending order.
+        CurrentSorting = sorting;
+        SortByAscending = true;
+        return Sorting.Ascending;
+    }
+
+    public async Task ShowPageAsync(int page, int pageSize)
+    {
+        PageSize = pageSize;
+        PageNumber = page;
+
+        await InvokeAsync(StateHasChanged);
+    }
+        
+}

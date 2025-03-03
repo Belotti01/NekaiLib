@@ -27,6 +27,8 @@
     public T Step { get; set; } = T.One; 
     [Parameter]
     public bool Required { get; set; }
+    [Parameter]
+    public Sizing Size { get; set; }
         
     private async Task _UpdateValue(T obj)
     {
@@ -40,5 +42,6 @@
         Class += " form-control";
         if(FloatingLabel)
             Class += " form-floating";
+        Class += Size.AsControlClass();
     }
 }
