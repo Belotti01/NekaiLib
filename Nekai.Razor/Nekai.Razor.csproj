@@ -36,9 +36,5 @@
     <ProjectReference Include="..\Nekai.Common\Nekai.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\Popups\" />
-  </ItemGroup>
-
 
 </Project>
