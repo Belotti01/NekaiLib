@@ -6,7 +6,7 @@ The main Nekai framework - includes many extension methods, a logging system, JS
 Based mainly on .NET, but also DotNext and Serilog.
 
 ### Nekai.Razor
-Simplifies implementation of the FluentUI components library, and builds components upon it.
+Components based on Fast BootStrap.
 
 ### Nekai.Analyzers
 Extends Nekai.Common with its own best-practices.
