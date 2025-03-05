@@ -52,7 +52,7 @@
     
     @if(PageSizes.Length > 1)
     {
-        <div>
+        <div class="mt-2">
             <NekaiSelect Id="page-size-select" Size="Sizing.Small" T="int" Value="@_PageSize" ValueChanged="@_ChangePageSizeAsync">
                 @foreach(var size in PageSizes)
                 {

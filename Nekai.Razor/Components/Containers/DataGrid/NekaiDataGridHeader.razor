@@ -25,7 +25,7 @@
     {
         await base.OnParametersSetAsync();
         // Check if this is still the currently sorted by column.
-        if(Grid.CurrentSorting != SortBy)
+        if(Grid is not null && Grid.CurrentSorting != SortBy)
         {
             await UpdateSortingIconAsync(Sorting.None);
         }
@@ -46,7 +46,7 @@
         {
             // Not sortable = No icon.
             // The icon hasn't changed - don't redraw.
-            return; 
+            return;
         }
         
         Icon = sortOrder.ToIcon();
