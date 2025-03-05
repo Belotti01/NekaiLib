@@ -7,10 +7,12 @@ public class ArgumentsReader
 {
 	internal const char DEFAULT_PARAMETER_PREFIX = '-';
 	protected Dictionary<string, string> arguments = new(StringComparer.OrdinalIgnoreCase);
-
-	public string ParameterlessArgument => arguments[""];
+	/// <summary> Read-only argument-value pairs. </summary>
+	public IReadOnlyDictionary<string, string> Arguments => arguments;
+	
+	public string ParameterlessArgument => Arguments[""];
 	public char ParameterPrefix { get; protected set; }
-	public string? this[string parameter] => arguments.GetValueOrDefault(parameter);
+	public string? this[string parameter] => Arguments.GetValueOrDefault(parameter);
 	public string? this[params string[] parameters] => this[parameters.AsEnumerable()];
 	public string? this[IEnumerable<string> parameters] => ReadAny(parameters);
 
