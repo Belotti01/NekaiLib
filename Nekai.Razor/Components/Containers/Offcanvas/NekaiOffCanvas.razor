@@ -1,0 +1,26 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div tabindex="-1" class="@Class" style="@Style" id="@Id" aria-label="@AriaLabel">
+    <div class="offcanvas-header">
+        @Header
+    </div>
+    <div class="offcanvas-body">
+        @Body
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+    [Parameter]
+    public RenderFragment? Body { get; set; }
+    [Parameter]
+    public bool Mirror { get; set; }
+
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += $" offcanvas offcanvas-{(Mirror ? "end" : "start")}";
+    }
+}

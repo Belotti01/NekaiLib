@@ -2,7 +2,8 @@
 @using System.Text
 @inherits NekaiComponentBase
 
-<button id="@Id" onclick="@OnClick" class="@Class" value="@Value" type="@Type.ToString()" style="@Style" disabled="@Disabled" aria-disabled="@Disabled" aria-label="@AriaLabel" aria-pressed="@Active">
+<button id="@Id" onclick="@OnClick" class="@Class" value="@Value" type="@Type.ToString()" style="@Style" disabled="@Disabled" aria-disabled="@Disabled" aria-label="@AriaLabel" aria-pressed="@Active"
+        data-bs-toggle="@BsToggle" data-bs-target="@(BsTarget is null ? null : $"#{BsTarget}")" aria-controls="@BsTarget">
     @ChildContent
 </button>
 
@@ -28,6 +29,10 @@
     public EventCallback OnClick { get; set; }
     [Parameter]
     public bool Active { get; set; }
+    [Parameter]
+    public string? BsToggle { get; set; }
+    [Parameter]
+    public string? BsTarget { get; set; }
 
     public override void AfterClassSet()
     {

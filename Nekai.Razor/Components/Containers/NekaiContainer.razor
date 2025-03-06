@@ -1,0 +1,21 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div class="@Class" style="@Style" id="@Id" aria-label="@AriaLabel">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public bool Fluid { get; set; }
+
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += Fluid 
+            ? " container-fluid"
+            : " container";
+    }
+}
