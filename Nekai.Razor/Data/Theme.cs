@@ -7,6 +7,8 @@ public enum Theme
 	DiscoverySubtle,
 	Primary,
 	PrimarySubtle,
+	Secondary,
+	SecondarySubtle,
 	Success,
 	SuccessSubtle,
 	Warning,

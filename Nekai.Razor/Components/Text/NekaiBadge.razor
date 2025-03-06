@@ -1,0 +1,20 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<span id="@Id" class="@Class" aria-label="@AriaLabel" style="@Style">
+    @ChildContent
+</span>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public Rounding Rounding { get; set; }
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " badge";
+        Class += ' ' + Rounding.AsClass();
+    }
+}
