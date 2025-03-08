@@ -2,7 +2,7 @@
 @inherits NekaiComponentBase
 
 <textarea id="@Id" class="@Class" rows="@Rows" style="@Style" type="@Type.AsTypeString()" aria-label="@AriaLabel" placeholder="@Placeholder" required="@Required"
-        @bind:event="@(Immediate ? "oninput" : "onchange")" @bind:get="@Value" @bind:set="@_UpdateValue">
+        readonly="@ReadOnly" @bind:event="@(Immediate ? "oninput" : "onchange")" @bind:get="@Value" @bind:set="@_UpdateValue">
 </textarea>
 
 @code {
@@ -20,6 +20,8 @@
     public InputType Type { get; set; } = InputType.Text;
     [Parameter]
     public int Rows { get; set; } = 1;
+    [Parameter]
+    public bool ReadOnly { get; set; }
     
     private async Task _UpdateValue(string obj)
     {

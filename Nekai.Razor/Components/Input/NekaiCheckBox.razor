@@ -3,7 +3,7 @@
 
 <NekaiInput Class="@Class" Style="@Style">
     <input id="@Id" class="@_inputClass" type="checkbox" aria-label="@AriaLabel" required="@Required"
-           @bind:get="@Value" @bind:set="@OnChange" @bind:event="onchange"/>
+           @bind:get="@Value" @bind:set="@OnChange" @bind:event="onchange" readonly="@ReadOnly"/>
 </NekaiInput>
 
 @code {
@@ -13,6 +13,8 @@
     public EventCallback<bool> ValueChanged { get; set; } 
     [Parameter]
     public bool Required { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
     
     private string _inputClass = "";
 

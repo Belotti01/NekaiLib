@@ -1,7 +1,7 @@
 @namespace Nekai.Razor
 @inherits NekaiComponentBase
 
-<input id="@Id" class="form-check-input @Class" type="radio" name="@GroupName" style="@Style" aria-label="@AriaLabel"
+<input id="@Id" class="form-check-input @Class" type="radio" name="@GroupName" style="@Style" aria-label="@AriaLabel" readonly="@ReadOnly"
        disabled="@Disabled" checked="@Checked" @bind:event="onchange" @bind:get="@Checked" @bind:set="@ToggleChecked" />
 
 @code {
@@ -17,6 +17,8 @@
     public bool Inline { get; set; }
     [Parameter]
     public bool RightToLeft { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
     
     protected async Task ToggleChecked(bool check)
     {

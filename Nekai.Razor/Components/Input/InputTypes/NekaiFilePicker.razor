@@ -2,7 +2,7 @@
 @inherits NekaiComponentBase
 
 <input id="@Id" class="@Class" style="@Style" type="file" aria-label="@AriaLabel" 
-       @bind:get="@Value" @bind:set="@ChangePickedFile" @bind:event="onchange"/>
+       @bind:get="@Value" @bind:set="@ChangePickedFile" @bind:event="onchange" readonly="@ReadOnly"/>
 
 
 @code {
@@ -10,6 +10,8 @@
     public string? Value { get; set; }
     [Parameter]
     public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
 
     protected async Task ChangePickedFile(string? file)
     {

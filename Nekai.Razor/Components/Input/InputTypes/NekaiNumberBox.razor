@@ -6,7 +6,7 @@
 @typeparam T where T : INumber<T>, IMinMaxValue<T>
 
 <input  id="@Id" class="@Class" style="@Style" type="number" min="@Min" max="@Max" step="@Step" aria-label="@AriaLabel" placeholder="@Placeholder" required="@Required"
-        @bind:event="@(Immediate ? "oninput" : "onchange")" @bind:get="@Value" @bind:set="@_UpdateValue"/>
+        readonly="@ReadOnly" @bind:event="@(Immediate ? "oninput" : "onchange")" @bind:get="@Value" @bind:set="@_UpdateValue"/>
 
 @code {
     [Parameter]
@@ -29,6 +29,8 @@
     public bool Required { get; set; }
     [Parameter]
     public Sizing Size { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
         
     private async Task _UpdateValue(T obj)
     {

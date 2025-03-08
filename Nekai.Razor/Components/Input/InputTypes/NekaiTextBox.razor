@@ -2,7 +2,7 @@
 @inherits NekaiComponentBase
 
 <input id="@Id" class="@Class" style="@Style" type="@Type.AsTypeString()" aria-label="@AriaLabel" placeholder="@Placeholder" required="@Required"
-        @bind:event="@(Immediate ? "oninput" : "onchange")" @bind:get="@Value" @bind:set="@_UpdateValue"/>
+       readonly="@ReadOnly" @bind:event="@(Immediate ? "oninput" : "onchange")" @bind:get="@Value" @bind:set="@_UpdateValue"/>
 
 @code {
     [Parameter]
@@ -19,6 +19,8 @@
     public InputType Type { get; set; } = InputType.Text;
     [Parameter]
     public Sizing Size { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
     
     private async Task _UpdateValue(string obj)
     {

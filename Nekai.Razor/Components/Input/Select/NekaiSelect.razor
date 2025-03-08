@@ -3,7 +3,7 @@
 
 @typeparam T
 
-<select id="@Id" class="form-select @Class" style="@Style" aria-label="@AriaLabel"
+<select id="@Id" class="form-select @Class" style="@Style" aria-label="@AriaLabel" readonly="@ReadOnly"
         multiple="@Multiple" @bind:event="onchange" @bind:get="@Value" @bind:set="@ChangeValue"> 
     @ChildContent
 </select>
@@ -19,6 +19,8 @@
     public T? Value { get; set; }
     [Parameter]
     public EventCallback<T?> ValueChanged { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
 
     public override void AfterClassSet()
     {

@@ -2,7 +2,7 @@
 @inherits NekaiComponentBase
 
 <input id="@Id" class="@Class" style="@Style" type="color" aria-label="@AriaLabel" required="@Required"
-       @bind:event="oninput" @bind:get="@Value" @bind:set="@_UpdateValue"/>
+       @bind:event="oninput" @bind:get="@Value" @bind:set="@_UpdateValue" readonly="@ReadOnly"/>
 
 @code {
     [Parameter]
@@ -11,6 +11,8 @@
     public EventCallback<string> ValueChanged { get; set; } 
     [Parameter]
     public bool Required { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
 
     private async Task _UpdateValue(string obj)
     {

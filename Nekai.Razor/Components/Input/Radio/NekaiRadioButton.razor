@@ -3,7 +3,7 @@
 @inherits NekaiComponentBase
 
 <input id="@Id" class="btn-check @Class" type="radio" name="@GroupName" style="@Style" aria-label="@AriaLabel"
-       disabled="@Disabled" checked="checked" @bind:event="onchange" @bind:get="@Checked" @bind:set="@ToggleChecked" />
+       readonly="@ReadOnly" disabled="@Disabled" checked="checked" @bind:event="onchange" @bind:get="@Checked" @bind:set="@ToggleChecked" />
 <NekaiLabel class="@_buttonClass" ForCheck For="@Id">
     @ChildContent
 </NekaiLabel>
@@ -26,6 +26,8 @@
     public Outline Outline { get; set; }
     [Parameter]
     public bool Disabled { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
 
     private string _buttonClass = "";
     
