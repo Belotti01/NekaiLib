@@ -1,0 +1,24 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+
+@code {
+    [Parameter]
+    public Sizing Size { get; set; }
+    [Parameter]
+    public Theme Color
+    {
+        get => TextColor; 
+        set => TextColor = value;
+    }
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " spinner-grow";
+        Class += ' ' + Size.AsPulsatingCircleClass();
+    }
+}

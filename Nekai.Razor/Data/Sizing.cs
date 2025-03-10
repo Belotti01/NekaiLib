@@ -34,4 +34,20 @@ public static class ButtonSizeExtensions
 			Sizing.Small => "form-control-sm",
 			_ => ""
 		};
+
+	public static string AsSpinnerClass(this Sizing size)
+		=> size switch
+		{
+			Sizing.Large => "spinner-border-lg",
+			Sizing.Small => "spinner-border-sm",
+			_ => ""
+		};
+
+	public static string AsPulsatingCircleClass(this Sizing size)
+		=> size switch
+		{
+			Sizing.Large => "spinner-grow-lg",
+			Sizing.Small => "spinner-grow-sm",
+			_ => ""
+		};
 }

@@ -36,15 +36,15 @@ public static class ThemeExtensions
 	}
 
 	public static string AsBackgroundColorClass(this Theme theme)
-		=> theme == Theme.None ? "" : ("bg-" + theme.AsClassEnding());
+		=> theme == Theme.None ? "" : ("bg-" + theme.AsClassEnding()).ToLower();
 
 	public static string AsBorderColorClass(this Theme theme)
-		=> theme == Theme.None ? "" : ("border-" + theme.AsClassEnding());
+		=> theme == Theme.None ? "" : ("border-" + theme.AsClassEnding()).ToLower();
 
 	public static string AsTextColorClass(this Theme theme)
 	// Can't be "text-color-subtle".
-		=> theme == Theme.None ? "" : ("text-" + theme.ToString().Split('S', 1)[0]);
+		=> theme == Theme.None ? "" : ("text-" + theme.ToString().Split('S', 1)[0]).ToLower();
 
 	public static string AsTextBackgroundClass(this Theme theme)
-		=> theme == Theme.None ? "" : "text-bg-" + theme.ToString().Split('S', 1)[0];
+		=> theme == Theme.None ? "" : "text-bg-" + theme.ToString().Split('S', 1)[0].ToLower();
 }

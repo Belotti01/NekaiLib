@@ -1,0 +1,42 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<div id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
+    <div class="@_barClass" style="@_BarStyle" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@Progress"></div>
+</div>
+
+@code {
+    [Parameter]
+    public int Progress { get; set; }
+    [Parameter]
+    public bool Striped { get; set; }
+    [Parameter]
+    public bool Animated { get; set; }
+    [Parameter]
+    public Theme Color { get; set; }
+    [Parameter]
+    public string Height { get; set; } = "10px";
+    
+    private string _barClass = "";
+    private string _BarStyle => $"width: {Progress}%";
+    
+    public override void AfterClassSet()
+    {
+        base.AfterClassSet();
+        Class += " progress";
+
+        _barClass = "progress-bar";
+        if(Striped)
+            _barClass += " progress-bar-striped";
+        if(Animated)
+            _barClass += " progress-bar-animated";
+        _barClass += ' ' + Color.AsBackgroundColorClass();
+    }
+
+    public override void AfterStyleSet()
+    {
+        base.AfterStyleSet();
+
+        Style += $"; height: {Height};";
+    }
+}
