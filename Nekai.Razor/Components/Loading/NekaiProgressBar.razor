@@ -6,18 +6,23 @@
 </div>
 
 @code {
+    /// <summary> The percentage of the progress to display. </summary>
     [Parameter]
     public int Progress { get; set; }
+    /// <summary> Whether to stylize the bar with diagonal stripes. </summary>
     [Parameter]
     public bool Striped { get; set; }
+    /// <summary> Whether the bar should be animated. </summary>
     [Parameter]
     public bool Animated { get; set; }
+    /// <summary> The background color of the bar. </summary>
     [Parameter]
     public Theme Color
     {
         get => BackgroundColor;
         set => BackgroundColor = value;
     }
+    /// <summary> The height of the bar. Defaults to "10px". </summary>
     [Parameter]
     public string Height { get; set; } = "10px";
     

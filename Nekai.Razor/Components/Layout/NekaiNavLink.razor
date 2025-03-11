@@ -11,16 +11,17 @@
 </NavLink>
 
 @code {
+    /// <summary> The link to navigate to on click. </summary>
     [Parameter, EditorRequired]
     public string Href { get; set; } = "";
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+    /// <summary> Whether to compare the whole <see cref="Href"/> against the current URL, or just part of it, for styling. </summary>
     [Parameter]
     public bool MatchAll { get; set; }
+    /// <summary> The Material icon to display for this link. </summary>
     [Parameter]
     public string? Icon { get; set; }
-    [Parameter]
-    public bool InSideBar { get; set; }
     
     public NavLinkMatch Match => MatchAll ? NavLinkMatch.All : NavLinkMatch.Prefix;
     
