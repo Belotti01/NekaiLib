@@ -13,7 +13,11 @@
     [Parameter]
     public bool Animated { get; set; }
     [Parameter]
-    public Theme Color { get; set; }
+    public Theme Color
+    {
+        get => BackgroundColor;
+        set => BackgroundColor = value;
+    }
     [Parameter]
     public string Height { get; set; } = "10px";
     
@@ -30,7 +34,6 @@
             _barClass += " progress-bar-striped";
         if(Animated)
             _barClass += " progress-bar-animated";
-        _barClass += ' ' + Color.AsBackgroundColorClass();
     }
 
     public override void AfterStyleSet()
