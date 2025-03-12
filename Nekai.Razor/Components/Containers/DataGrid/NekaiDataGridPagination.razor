@@ -24,9 +24,7 @@
             <li class="page-item">
                 @if(CurrentPage == currentPage && PageInputBox)
                 {
-                    <button aria-label="Page number field" type="button" class="@(_GetPageButtonClass(currentPage))">
-                        <NekaiNumberBox Size="@Sizing.Small" T="int" Value="@currentPage" Min="1" Max="TotalPageCount" ValueChanged="@SetPageAsync" />
-                    </button>
+                    <NekaiNumberBox T="int" Value="@currentPage" Min="1" Max="TotalPageCount" ValueChanged="@SetPageAsync" />
                 }
                 else
                 {
@@ -107,7 +105,7 @@
     private string _GetPageButtonClass(int pageNumber)
     {
         return pageNumber != CurrentPage 
-            ? "page-link mt-1" 
+            ? "page-link" 
             : "page-link active";
     }
 
