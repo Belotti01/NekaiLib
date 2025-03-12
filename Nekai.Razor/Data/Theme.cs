@@ -47,4 +47,7 @@ public static class ThemeExtensions
 
 	public static string AsTextBackgroundClass(this Theme theme)
 		=> theme == Theme.None ? "" : "text-bg-" + theme.ToString().Split('S', 1)[0].ToLower();
+
+	public static string AsTableClass(this Theme theme)
+		=> theme == Theme.None ? "" : "table-" + theme.ToString().Split('S', 1)[0].ToLower();
 }
