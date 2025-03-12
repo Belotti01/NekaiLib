@@ -1,0 +1,26 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+@typeparam T where T : System.Numerics.INumber<T>, System.Numerics.IMinMaxValue<T>
+
+<input id="@Id" class="@Class form-range" style="@Style" type="range" aria-label="@AriaLabel"
+       min="@Min" max="@Max" step="@Step" @bind:get="@Value" @bind:set="@SetValue">
+
+@code {
+    [Parameter]
+    public T Value { get; set; } = T.Zero;
+    [Parameter]
+    public EventCallback<T> ValueChanged { get; set; }
+    [Parameter]
+    public T Min { get; set; } = T.Zero;
+    [Parameter]
+    public T Max { get; set; } = T.MaxValue;
+    [Parameter]
+    public T Step { get; set; } = T.One;
+
+    public async Task SetValue(T value)
+    {
+        Value = value;
+        await ValueChanged.InvokeAsync(value);
+    }
+}
