@@ -1,0 +1,25 @@
+@namespace Nekai.Razor
+@inherits NekaiComponentBase
+
+<span class="@Class" style="@Style" aria-label="@AriaLabel">
+    @ChildContent
+</span>
+
+
+@code {
+    /// <summary> Disables animations for this skeleton. </summary>
+    [Parameter]
+    public bool Static { get; set; }
+    /// <summary> The size of the skeleton in columns (1-12). </summary>
+    [Parameter]
+    public int Size { get; set; } = 12;
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    public override void AfterClassSet()
+    {
+        Class += " placeholder col-" + int.Clamp(Size, 1, 12);
+        if(!Static)
+            Class += " placeholder-glow";
+    }
+}
