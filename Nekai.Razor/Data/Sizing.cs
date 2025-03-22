@@ -50,4 +50,12 @@ public static class ButtonSizeExtensions
 			Sizing.Small => "spinner-grow-sm",
 			_ => ""
 		};
+	
+	public static string AsSkeletonSize(this Sizing size)
+	=> size switch
+	{
+		Sizing.Large => "placeholder-lg",
+		Sizing.Small => "placeholder-sm",
+		_ => ""
+	};
 }

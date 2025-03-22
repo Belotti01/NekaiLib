@@ -15,17 +15,27 @@
     public int Size { get; set; } = 12;
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+    /// <summary> The color of the skeleton. </summary>
     [Parameter]
     public Theme Color
     {
         get => BackgroundColor; 
         set => BackgroundColor = value;
     }
+    /// <summary> Use a wave animation instead of glowing. </summary>
+    [Parameter]
+    public bool WaveAnimation { get; set; }
+    /// <summary> The height size of the skeleton. </summary>
+    [Parameter]
+    public Sizing Height { get; set; }
     
     public override void AfterClassSet()
     {
         Class += " placeholder col-" + int.Clamp(Size, 1, 12);
         if(!Static)
-            Class += " placeholder-glow";
+            Class += WaveAnimation
+                ? " placeholder-wave"
+                : " placeholder-glow";
+        Class += ' ' + Height.AsSkeletonSize();
     }
 }
