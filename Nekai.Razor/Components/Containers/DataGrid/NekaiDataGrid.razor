@@ -19,9 +19,11 @@
         }
 
         <tbody>
-        @if(ItemsCount == 0)
+        @if(Items is null || ItemsCount == 0)
         {
-            @EmptyContent
+            <tr>
+                @EmptyContent
+            </tr>
         }
         else
         {
@@ -80,7 +82,7 @@
     }
 
     [Parameter]
-    public IEnumerable<T> Items { get; set; } = [];
+    public IEnumerable<T>? Items { get; set; } = [];
     [Parameter]
     public RenderFragment? EmptyContent { get; set; }
     [Parameter]
