@@ -4,14 +4,14 @@
 @typeparam T
 
 <table id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
-    @if(Caption is not null)
+    @if(DataTableCaption is not null)
     {
-        <caption>@Caption</caption>
+        <caption>@DataTableCaption</caption>
     }
     
     <thead>
         <tr>
-            @Header
+            @DataTableHeader
         </tr>
     </thead>
     
@@ -21,34 +21,34 @@
             foreach(var item in Items)
             {
                 <tr>
-                    @RowTemplate?.Invoke(item)
+                    @DataTableRowTemplate?.Invoke(item)
                 </tr>
             }
         }
         else
         {
-            @EmptyDisplay
+            @DataTableEmptyDisplay
         }
     </tbody>
     
     <tfoot>
         <tr>
-            @Footer
+            @DataTableFooter
         </tr>
     </tfoot>
 </table>
 
 @code {
     [Parameter]
-    public RenderFragment? Header { get; set; }
+    public RenderFragment? DataTableHeader { get; set; }
     [Parameter]
-    public RenderFragment? EmptyDisplay { get; set; }
+    public RenderFragment? DataTableEmptyDisplay { get; set; }
     [Parameter]
-    public RenderFragment<T>? RowTemplate { get; set; }
+    public RenderFragment<T>? DataTableRowTemplate { get; set; }
     [Parameter]
-    public RenderFragment? Footer { get; set; }
+    public RenderFragment? DataTableFooter { get; set; }
     [Parameter]
-    public RenderFragment? Caption { get; set; }
+    public RenderFragment? DataTableCaption { get; set; }
     [Parameter]
     public IEnumerable<T> Items { get; set; } = [];
     [Parameter]

@@ -8,14 +8,14 @@
 <CascadingValue IsFixed Value="@this" Name="Grid">
 @if(TopPagination)
 {
-    @Pagination
+    @DataGridPagination
 }
 
 <table id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
-        @if(Headers is not null)
+        @if(DataGridHeaders is not null)
         {
             <thead>
-            @Headers
+            @DataGridHeaders
             </thead>
         }
 
@@ -23,7 +23,7 @@
         @if(Items is null || ItemsCount == 0)
         {
             <tr>
-                @EmptyContent
+                @DataGridEmptyContent
             </tr>
         }
         else
@@ -31,23 +31,23 @@
             @foreach(var item in CurrentPageOfSortedFilteredItems)
             {
                 <tr>
-                    @RowTemplate?.Invoke(item)
+                    @DataGridRowTemplate?.Invoke(item)
                 </tr>
             }
         }
         </tbody>
 
-        @if(Footer is not null)
+        @if(DataGridFooter is not null)
         {
             <tfoot>
-            @Footer
+            @DataGridFooter
             </tfoot>
         }
 </table>
 
 @if(BottomPagination)
 {
-    @Pagination
+    @DataGridPagination
 }
 </CascadingValue>
 
@@ -87,15 +87,15 @@
     [Parameter]
     public IEnumerable<T>? Items { get; set; } = [];
     [Parameter]
-    public RenderFragment? EmptyContent { get; set; }
+    public RenderFragment? DataGridEmptyContent { get; set; }
     [Parameter]
-    public RenderFragment<T>? RowTemplate { get; set; }
+    public RenderFragment<T>? DataGridRowTemplate { get; set; }
     [Parameter]
-    public RenderFragment? Headers { get; set; }
+    public RenderFragment? DataGridHeaders { get; set; }
     [Parameter]
-    public RenderFragment? Footer { get; set; }
+    public RenderFragment? DataGridFooter { get; set; }
     [Parameter]
-    public RenderFragment? Pagination { get; set; }
+    public RenderFragment? DataGridPagination { get; set; }
     [Parameter]
     public bool StripedRows { get; set; }
     [Parameter]

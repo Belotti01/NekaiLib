@@ -3,18 +3,18 @@
 
 <div tabindex="-1" class="@Class" style="@Style" id="@Id" aria-label="@AriaLabel">
     <div class="offcanvas-header">
-        @Header
+        @OffCanvasHeader
     </div>
     <div class="offcanvas-body">
-        @Body
+        @OffCanvasBody
     </div>
 </div>
 
 @code {
     [Parameter]
-    public RenderFragment? Header { get; set; }
+    public RenderFragment? OffCanvasHeader { get; set; }
     [Parameter]
-    public RenderFragment? Body { get; set; }
+    public RenderFragment? OffCanvasBody { get; set; }
     [Parameter]
     public bool Mirror { get; set; }
 
