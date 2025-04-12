@@ -2,11 +2,11 @@
 @inherits NekaiComponentBase
 
 <div id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
-    <NekaiButton Class="dropdown-toggle" Color="@Color" Outline="@Outline" Rounding="@Rounding" Size="@Size" Value="@Label">
-        @Label
+    <NekaiButton Class="dropdown-toggle" Color="@Color" Outline="@Outline" Rounding="@Rounding" Size="@Size">
+        @DropDownLabel
     </NekaiButton>
     <ul class="dropdown-menu" role="menu">
-        @ChildContent
+        @DropDownEntries
     </ul>
 </div>
 
@@ -15,9 +15,9 @@
     [Parameter]
     public bool OpenOnHover { get; set; }
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    public RenderFragment? DropDownEntries { get; set; }
     [Parameter]
-    public string Label { get; set; } = "";
+    public RenderFragment? DropDownLabel { get; set; }
     [Parameter]
     public Sizing Size { get; set; }
     [Parameter]
