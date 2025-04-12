@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Components
 @namespace Nekai.Razor
 @inherits NekaiComponentBase
 
@@ -27,7 +28,7 @@
         }
         else
         {
-            @foreach(var item in CurrentPageSortedItems)
+            @foreach(var item in CurrentPageSortedFilteredItems)
             {
                 <tr>
                     @RowTemplate?.Invoke(item)
@@ -56,28 +57,31 @@
         : Items.Count();
 
 
-    public IEnumerable<T> CurrentPageSortedItems
+    public IEnumerable<T> CurrentPageSortedFilteredItems
     {
         get
         {
             if(PageSize <= 0)   // No pagination.
-                return SortedItems;
+                return SortedFilteredItems;
 
             int skipAmount = PageSize * (PageNumber - 1);
-            return SortedItems.Skip(skipAmount).Take(PageSize);
+            return SortedFilteredItems.Skip(skipAmount).Take(PageSize);
         }
     }
     
-    public IEnumerable<T> SortedItems
+    public IEnumerable<T> SortedFilteredItems
     {
         get
         {
+            if(Items is null)
+                return [];
+            
             if(CurrentSorting is null)
-                return Items;
+                return Items.Where(Filter);
             
             return SortByAscending
-                ? Items.OrderBy(CurrentSorting)
-                : Items.OrderByDescending(CurrentSorting);
+                ? Items.Where(Filter).OrderBy(CurrentSorting)
+                : Items.Where(Filter).OrderByDescending(CurrentSorting);
         }
     }
 
@@ -116,6 +120,7 @@
     public bool SortByAscending { get; private set; } = true;
     public int PageSize { get; private set; } = -1; // <= 0 = no pagination.
     public int PageNumber { get; private set; } = 1;
+    public Func<T, bool> Filter { get; set; } = _ => true;
     
     public override void AfterClassSet()
     {
@@ -143,6 +148,12 @@
         var sortOrder = await _UpdateSortingColumnAndOrderAsync(sorting);
         await InvokeAsync(StateHasChanged);
         return sortOrder;
+    }
+
+    public async Task FilterByAsync(Func<T, bool> filter)
+    {
+        Filter = filter;
+        await InvokeAsync(StateHasChanged);
     }
     
     public async Task<Sorting> _UpdateSortingColumnAndOrderAsync(Func<T, object>? sorting)
