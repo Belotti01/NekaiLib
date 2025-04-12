@@ -4,10 +4,29 @@
 @typeparam T
 
 <th id="@Id" class="@Class" style="@Style" aria-label="@AriaLabel">
-    <NekaiButton Class="container" OnClick="@SortAsync">
-        @ChildContent 
-        <MaterialIcon Alignment="VerticalAlignment.Bottom">@Icon</MaterialIcon>
-    </NekaiButton>
+    <span class="d-flex flex-row">
+        @ChildContent
+        @if(SortBy is not null)
+        {
+            <NekaiButton Class="container" OnClick="@SortAsync">
+                <MaterialIcon Alignment="VerticalAlignment.Bottom">@SortIcon</MaterialIcon>
+            </NekaiButton>
+        }
+
+        @if(FilterBy is not null)
+        {
+            <NekaiDropDown>
+                <DropDownLabel>
+                    <MaterialIcon Alignment="VerticalAlignment.Bottom">filter_alt</MaterialIcon>
+                </DropDownLabel>
+                <DropDownEntries>
+                    <NekaiDropDownEntry>
+                        <NekaiTextBox Placeholder="Filter..." ValueChanged="@FilterAsync"/>
+                    </NekaiDropDownEntry>
+                </DropDownEntries>
+            </NekaiDropDown>
+        }
+    </span>
 </th>
 
 @code {
@@ -15,8 +34,10 @@
     public RenderFragment? ChildContent { get; set; }
     [Parameter]
     public Func<T, object>? SortBy { get; set; }
+    [Parameter]
+    public Func<T, string, bool>? FilterBy { get; set; }
 
-    protected string Icon { get; set; } = "";
+    protected string SortIcon { get; set; } = "";
     
     [CascadingParameter(Name = "grid")]
     public NekaiDataGrid<T>? Grid { get; set; }
@@ -40,6 +61,19 @@
         await UpdateSortingIconAsync(sortOrder);
     }
 
+    public async Task ToggleFilterPopupAsync()
+    {
+        
+    }
+
+    public async Task FilterAsync(string filter)
+    {
+        if(Grid is null || FilterBy is null)
+            return;
+        
+        await Grid.FilterByAsync(x => FilterBy(x, filter));
+    }
+
     public async Task UpdateSortingIconAsync(Sorting sortOrder)
     {
         if(SortBy is null)
@@ -49,7 +83,7 @@
             return;
         }
         
-        Icon = sortOrder.ToIcon();
+        SortIcon = sortOrder.ToIcon();
         await InvokeAsync(StateHasChanged);
     }
 }

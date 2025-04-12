@@ -28,7 +28,7 @@
         }
         else
         {
-            @foreach(var item in CurrentPageSortedFilteredItems)
+            @foreach(var item in CurrentPageOfSortedFilteredItems)
             {
                 <tr>
                     @RowTemplate?.Invoke(item)
@@ -57,7 +57,7 @@
         : Items.Count();
 
 
-    public IEnumerable<T> CurrentPageSortedFilteredItems
+    public IEnumerable<T> CurrentPageOfSortedFilteredItems
     {
         get
         {
@@ -73,17 +73,16 @@
     {
         get
         {
-            if(Items is null)
-                return [];
-            
             if(CurrentSorting is null)
-                return Items.Where(Filter);
+                return FilteredItems;
             
             return SortByAscending
-                ? Items.Where(Filter).OrderBy(CurrentSorting)
-                : Items.Where(Filter).OrderByDescending(CurrentSorting);
+                ? FilteredItems.OrderBy(CurrentSorting)
+                : FilteredItems.OrderByDescending(CurrentSorting);
         }
     }
+
+    public IEnumerable<T> FilteredItems => Items?.Where(Filter) ?? [];
 
     [Parameter]
     public IEnumerable<T>? Items { get; set; } = [];
