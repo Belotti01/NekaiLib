@@ -2,35 +2,35 @@
 @inherits NekaiComponentBase
 
 <div id="@Id" class="@Class card" style="@Style" aria-label="@AriaLabel">
-    @if(Header is not null)
+    @if(CardHeader is not null)
     {
         <div class="card-header">
-            @Header
+            @CardHeader
         </div>
     }
     
-    @if(Body is not null)
+    @if(CardBody is not null)
     {
         <div class="card-body">
-            @Body
+            @CardBody
         </div>
     }
 
-    @if(Footer is not null)
+    @if(CardFooter is not null)
     {
         <div class="card-footer">
-            @Footer
+            @CardFooter
         </div>
     }
 </div>
 
 @code {
     [Parameter]
-    public RenderFragment? Header { get; set; }
+    public RenderFragment? CardHeader { get; set; }
     [Parameter]
-    public RenderFragment? Body { get; set; }
+    public RenderFragment? CardBody { get; set; }
     [Parameter]
-    public RenderFragment? Footer { get; set; }
+    public RenderFragment? CardFooter { get; set; }
     [Parameter]
     public Rounding Rounding { get; set; }
 
