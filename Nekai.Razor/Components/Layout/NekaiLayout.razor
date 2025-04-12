@@ -1,7 +1,7 @@
 ﻿@namespace Nekai.Razor
 @inherits NekaiComponentBase
 
-<div class="container">
+<div id="@Id" class="container @Class" style="@Style" aria-label="@AriaLabel">
     @if(HeaderContent is not null)
     {
         <header id="layout-header" class="row">
