@@ -148,12 +148,6 @@
         await InvokeAsync(StateHasChanged);
         return sortOrder;
     }
-
-    public async Task FilterByAsync(Func<T, bool> filter)
-    {
-        Filter = filter;
-        await InvokeAsync(StateHasChanged);
-    }
     
     public async Task<Sorting> _UpdateSortingColumnAndOrderAsync(Func<T, object>? sorting)
     {

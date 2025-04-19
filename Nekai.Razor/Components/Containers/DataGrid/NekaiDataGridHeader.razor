@@ -65,8 +65,9 @@
     {
         if(Grid is null || FilterBy is null)
             return;
-        
-        await Grid.FilterByAsync(x => FilterBy(x, filter));
+
+        Grid.Filter = x => FilterBy(x, filter);
+        await Grid.ShowPageAsync(1, Grid.PageSize);
     }
 
     public async Task UpdateSortingIconAsync(Sorting sortOrder)
