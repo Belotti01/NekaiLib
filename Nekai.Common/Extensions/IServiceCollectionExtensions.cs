@@ -14,6 +14,11 @@ public static class IServiceCollectionExtensions
 		return services.AddSingleton(NekaiLogs.Program);
 	}
 
+	/// <summary>
+	/// Inject an <see cref="ILogger"/> that logs to the current folder's "Logs" subfolder.
+	/// </summary>
+	/// <param name="services"> The collection of injected services. </param>
+	/// <exception cref="PathOperationException"> Thrown when the current path can't be converted to a <see cref="PathString"/>. </exception>
 	public static IServiceCollection AddDebugLoggingToCurrentFolder(this IServiceCollection services)
 	{
 		string rawPath = Path.Combine(Environment.CurrentDirectory, "Logs");
