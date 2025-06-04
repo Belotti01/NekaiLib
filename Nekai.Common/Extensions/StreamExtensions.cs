@@ -26,8 +26,11 @@ public static class StreamExtensions
 	/// <param name="stream"> The stream to read from. </param>
 	/// <returns> The line as a <see langword="string"/> (excluding NewLine characters), or <see langword="null"/>
 	/// if EOF has already been reached. </returns>
+	/// <exception cref="InvalidOperationException">Thrown if the stream is not readable.</exception>
 	public static string? ReadLine(this Stream stream)
 	{
+		if(!stream.CanRead)
+			throw new InvalidOperationException("The stream is not readable.");
 		var builder = new StringBuilder();
 		int read = stream.ReadByte();
 		if(read == -1)  // EOF
@@ -54,6 +57,8 @@ public static class StreamExtensions
 	/// <inheritdoc cref="ReadAllText(Stream, Encoding, bool)"/>
 	public static string? ReadAllText(this Stream stream, bool autoDetectEncoding = false)
 	{
+		if(!stream.CanRead)
+			throw new InvalidOperationException("The stream is not readable.");
 		using TextReader reader = new StreamReader(stream, autoDetectEncoding);
 		return reader.ReadToEnd();
 	}
@@ -64,8 +69,11 @@ public static class StreamExtensions
 	/// <param name="stream"> The stream to read. </param>
 	/// <param name="autoDetectEncoding"> Whether to look for byte order marks at the beginning of the file to detect the encoding type. </param>
 	/// <param name="encoding"> The text encoding to use. </param>
-	public static string? ReadAllText(this Stream stream, Encoding encoding, bool autoDetectEncoding = false)
+	/// <exception cref="InvalidOperationException">Thrown if the stream is not readable.</exception>
+	public static string? ReadAllText(this Stream stream, Encoding encoding)
 	{
+		if(!stream.CanRead)
+			throw new InvalidOperationException("The stream is not readable.");
 		using TextReader reader = new StreamReader(stream, encoding);
 		return reader.ReadToEnd();
 	}
@@ -75,8 +83,11 @@ public static class StreamExtensions
 	/// Read all the content of the <paramref name="stream"/> as an array of bytes.
 	/// </summary>
 	/// <param name="stream"> The stream to read. </param>
+	/// <exception cref="InvalidOperationException">Thrown if the stream is not readable.</exception>
 	public static ReadOnlyMemory<byte> ReadAllBytes(this Stream stream)
 	{
+		if(!stream.CanRead)
+			throw new InvalidOperationException("The stream is not readable.");
 		IEnumerable<byte> bytes = [];
 		int frame;
 		
