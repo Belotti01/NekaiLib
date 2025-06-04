@@ -17,7 +17,11 @@ public static class IServiceCollectionExtensions
 	public static IServiceCollection AddDebugLoggingToCurrentFolder(this IServiceCollection services)
 	{
 		string rawPath = Path.Combine(Environment.CurrentDirectory, "Logs");
-		var path = PathString.Parse(rawPath);
+		var pathResult = PathString.TryParse(rawPath);
+		if(!pathResult.IsSuccessful)
+			pathResult.Error.Throw(rawPath);
+
+		var path = pathResult.Value;
 		bool pathExists = path.EnsureExistsAsDirectory().IsSuccessful();
 		Debug.Assert(pathExists);
 
