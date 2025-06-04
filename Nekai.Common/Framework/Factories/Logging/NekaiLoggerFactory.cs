@@ -63,16 +63,26 @@ public sealed class NekaiLoggerFactory
 	}
 
 	/// <summary>
-	/// Create a Serilog <see cref="ILogger"/> that writes all logs under the program's "Logs" subfolder.
+	/// Create an <see cref="ILogger"/> that writes all logs under the program's "Logs" subfolder.
 	/// </summary>
-	public ILogger CreateForDebug()
+	/// <exception cref="PathOperationException">Thrown when the <see cref="logsDirectory"/> is <see langword="null"/> and a valid path can't be generated.</exception>
+	public ILogger CreateForDebug(PathString? logsDirectory = null)
 	{
-		string path = Path.Combine(Environment.CurrentDirectory, "Logs");
-		Directory.CreateDirectory(path);
-
+		if(logsDirectory is null)
+		{
+			// Use the current folder + "/Logs".
+			string path = Path.Combine(Environment.CurrentDirectory, "Logs");
+			var pathResult = PathString.TryParse(path);
+			if(!pathResult.IsSuccessful)
+				pathResult.Error.Throw(path);
+			
+			logsDirectory = pathResult.Value;
+		}
+		
+		Directory.CreateDirectory(logsDirectory);
 		LoggerConfiguration config = new();
 		config.WriteTo.File(
-			path: path,
+			path: logsDirectory,
 			rollingInterval: RollingInterval.Day,
 			restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
 			shared: true

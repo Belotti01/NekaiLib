@@ -21,15 +21,6 @@ public static class IServiceCollectionExtensions
 	/// <exception cref="PathOperationException"> Thrown when the current path can't be converted to a <see cref="PathString"/>. </exception>
 	public static IServiceCollection AddDebugLoggingToCurrentFolder(this IServiceCollection services)
 	{
-		string rawPath = Path.Combine(Environment.CurrentDirectory, "Logs");
-		var pathResult = PathString.TryParse(rawPath);
-		if(!pathResult.IsSuccessful)
-			pathResult.Error.Throw(rawPath);
-
-		var path = pathResult.Value;
-		bool pathExists = path.EnsureExistsAsDirectory().IsSuccessful();
-		Debug.Assert(pathExists);
-
 		var logger = NekaiLogs.Factory.CreateForDebug();
 		return services.AddSingleton(logger);
 	}
