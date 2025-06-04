@@ -45,7 +45,7 @@ public static partial class Exceptor
 	public static void ThrowAndLogError<TException>(TException ex)
 		where TException : Exception
 	{
-		NekaiLogs.Shared.Error(ex);
+		NekaiLogs.Program.Error(ex);
 		throw ex;
 	}
 
@@ -71,7 +71,7 @@ public static partial class Exceptor
 	public static void ThrowAndLog<TException>(TException ex, LogEventLevel logType)
 		where TException : Exception
 	{
-		NekaiLogs.Shared.Write(ex, logType);
+		NekaiLogs.Program.Write(ex, logType);
 		_Throw(ex);
 	}
 
@@ -128,7 +128,7 @@ public static partial class Exceptor
 	{
 		try
 		{
-			NekaiLogs.Shared.Fatal(data.ToString());
+			NekaiLogs.Program.Fatal(data.ToString());
 			return true;
 		}
 		catch
