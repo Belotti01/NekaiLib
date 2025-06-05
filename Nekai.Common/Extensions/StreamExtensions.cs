@@ -2,6 +2,13 @@
 
 public static class StreamExtensions
 {
+	/// <summary>
+	/// Attempts to write the contents of <paramref name="line"/> onto the <paramref name="stream"/>.
+	/// </summary>
+	/// <param name="stream">The stream to write to.</param>
+	/// <param name="line">The data to write.</param>
+	/// <returns><see langword="true"/> if the data has been written.
+	/// <see langword="false"/> if the stream is not writable.</returns>
 	public static bool WriteLine(this Stream stream, string line)
 	{
 		if(!stream.CanWrite)
@@ -11,6 +18,8 @@ public static class StreamExtensions
 		return true;
 	}
 
+	/// <inheritdoc cref="WriteLine(System.IO.Stream,string)"/>
+	/// <param name="encoding">The encoding of the data.</param>
 	public static bool WriteLine(this Stream stream, string line, Encoding encoding)
 	{
 		if(!stream.CanWrite)
