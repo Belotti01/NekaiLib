@@ -23,7 +23,7 @@ public sealed class NekaiProcessNetworkInfo
 
 	public static NekaiProcessNetworkInfo ForCurrentProcess(ProtocolType protocol, int port)
 	{
-		IPAddress? address = NekaiApp.LocalHost.AddressList.First(x => x.AddressFamily == AddressFamily.InterNetwork);
+		IPAddress? address = NekaiApp.LocalHost.AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
 		if(address is null)
 		{
 			NekaiLogs.Shared.Warning("Couldn't load InterNetwork-type IP for the process' host.");
