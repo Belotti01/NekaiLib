@@ -137,8 +137,7 @@ public static class NekaiPath
 	{
 		return exception switch
 		{
-			SecurityException => PathOperationResult.NotAllowed,
-			UnauthorizedAccessException => PathOperationResult.NotAllowed,
+			SecurityException or UnauthorizedAccessException => PathOperationResult.NotAllowed,
 			PathTooLongException => PathOperationResult.PathTooLong,
 			ArgumentException => PathOperationResult.InvalidPath,
 			DirectoryNotFoundException => PathOperationResult.DoesNotExist,

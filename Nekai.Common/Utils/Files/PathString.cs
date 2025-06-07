@@ -62,6 +62,9 @@ public class PathString
 	/// <param name="relativePath">The relative path to append.</param>
 	public static PathString operator +(PathString path, string relativePath)
 	{
+		if(string.IsNullOrWhiteSpace(relativePath))
+			return path;
+		
 		try
 		{
 			return (PathString)System.IO.Path.Combine(path, relativePath);
@@ -612,8 +615,35 @@ public class PathString
 		if(!IsExistingFile())
 			return FileAttributes.None;
 
-		using var handle = File.OpenHandle(Path);
-		return File.GetAttributes(handle);
+		try
+		{
+			using var handle = File.OpenHandle(Path);
+			return File.GetAttributes(handle);
+		}
+		catch(Exception)
+		{
+			// File can't be opened, or the attributes cannot be retrieved.
+			return FileAttributes.None;
+		}
+	}
+
+	public bool TryGetAttributes(out FileAttributes attributes)
+	{
+		attributes = FileAttributes.None;
+		if(!IsExistingFile())
+			return false;
+
+		try
+		{
+			using var handle = File.OpenHandle(Path);
+			attributes = File.GetAttributes(handle);
+			return true;
+		}
+		catch(Exception)
+		{
+			// File can't be opened, or the attributes cannot be retrieved.
+			return false;
+		}
 	}
 
 	/// <summary>
