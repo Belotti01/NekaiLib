@@ -24,8 +24,6 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 
 	/// <summary> The default display language. </summary>
 	public DisplayLanguage DefaultLanguage { get; set; } = DisplayLanguage.EnglishUsa;
-	/// <summary> The SMTP settings for sending emails. </summary>
-	public NekaiSmtpConfiguration Smtp { get; set; } = new();
 	/// <summary> Whether to use dark color tones for the UI when possible. </summary>
 	public bool PreferDarkMode { get; set; } = true;
 
@@ -54,7 +52,6 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 			}
 
 			var config = deserializationResult.Value;
-			config.Smtp ??= new();	// If the file doesn't have the SMTP fields.
 			return deserializationResult.Value;
 		}
 
