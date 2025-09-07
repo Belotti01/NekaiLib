@@ -667,9 +667,6 @@ public class PathString
 		if(ReferenceEquals(this, obj))
 			return true;
 
-		if(!(obj is string or PathString))
-			return false;
-
 		return Equals(obj.ToString());
 	}
 
