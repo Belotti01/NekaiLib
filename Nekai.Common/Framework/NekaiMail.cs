@@ -18,7 +18,7 @@ public static class NekaiMail
 	/// <param name="body">The body of the email.</param>
 	/// <param name="token">The <see cref="CancellationToken"/> for this operation.</param>
 	/// <returns>The response from the server, or the error caught.</returns>
-	public static async Task<MailOperationREsult> SendMailAsync(MailboxAddress from, ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
+	public static async Task<MailOperationResult> SendMailAsync(MailboxAddress from, ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
 	{
 		using SmtpClient client = new();
 		MimeMessage message = new();
@@ -39,13 +39,13 @@ public static class NekaiMail
 		}
 	}
 
-	public static async Task<MailOperationREsult> SendMailAsync(MailboxAddress to, string subject, string body, CancellationToken token = default)
+	public static async Task<MailOperationResult> SendMailAsync(MailboxAddress to, string subject, string body, CancellationToken token = default)
 	{
 		var from = new MailboxAddress("Nekai", "nekai@noreply.com");
 		return await SendMailAsync(from, [to], subject, body, token);
 	}
 
-	public static async Task<MailOperationREsult> SendMailAsync(ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
+	public static async Task<MailOperationResult> SendMailAsync(ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
 	{
 		var from = new MailboxAddress("Nekai", "nekai@noreply.com");
 		return await SendMailAsync(from, to, subject, body, token);
