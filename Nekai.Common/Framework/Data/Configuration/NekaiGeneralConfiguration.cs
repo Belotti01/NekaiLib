@@ -47,7 +47,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 			var deserializationResult = TryDeserialize(singletonFilePath);
 			if(!deserializationResult.IsSuccessful)
 			{
-				NekaiLogs.Shared.Error("General configuration file exists, but deserialization failed. Creating a new instance...");
+				NekaiLogs.Shared.Error("General configuration file exists, but deserialization failed. Loading default values...");
 				return new();
 			}
 
@@ -94,6 +94,7 @@ public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConf
 		}
 		catch(Exception ex)
 		{
+			NekaiLogs.Shared.Error("Couldn't load default system language: {ex}", ex.Message);
 			Debug.Fail($"Default language could not be loaded.", ex.Message);
 		}
 
