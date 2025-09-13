@@ -9,6 +9,8 @@ namespace Nekai.Common;
 /// </summary>
 public static class NekaiMail
 {
+	private static readonly MailboxAddress _defaultSender = new("Nekai", "nekai@noreply.com");
+	
 	/// <summary>
 	/// Send an email.
 	/// </summary>
@@ -18,15 +20,40 @@ public static class NekaiMail
 	/// <param name="body">The body of the email.</param>
 	/// <param name="token">The <see cref="CancellationToken"/> for this operation.</param>
 	/// <returns>The response from the server, or the error caught.</returns>
-	public static async Task<MailOperationResult> SendMailAsync(MailboxAddress from, ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
+	public static async Task<MailOperationResult> TrySendMailAsync(MailboxAddress from, ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
 	{
 		using SmtpClient client = new();
 		MimeMessage message = new();
 		message.To.AddRange(to);
 		message.From.Add(from);
 		message.Subject = subject;
-		message.Body = new TextPart(body);
+		message.Body = new TextPart()
+		{
+			Text = body
+		};
 
+		return await TrySendAsync(message, token);
+	}
+
+	public static async Task<MailOperationResult> TrySendMailAsync(MailboxAddress to, string subject, string body, CancellationToken token = default)
+	{
+		return await TrySendMailAsync(_defaultSender, [to], subject, body, token);
+	}
+
+	public static async Task<MailOperationResult> TrySendMailAsync(ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
+	{
+		return await TrySendMailAsync(_defaultSender, to, subject, body, token);
+	}
+
+	public static async Task<MailOperationResult> TrySendAsNekaiSenderAsync(MimeMessage message, CancellationToken token = default)
+	{
+		message.From.Add(_defaultSender);
+		return await TrySendAsync(message, token);
+	}
+
+	public static async Task<MailOperationResult> TrySendAsync(MimeMessage message, CancellationToken token = default)
+	{
+		using SmtpClient client = new();
 		try
 		{
 			string response = await client.SendAsync(message, token);
@@ -34,21 +61,9 @@ public static class NekaiMail
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Shared.Error("Couldn't send mail to {to}: {ex}", to, ex.Message);
+			string targets = string.Join(", ", message.To);
+			NekaiLogs.Shared.Error("Couldn't send mail to [{targets}]: {ex}", targets, ex.Message);
 			return new(ex.Message, false);
 		}
 	}
-
-	public static async Task<MailOperationResult> SendMailAsync(MailboxAddress to, string subject, string body, CancellationToken token = default)
-	{
-		var from = new MailboxAddress("Nekai", "nekai@noreply.com");
-		return await SendMailAsync(from, [to], subject, body, token);
-	}
-
-	public static async Task<MailOperationResult> SendMailAsync(ICollection<MailboxAddress> to, string subject, string body, CancellationToken token = default)
-	{
-		var from = new MailboxAddress("Nekai", "nekai@noreply.com");
-		return await SendMailAsync(from, to, subject, body, token);
-	}
-
 }	
