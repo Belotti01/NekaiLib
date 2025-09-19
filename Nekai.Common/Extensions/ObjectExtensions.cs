@@ -1,4 +1,5 @@
-﻿using DotNext.Runtime;
+﻿using System.Diagnostics;
+using DotNext.Runtime;
 
 namespace Nekai.Common;
 
@@ -18,7 +19,11 @@ public static class ObjectExtensions
 		{
 			return obj.ToString();
 		}
-		catch { }
+		catch(Exception ex)
+		{
+			// It's better to prevent exceptions, so warn the developer.
+			Debug.Fail(ex.Message);
+		}
 
 		return null;
 	}

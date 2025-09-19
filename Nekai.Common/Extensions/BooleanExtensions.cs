@@ -9,6 +9,7 @@ public static class BooleanExtensions
 		=> type switch
 		{
 			BoolStringType.Default => value.ToString(),
+			BoolStringType.TrueFalse => value ? "True" : "False",
 			BoolStringType.YesNo => value ? "Yes" : "No",
 			BoolStringType.OnOff => value ? "On" : "Off",
 			BoolStringType.EnabledDisabled => value ? "Enabled" : "Disabled",

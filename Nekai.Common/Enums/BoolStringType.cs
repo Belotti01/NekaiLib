@@ -5,8 +5,11 @@
 /// </summary>
 public enum BoolStringType
 {
-	/// <summary> "True" or "False" (default <see cref="bool.ToString()"/> behaviour).</summary>
+	/// <summary> "true" or "false" (default <see cref="bool.ToString()"/> behaviour).</summary>
 	Default,
+	
+	/// <summary> "True" or "False" </summary>
+	TrueFalse,
 
 	/// <summary> "Yes" or "No".</summary>
 	YesNo,

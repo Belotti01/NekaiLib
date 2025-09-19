@@ -7,10 +7,9 @@ public static class ExceptionExtensions
 	/// </summary>
 	public static string GetFullMessage(this Exception exception)
 	{
-		Exception? currentException;
 		string result = exception.Message;
 
-		while((currentException = exception.InnerException) is not null)
+		while(exception.InnerException is {} currentException)
 		{
 			if(result.EndsWith('.'))
 				result += ' ' + currentException.Message;
