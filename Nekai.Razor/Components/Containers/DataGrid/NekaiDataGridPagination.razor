@@ -36,7 +36,7 @@
         }
 
         <li class="page-item">
-            <btn type="button"  aria-label="Next page" class="page-link" onclick="@(() => SetPageAsync((Grid?.PageNumber ?? 1) + 1))">
+            <btn type="button"  aria-label="Next page" class="page-link" onclick="@(() => SetPageAsync((Grid?.PageNumber ?? 0) + 1))">
                 <MaterialIcon>chevron_right</MaterialIcon>
             </btn>
         </li>
