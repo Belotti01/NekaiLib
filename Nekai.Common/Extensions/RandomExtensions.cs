@@ -44,11 +44,11 @@ public static class RandomExtensions
 	public static string NextString(this Random random, int minLength, int maxLength)
 	{
 		if(minLength < 0)
-			throw new ArgumentOutOfRangeException(nameof(minLength), $"{nameof(minLength)} must be greater than or equal to 0");
+			throw new ArgumentOutOfRangeException(nameof(minLength), minLength, $"{nameof(minLength)} must be greater than or equal to 0");
 		if(maxLength < 0)
-			throw new ArgumentOutOfRangeException(nameof(maxLength), $"{nameof(maxLength)} must be greater than or equal to 0");
+			throw new ArgumentOutOfRangeException(nameof(maxLength), minLength, $"{nameof(maxLength)} must be greater than or equal to 0");
 		if(minLength > maxLength)
-			throw new ArgumentOutOfRangeException(nameof(minLength), $"{nameof(minLength)} must be less than or equal to {nameof(maxLength)}");
+			throw new ArgumentOutOfRangeException(nameof(minLength), minLength, $"{nameof(minLength)} must be less than or equal to {nameof(maxLength)}");
 
 		int length = random.Next(minLength, maxLength);
 		Span<char> chars = NekaiMemory.IsStackallocSafe(length, sizeof(char))
@@ -72,7 +72,7 @@ public static class RandomExtensions
 	public static string NextString(this Random random, int length)
 	{
 		if(length < 0)
-			throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must be greater than or equal to 0");
+			throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must be greater than or equal to 0");
 		if(length == 0)
 			return "";
 

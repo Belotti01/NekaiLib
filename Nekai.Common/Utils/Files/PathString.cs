@@ -237,44 +237,25 @@ public class PathString
 
 	public PathOperationResult EnsureDeletion()
 	{
-		// Delete File
-		if(IsExistingFile())
+		try
 		{
-			try
+			if(IsExistingFile())
 			{
-				File.Delete(this);
-				return PathOperationResult.Success;
-			}
-			catch(Exception ex)
+				File.Delete(Path);
+			}else if(IsExistingDirectory())
 			{
-				return ex switch
-				{
-					UnauthorizedAccessException => PathOperationResult.NotAllowed,
-					_ => PathOperationResult.UnknownFailure
-				};
+				Directory.Delete(Path);
 			}
+			return PathOperationResult.Success;
 		}
-
-		// Delete Directory
-		if(IsExistingDirectory())
+		catch(Exception ex)
 		{
-			try
+			return ex switch
 			{
-				Directory.Delete(this);
-				return PathOperationResult.Success;
-			}
-			catch(Exception ex)
-			{
-				return ex switch
-				{
-					UnauthorizedAccessException => PathOperationResult.NotAllowed,
-					_ => PathOperationResult.UnknownFailure
-				};
-			}
+				UnauthorizedAccessException => PathOperationResult.NotAllowed,
+				_ => PathOperationResult.UnknownFailure
+			};
 		}
-
-		// Didn't exist in the first place.
-		return PathOperationResult.Success;
 	}
 
 	public Result<PathString, PathOperationResult> TryAppend(params string[] pathSteps)

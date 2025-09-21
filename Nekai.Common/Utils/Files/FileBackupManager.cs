@@ -118,7 +118,6 @@ public class FileBackupManager : IDisposable
 		try
 		{
 			File.Copy(BackupFilePath, FilePath, true);
-			// Assertion used to ensure that both files can be found and contain the same content.
 			Debug.Assert(FilePath.CanBeReadAsFile(), "Could not access restored file.");
 			return PathOperationResult.Success;
 		}
@@ -135,9 +134,12 @@ public class FileBackupManager : IDisposable
 		if(_Disposed)
 			return;
 		_Disposed = true;
-		
+
 		if(BackupFilePath is null || !BackupFilePath.IsExistingFile())
+		{
+			GC.SuppressFinalize(this);
 			return;
+		}
 
 		if(!KeepPersistentBackup)
 		{
