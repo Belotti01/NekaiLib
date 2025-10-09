@@ -27,14 +27,14 @@ public partial class NekaiLog : JsonSerializableObject<NekaiLog>
 	[JsonPropertyName("MachineName")]
 	public string? MachineName { get; set; }
 
-	public LogLevel Type
+	public LogLevel LogType
 	{
 		get
 		{
 			var success = Enum.TryParse(TypeString, out LogLevel result);
 			return success 
 				? result 
-				: LogLevel.None;
+				: Microsoft.Extensions.Logging.LogLevel.None;
 		}
 	}
 
