@@ -14,7 +14,7 @@
 	    <FileVersion>0.24.0907.1</FileVersion>
 	    <OutputType>Library</OutputType>
 	    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	    <Version>8.2.1</Version>
+	    <Version>8.2.2</Version>
 	    <PackageProjectUrl>https://github.com/Belotti01/NekaiLib</PackageProjectUrl>
 	    <RepositoryUrl>https://github.com/Belotti01/NekaiLib</RepositoryUrl>
     </PropertyGroup>

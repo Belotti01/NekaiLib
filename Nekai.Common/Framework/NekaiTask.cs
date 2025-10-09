@@ -39,7 +39,7 @@ public static class NekaiTask
 		}
 	}
 
-	/// <inheritdoc cref="TryWaitUntil(Func{bool}, int, int)(Func{bool}, int)"/>
+	/// <inheritdoc cref="TryWaitUntil(Func{bool}, int, int)"/>
 	public static async Task<bool> TryWaitUntil(Func<bool> condition, int timeoutMs, int evaluationDelayMs = _DEFAULT_EVALUATION_DELAY_MS)
 	{
 		Debug.Assert(evaluationDelayMs < 0, "The delay should be at least 0ms to avoid deadlocks and exceptions.");

@@ -9,7 +9,9 @@ public static class IndexFinderExtensions
 	{
 		int i = 0;
 		List<int> indexes = [];
-
+		// Only enumerate once.
+		values = values.ToList();
+		
 		foreach(var item in data)
 		{
 			if(values.Any(x => comparer.Invoke(x, item)))
@@ -69,7 +71,9 @@ public static class IndexFinderExtensions
 	private static IEnumerable<int> _IndexesOfInternal<T>(this IEnumerable<T> data, IEnumerable<T> values, Func<T, T, bool> comparer)
 	{
 		int i = 0;
-
+		// Only enumerate once.
+		values = values.ToList();
+		
 		foreach(var item in data)
 		{
 			if(values.Any(value => comparer.Invoke(item, value)))

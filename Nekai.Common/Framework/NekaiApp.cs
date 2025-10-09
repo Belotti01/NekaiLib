@@ -75,7 +75,7 @@ public static class NekaiApp
 	/// Internal event, used to free the resources used by the framework that might be required by previous handlers.
 	/// Avoid any dependence to objects outside the scope of the handler, since they might already have been disposed.
 	/// </remarks>
-	internal static event EventHandler? _OnProcessExitHandledInternal;
+	internal static event EventHandler? OnProcessExitHandledInternal;
 
 	static NekaiApp()
 	{
@@ -96,13 +96,13 @@ public static class NekaiApp
 
 		try
 		{
-			_OnProcessExitHandledInternal?.Invoke(sender, e);
+			OnProcessExitHandledInternal?.Invoke(sender, e);
 		}
 		catch(Exception ex)
 		{
 			Exceptor.ThrowIfDebug($"An unhandled Exception was caught while closing the application: {ex.Message}", ex);
 		}
-		_OnProcessExitHandledInternal = null;
+		OnProcessExitHandledInternal = null;
 	}
 
 	/// <inheritdoc cref="GCMemoryInfo.TotalCommittedBytes"/>

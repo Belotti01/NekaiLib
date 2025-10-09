@@ -16,7 +16,7 @@ public abstract class JsonSerializableObject<TSelf> : JsonSerializerContext
 where TSelf : JsonSerializableObject<TSelf>
 {
 	[JsonPropertyName("LastSerialization")]
-	public DateTime LastSerialization { get; set; } = DateTime.MinValue;
+	public DateTime? LastSerialization { get; set; }
 	
 	/// <summary>
 	/// The path to the file linked to this instance.

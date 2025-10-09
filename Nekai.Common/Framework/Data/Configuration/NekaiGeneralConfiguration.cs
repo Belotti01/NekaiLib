@@ -11,7 +11,7 @@ namespace Nekai.Common;
 /// all Nekai applications.
 /// </summary>
 [JsonSerializable(typeof(NekaiGeneralConfiguration))]
-public class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConfiguration>
+public partial class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConfiguration>
 {
 	/// <summary>
 	/// Unique instance of this class.

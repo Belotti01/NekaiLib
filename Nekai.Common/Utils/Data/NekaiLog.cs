@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Nekai.Common;
 
 [JsonSerializable(typeof(NekaiLog))]
-public class NekaiLog : JsonSerializableObject<NekaiLog>
+public partial class NekaiLog : JsonSerializableObject<NekaiLog>
 {
 	[JsonPropertyName("@t")]
 	public DateTime TimeStamp { get; set; }

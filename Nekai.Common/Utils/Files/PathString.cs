@@ -268,7 +268,7 @@ public class PathString
 			string relativePath = System.IO.Path.Combine(pathSteps);
 			return this + relativePath;
 		}
-		catch(Exception ex)
+		catch(Exception)
 		{
 			return new(PathOperationResult.InvalidPath);
 		}

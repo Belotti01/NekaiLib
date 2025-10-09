@@ -80,7 +80,7 @@ public static class MailTransportExtensions
 	/// </summary>
 	/// <param name="message">The message to send.</param>
 	/// <param name="client">The client to send the mail with.</param>
-	/// <param name="token">THe cancellation token.</param>
+	/// <param name="token">The cancellation token.</param>
 	/// <returns>A <see cref="MailOperationResult"/> containing information about the transaction.</returns>
 	public static async Task<MailOperationResult> TrySendAsync(this IMailTransport client, MimeMessage message, CancellationToken token = default)
 	{

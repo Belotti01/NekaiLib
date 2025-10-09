@@ -76,7 +76,6 @@ public static class StreamExtensions
 	/// Read all the content of the <paramref name="stream"/> as text and return it as a <see langword="string"/>.
 	/// </summary>
 	/// <param name="stream"> The stream to read. </param>
-	/// <param name="autoDetectEncoding"> Whether to look for byte order marks at the beginning of the file to detect the encoding type. </param>
 	/// <param name="encoding"> The text encoding to use. </param>
 	/// <exception cref="InvalidOperationException">Thrown if the stream is not readable.</exception>
 	public static string? ReadAllText(this Stream stream, Encoding encoding)
