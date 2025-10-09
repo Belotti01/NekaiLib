@@ -23,14 +23,14 @@ public partial class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGen
 	private static readonly Lazy<NekaiGeneralConfiguration> _instanceInitializer = new(_CreateSingleton);
 
 	/// <summary> The default display language. </summary>
-	public DisplayLanguage DefaultLanguage { get; set; } = DisplayLanguage.EnglishUsa;
+	public DisplayLanguage DefaultLanguage { get; set; } = Common.DisplayLanguage.EnglishUsa;
 	/// <summary> Whether to use dark color tones for the UI when possible. </summary>
 	public bool PreferDarkMode { get; set; } = true;
 
 	public NekaiGeneralConfiguration(PathString? filePath = null)
 		: base(filePath)
 	{
-		if(DefaultLanguage == DisplayLanguage.Default)
+		if(DefaultLanguage == Common.DisplayLanguage.Default)
 		{
 			// Fallback to the OS language if none is set in the configuration.
 			TryLoadOSLanguage();
@@ -98,7 +98,7 @@ public partial class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGen
 			Debug.Fail($"Default language could not be loaded.", ex.Message);
 		}
 
-		osLanguage = DisplayLanguage.EnglishUsa;    // Use a default language to fall back to.
+		osLanguage = Common.DisplayLanguage.Default;    // Use a default language to fall back to.
 		return false;
 	}
 }
