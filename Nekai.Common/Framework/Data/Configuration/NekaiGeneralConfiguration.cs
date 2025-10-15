@@ -82,7 +82,8 @@ public partial class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGen
 		try
 		{
 			string isoOSLanguage = CultureInfo.InstalledUICulture.ThreeLetterISOLanguageName;
-			foreach(DisplayLanguage language in Enum.GetValues<DisplayLanguage>())
+			var languages = Enum.GetValues<DisplayLanguage>();
+			foreach(DisplayLanguage language in languages)
 			{
 				string isoLanguage = language.ToThreeLetterISOName();
 				if(isoOSLanguage.EqualsIgnoreCase(isoLanguage))

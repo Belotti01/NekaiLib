@@ -110,11 +110,12 @@ public static class NekaiConsole
 
 	public static string ReadLine() => Read<string>();
 
-	public static ConsoleKeyInfo ReadKey(params ConsoleKey[] allowed)
+	public static ConsoleKeyInfo ReadKey(params IEnumerable<ConsoleKey> allowed)
 	{
 		lock(_lock)
 		{
-			if(allowed.Length == 0)
+			allowed = allowed.ToList();
+			if(!allowed.Any())
 				return Console.ReadKey();
 
 			ConsoleKeyInfo input;
@@ -142,11 +143,12 @@ public static class NekaiConsole
 		return (char)input;
 	}
 
-	public static char ReadChar(params char[] allowed)
+	public static char ReadChar(params IEnumerable<char> allowed)
 	{
 		int input;
 		bool isValidInput;
 
+		allowed = allowed.ToList();
 		lock(_lock)
 		{
 			do
