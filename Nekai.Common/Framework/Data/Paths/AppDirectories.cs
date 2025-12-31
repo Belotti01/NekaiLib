@@ -48,7 +48,7 @@ public static partial class NekaiData
 
 
 		private static PathString _CreateProgramDirectory(params string[] relativePath)
-			=> _CreateDirectory(relativePath.Prepend(_CreateLocalConfigDirectory("ProgramData", NekaiApp.Name)).ToArray());
+			=> _CreateDirectory(relativePath.Prepend<string>(_CreateLocalConfigDirectory("ProgramData", NekaiApp.Name)).ToArray());
 
 		private static PathString _CreateLocalConfigDirectory(params string[] relativePath)
 			=> _CreateDirectory(relativePath.Prepend(_localConfiguration.Value).ToArray());
