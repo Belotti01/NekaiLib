@@ -21,7 +21,7 @@ public static class NekaiConsole
 	/// <remarks>
 	/// Defaults to 30ms.
 	/// </remarks>
-	public static TimeSpan SlowPrintDelay = TimeSpan.FromMilliseconds(20);
+	public static TimeSpan SlowPrintDelay { get; set; }= TimeSpan.FromMilliseconds(20);
 	
 	private static readonly object _lock = new();
 

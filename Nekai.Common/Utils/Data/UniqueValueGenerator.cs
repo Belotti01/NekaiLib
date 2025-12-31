@@ -10,7 +10,7 @@ namespace Nekai.Common;
 public sealed class UniqueValueGenerator<TValue>
 	where TValue : IEquatable<TValue>
 {
-	private const int _DEAULT_TEST_ITERATIONS = 500;
+	private const int _DEFAULT_TEST_ITERATIONS = 500;
 
 	/// <summary>
 	/// Functions defining the generation of each ID, based on the last generated value (taken as parameter)
@@ -30,7 +30,7 @@ public sealed class UniqueValueGenerator<TValue>
 	{
 		_generator = generator;
 		_lastValue = startIdValue;
-		_DebugTestIdGenerator(generator, _DEAULT_TEST_ITERATIONS, startIdValue);
+		_DebugTestIdGenerator(generator, _DEFAULT_TEST_ITERATIONS, startIdValue);
 	}
 
 	public UniqueValueGenerator(Func<TValue> generator, TValue? startIdValue = default)
@@ -58,14 +58,14 @@ public sealed class UniqueValueGenerator<TValue>
 	}
 
 	/// <summary>
-	/// In DEBUG mode, runs the <paramref name="generator"/> for <see cref="_DEAULT_TEST_ITERATIONS"/> times, and asserts that none of the values
+	/// In DEBUG mode, runs the <paramref name="generator"/> for <see cref="_DEFAULT_TEST_ITERATIONS"/> times, and asserts that none of the values
 	/// is a duplicate of another.
 	/// </summary>
 	/// <param name="generator"> The generator function to test. </param>
 	/// <param name="iterations"> The amount of elements to generate for testing. </param>
 	/// <param name="previousValue"> A value that has already been generated using the <paramref name="generator"/>, or <see langword="null"/>. </param>
 	[Conditional("DEBUG")]
-	internal static void _DebugTestIdGenerator(Func<TValue?, TValue> generator, int iterations = _DEAULT_TEST_ITERATIONS, TValue? previousValue = default)
+	internal static void _DebugTestIdGenerator(Func<TValue?, TValue> generator, int iterations = _DEFAULT_TEST_ITERATIONS, TValue? previousValue = default)
 	{
 		HashSet<TValue> ids = new(iterations);
 

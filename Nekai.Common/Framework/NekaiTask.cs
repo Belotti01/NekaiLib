@@ -30,13 +30,16 @@ public static class NekaiTask
 	/// <see langword="true"/>. </param>
 	/// <param name="cancellationToken"> The <see cref="CancellationToken"/> used to cancel the wait operation. </param>
 	/// <param name="evaluationDelayMs"> The delay between each evaluation of the <paramref name="condition"/>. </param>
-	public static async Task WaitUntil(Func<bool> condition, CancellationToken cancellationToken, [ConstantExpected(Min = 0)] int evaluationDelayMs = _DEFAULT_EVALUATION_DELAY_MS)
+	/// <returns> <see langword="false"/> is the <paramref name="cancellationToken"/> requested the interruption;
+	/// <see langword="true"/> otherwise. </returns>
+	public static async Task<bool> WaitUntil(Func<bool> condition, CancellationToken cancellationToken, [ConstantExpected(Min = 0)] int evaluationDelayMs = _DEFAULT_EVALUATION_DELAY_MS)
 	{
 		Debug.Assert(evaluationDelayMs < 0, "The delay should be at least 0ms to avoid deadlocks and exceptions.");
 		while(!(condition() || cancellationToken.IsCancellationRequested))
 		{
 			await Task.Delay(evaluationDelayMs, cancellationToken);
 		}
+		return !cancellationToken.IsCancellationRequested;
 	}
 
 	/// <inheritdoc cref="TryWaitUntil(Func{bool}, int, int)"/>
