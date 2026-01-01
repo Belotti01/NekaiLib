@@ -12,7 +12,7 @@ namespace Nekai.Common;
 /// <remarks>
 /// Use <see cref="JsonSerializableAttribute"/> in derived Types to improve performance.
 /// </remarks>
-public abstract class JsonSerializableObject<TSelf> : JsonSerializerContext
+public abstract class JsonSerializableObject<TSelf>
 where TSelf : JsonSerializableObject<TSelf>
 {
 	[JsonPropertyName("LastSerialization")]
@@ -24,18 +24,8 @@ where TSelf : JsonSerializableObject<TSelf>
 	[JsonIgnore]
 	public virtual PathString? FilePath { get; private set; }
 
-    // The default serializer options.
     [JsonIgnore]
-    protected override JsonSerializerOptions? GeneratedSerializerOptions => 
-		new(JsonSerializerDefaults.General)
-		{
-			IgnoreReadOnlyProperties = true,
-			IgnoreReadOnlyFields = true,
-			WriteIndented = true
-		};
-    
-    [JsonIgnore]
-    public new JsonSerializerOptions Options { get => base.Options; }
+    public JsonSerializerOptions Options { get; init; }
     
 	static JsonSerializableObject()
 	{
@@ -43,7 +33,6 @@ where TSelf : JsonSerializableObject<TSelf>
 	}
 
 	protected JsonSerializableObject(PathString? filePath = null, JsonSerializerOptions? options = null)
-		: base(options)
 	{
 		if(filePath is null)
 			return;
@@ -129,7 +118,7 @@ where TSelf : JsonSerializableObject<TSelf>
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} failed: {ex.Message}");
+			NekaiLogs.Shared.Warning("Deserialization of {Type} failed: {Exception}", typeof(TSelf).Name, ex.Message);
 			return new();
 		}
 
@@ -184,7 +173,4 @@ where TSelf : JsonSerializableObject<TSelf>
 	{
 		return JsonSerializer.Serialize((TSelf)this, Options);
 	}
-	
-	/// <inheritdoc/>
-	public override JsonTypeInfo? GetTypeInfo(Type type) => JsonTypeInfo.CreateJsonTypeInfo<TSelf>(Options);
 }

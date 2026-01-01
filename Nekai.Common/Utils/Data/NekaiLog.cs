@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Nekai.Common;
 
-[JsonSerializable(typeof(NekaiLog))]
 public partial class NekaiLog : JsonSerializableObject<NekaiLog>
 {
 	[JsonPropertyName("@t")]

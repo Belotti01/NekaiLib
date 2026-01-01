@@ -10,7 +10,6 @@ namespace Nekai.Common;
 /// Singleton implementation of a <see cref="JsonSerializableObject{TSelf}"/> that handles the general configuration shared among
 /// all Nekai applications.
 /// </summary>
-[JsonSerializable(typeof(NekaiGeneralConfiguration))]
 public partial class NekaiGeneralConfiguration : JsonSerializableObject<NekaiGeneralConfiguration>
 {
 	/// <summary>
