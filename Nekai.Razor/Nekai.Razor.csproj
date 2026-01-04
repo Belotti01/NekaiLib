@@ -6,7 +6,7 @@
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 	  <Version>8.3.0</Version>
 	  <Authors>Nekai</Authors>
-	  <TargetFramework>net8.0</TargetFramework>
+	  <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 	
 	<PropertyGroup>
@@ -27,9 +27,9 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorAnimate" Version="3.0.0" />
-    <PackageReference Include="Material.Icons" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.12" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="Material.Icons" Version="2.4.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
