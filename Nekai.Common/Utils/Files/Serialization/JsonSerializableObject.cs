@@ -25,7 +25,7 @@ where TSelf : JsonSerializableObject<TSelf>
 	public virtual PathString? FilePath { get; private set; }
 
     [JsonIgnore]
-    public JsonSerializerOptions Options { get; init; }
+    public JsonSerializerOptions Options { get; }
     
 	static JsonSerializableObject()
 	{
@@ -37,6 +37,7 @@ where TSelf : JsonSerializableObject<TSelf>
 		if(filePath is null)
 			return;
 
+		Options = options ?? new();
 		var result = _TrySetFilePath(filePath);
 		if(!result.IsSuccessful())
 		{
@@ -79,7 +80,7 @@ where TSelf : JsonSerializableObject<TSelf>
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Shared.Warning($"Deserialization of {typeof(TSelf).Name} \"{filePath}\" failed: {ex.GetFullMessage()}");
+			NekaiLogs.Shared.Warning("Deserialization of {type} \"{path}\" failed: {message}", typeof(TSelf).Name, filePath, ex.GetFullMessage());
 			return new(PathOperationResult.NotAllowed);
         }
 
@@ -159,7 +160,7 @@ where TSelf : JsonSerializableObject<TSelf>
 		{
 			var restoreResult = backupManager.TryRestore();
 			if(!restoreResult.IsSuccessful())
-				Exceptor.ThrowIfDebug($"Multiple failures while serializing and restoring an instance of {typeof(TSelf).Name} ({ex.Message}).");
+				NekaiLogs.Shared.Error("Multiple failures while serializing and restoring an instance of {type} ({message}).", typeof(TSelf).Name, ex.Message);
 			return PathOperationResult.UnknownFailure;
 		}
 

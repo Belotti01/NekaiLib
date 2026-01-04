@@ -103,7 +103,7 @@ public class FileBackupManager : IDisposable
 			return backupFilePath;
 		
 		// Write a log entry, it might be useful to identify permission errors and such.
-		NekaiLogs.Shared.Warning("Backup file could not be deleted: " + duplicateDeletionResult.GetMessage());
+		NekaiLogs.Shared.Warning("Backup file could not be deleted: {message}", duplicateDeletionResult.GetMessage());
 		return backupFilePath;
 	}
 
@@ -123,7 +123,7 @@ public class FileBackupManager : IDisposable
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Shared.Error("Could not restore backup file: {ex}", ex);
+			NekaiLogs.Shared.Error("Could not restore backup file: {ex}", ex.Message);
 
 			return NekaiPath.GetResultFromException(ex);
 		}
@@ -146,7 +146,7 @@ public class FileBackupManager : IDisposable
 			var result = BackupFilePath.EnsureDeletion();
 			if(!result.IsSuccessful())
 			{
-				NekaiLogs.Program.Warning($"Backup file could not be deleted upon disposal of object of type {GetType().Name}; {result.GetMessage()}");
+				NekaiLogs.Program.Warning("Backup file could not be deleted upon disposal of object of type {type}; {message}", GetType().Name, result.GetMessage());
 			}
 		}
 		BackupFileName = null;
