@@ -13,9 +13,6 @@ namespace Nekai.Common;
 public static class NekaiLogs
 {
 	private static readonly object _lock = new();
-	private static ILogger? _sharedLogger;
-	private static ILogger? _currentProgramLogger;
-	private static ILogger? _consoleLogger;
 
 	/// <summary>
 	/// Factory used to generate the <see cref="NekaiLogs"/>' <see cref="ILogger"/> instances.
@@ -32,8 +29,8 @@ public static class NekaiLogs
 	{
 		get
 		{
-			if(_sharedLogger is not null)
-				return _sharedLogger;
+			if(field is not null)
+				return field;
 
 			string? sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.SharedLogs, "Logs.json");
 			var sharedLogPath = PathString.Parse(sharedLogFilesTemplate);
@@ -46,18 +43,18 @@ public static class NekaiLogs
 
 			lock(_lock)
 			{
-				if(!_TryInstantiateGlobalLogger(ref _sharedLogger, sharedLogFilesTemplate))
+				if(!_TryInstantiateGlobalLogger(ref field, sharedLogFilesTemplate))
 					// Logger creation failed. Return a void logger, and retry on the next call.
 					return Logger.None;
 
 				if(sharedLogFilesTemplate is null)
 				{
-					_sharedLogger.Warning($"Logs folder could not be accessed or created. Logs will not be exported. (Error: {fileCreationResult.GetMessage()})");
+					field.Warning($"Logs folder could not be accessed or created. Logs will not be exported. (Error: {fileCreationResult.GetMessage()})");
 					Debug.Assert(!fileCreationResult.IsSuccessful(), "Logical error: the file was found.");
 				}
 			}
 
-			return _sharedLogger;
+			return field;
 		}
 	}
 
@@ -69,17 +66,17 @@ public static class NekaiLogs
 	{
 		get
 		{
-			if(_currentProgramLogger is not null)
-				return _currentProgramLogger;
+			if(field is not null)
+				return field;
 
 			string sharedLogFilesTemplate = Path.Combine(NekaiData.Directories.CurrentProgramLogs, "Logs.json");
 			lock(_lock)
 			{
-				if(!_TryInstantiateGlobalLogger(ref _currentProgramLogger, sharedLogFilesTemplate))
+				if(!_TryInstantiateGlobalLogger(ref field, sharedLogFilesTemplate))
 					// Logger creation failed. Return a void logger, and retry on the next call.
 					return Logger.None;
 			}
-			return _currentProgramLogger;
+			return field;
 		}
 	}
 
@@ -90,16 +87,16 @@ public static class NekaiLogs
 	{
 		get
 		{
-			if(_consoleLogger is not null)
-				return _consoleLogger;
+			if(field is not null)
+				return field;
 
 			lock(_lock)
 			{
-				if(!_TryInstantiateGlobalLogger(ref _consoleLogger, null))
+				if(!_TryInstantiateGlobalLogger(ref field, null))
 					// Logger creation failed. Return a void logger, and retry on the next call.
 					return Logger.None;
 			}
-			return _consoleLogger;
+			return field;
 		}
 	}
 
