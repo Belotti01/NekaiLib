@@ -88,7 +88,7 @@ public static class NekaiApp
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Program.Error($"An unhandled Exception was caught while closing the application: {ex.Message}");
+			NekaiLogs.Program.Error("An unhandled Exception was caught while closing the application: {exception}", ex.Message);
 		}
 		OnProcessExit = null;
 
@@ -170,7 +170,7 @@ public static class NekaiApp
 		}
 		catch(Exception ex)
 		{
-			NekaiLogs.Program.Error("Could not start browser process at url \"{url}\".", url);
+			NekaiLogs.Program.Error("Could not start browser process at url \"{url}\": {exception}.", url, ex.Message);
 			process = null;
 			return false;
 		}
