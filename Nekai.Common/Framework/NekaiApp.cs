@@ -151,4 +151,28 @@ public static class NekaiApp
 
 		return true;
 	}
+
+	/// <summary>
+	/// Attempt to start the system's default browser at the <paramref name="url"/> page.
+	/// </summary>
+	/// <param name="url">The page to open in the browser.</param>
+	/// <param name="process">The started <see cref="Process"/>, or <see langword="null"/> if the operation failed.</param>
+	/// <returns><see langword="true"/> if the browser was opened correctly; <see langword="false"/> otherwise.</returns>
+	public static bool TryLaunchInBrowser(string url, [NotNullWhen(true)] out Process? process)
+	{
+		try
+		{
+			process = Process.Start(new ProcessStartInfo(url)
+			{
+				UseShellExecute = true,
+			});
+			return process is not null;
+		}
+		catch(Exception ex)
+		{
+			NekaiLogs.Program.Error("Could not start browser process at url \"{url}\".", url);
+			process = null;
+			return false;
+		}
+	}
 }
