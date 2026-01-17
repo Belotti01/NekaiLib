@@ -34,10 +34,10 @@ where TSelf : JsonSerializableObject<TSelf>
 
 	protected JsonSerializableObject(PathString? filePath = null, JsonSerializerOptions? options = null)
 	{
+		Options = options ?? new();
 		if(filePath is null)
 			return;
 
-		Options = options ?? new();
 		var result = _TrySetFilePath(filePath);
 		if(!result.IsSuccessful())
 		{
