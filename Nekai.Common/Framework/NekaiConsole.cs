@@ -23,7 +23,7 @@ public static class NekaiConsole
 	/// </remarks>
 	public static TimeSpan SlowPrintDelay { get; set; }= TimeSpan.FromMilliseconds(20);
 	
-	private static readonly object _lock = new();
+	private static readonly Lock _lock = new();
 
 	/// <summary>
 	/// Print the framework signature to the console with the specified number of tabs.
@@ -95,7 +95,7 @@ public static class NekaiConsole
 		T? result;
 		string? input;
 		bool isValidInput;
-
+		
 		lock(_lock)
 		{
 			do

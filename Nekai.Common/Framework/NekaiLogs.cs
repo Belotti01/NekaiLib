@@ -12,7 +12,7 @@ namespace Nekai.Common;
 /// </summary>
 public static class NekaiLogs
 {
-	private static readonly object _lock = new();
+	private static readonly Lock _lock = new();
 
 	/// <summary>
 	/// Factory used to generate the <see cref="NekaiLogs"/>' <see cref="ILogger"/> instances.
