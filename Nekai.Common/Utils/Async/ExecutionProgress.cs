@@ -25,7 +25,7 @@ public sealed class ExecutionProgress : ReadOnlyExecutionProgress
 	}
 
 	/// <summary> Get a read-only reference to this instance. </summary>
-	/// <returns> This object casted to a <see cref="ReadOnlyExecutionProgress"/>. </returns>
+	/// <returns> This object cast to a <see cref="ReadOnlyExecutionProgress"/>. </returns>
 	public ReadOnlyExecutionProgress AsReadOnly()
 		=> this;
 }

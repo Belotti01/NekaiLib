@@ -33,7 +33,7 @@ public static class SpanEnumerationExtensions
 		return false;
 	}
 
-	public static bool ContainsAny<T>(this ReadOnlySpan<T> span, ReadOnlySpan<T> values)
+	public static bool ContainsAny<T>(this ReadOnlySpan<T> span, params ReadOnlySpan<T> values)
 		where T : struct
 	{
 		for(int i = values.Length - 1; i >= 0; --i)
@@ -43,8 +43,4 @@ public static class SpanEnumerationExtensions
 		}
 		return false;
 	}
-
-	public static bool ContainsAny<T>(this ReadOnlySpan<T> span, params T[] values)
-		where T : struct
-		=> span.ContainsAny(values.AsSpan());
 }

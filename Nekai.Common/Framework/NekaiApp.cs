@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using ConfigurationManager=Microsoft.Extensions.Configuration.ConfigurationManager;
@@ -45,19 +46,16 @@ public static class NekaiApp
 		{
 			if(_appSettings is not null)
 				return _appSettings;
-
-			// Avoid throwing an exception - if appsettings.json doesn't exist, return an empty IConfiguration.
-			if(!File.Exists("appsettings.json"))
-			{
-				NekaiLogs.Program.Warning("Attempted to read AppSettings, but no appsettings.json file was found.");
-				return new ConfigurationManager();
-			}
 			
-			_appSettings = new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json")
-				.Build();
-
-			return _appSettings;
+			var result = PathString.TryParse("appsettings.json");
+			if(result.IsSuccessful && TryParseConfigurationFile(result.Value, out IConfiguration? configuration))
+			{
+				_appSettings = configuration;
+				return configuration;
+			}
+			// Parsing failed.
+			NekaiLogs.Program.Warning("Attempted to read AppSettings, but no appsettings.json file was found.");
+			return new ConfigurationManager();
 		}
 	}
 	
@@ -130,5 +128,27 @@ public static class NekaiApp
 	{
 		var memoryInfo = GC.GetGCMemoryInfo();
 		return memoryInfo.MemoryLoadBytes > memoryInfo.HighMemoryLoadThresholdBytes;
+	}
+
+	/// <summary>
+	/// Attempt to parse a JSON configuration file, and return the resulting <see cref="IConfiguration"/>.
+	/// </summary>
+	/// <param name="path">The path of the configuration file to parse.</param>
+	/// <param name="configuration">The resulting <see cref="IConfiguration"/>, or <see langword="false"/> if the file at <paramref name="path"/> doesn't exist.</param>
+	/// <returns><see langword="true"/> if the <paramref name="configuration"/> has been built, or <see langword="false"/>
+	/// if the file at <paramref name="path"/> doesn't exist.</returns>
+	public static bool TryParseConfigurationFile(PathString path, [NotNullWhen(true)] out IConfiguration? configuration)
+	{
+		if(!path.IsExistingFile())
+		{
+			configuration = null;
+			return false;
+		}
+			
+		configuration = new ConfigurationBuilder()
+			.AddJsonFile(path)
+			.Build();
+
+		return true;
 	}
 }

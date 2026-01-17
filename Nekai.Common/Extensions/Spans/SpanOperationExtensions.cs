@@ -4,7 +4,7 @@ public static class SpanOperationExtensions
 {
 	public static int CountLines(this ReadOnlySpan<char> span)
 	{
-		var enumerator = span.GetEnumerator();
+		using var enumerator = span.GetEnumerator();
 		var count = 0;
 		while(enumerator.MoveNext())
 		{
