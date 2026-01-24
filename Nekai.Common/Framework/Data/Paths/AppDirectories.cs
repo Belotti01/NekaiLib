@@ -45,7 +45,13 @@ public static partial class NekaiData
 		/// <summary> Configurations folder of the current program. </summary>
 		public static PathString CurrentProgramConfiguration => _CreateProgramDirectory("Configuration");
 
-
+		/// <summary>
+		/// Retrieve the logs directory for a specific program.
+		/// </summary>
+		/// <param name="programName">The name of the program to retrieve the logs of.</param>
+		/// <returns>A <see cref="PathString"/> to the program's logs directory.</returns>
+		public static PathString ProgramLogs(string programName)
+			=> _CreateDirectory(ProgramsLogs, NekaiPath.RemoveInvalidPathChars(programName));
 
 		private static PathString _CreateProgramDirectory(params string[] relativePath)
 			=> _CreateDirectory(relativePath.Prepend<string>(_CreateLocalConfigDirectory("ProgramData", NekaiApp.Name)).ToArray());

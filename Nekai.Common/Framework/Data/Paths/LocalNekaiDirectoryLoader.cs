@@ -82,7 +82,7 @@ public static partial class NekaiData
 			catch(Exception ex)
 			{
 				// All attempts failed - the configuration can't be accessed nor created anew.
-				Exceptor.ThrowCritical(AppExitCode.SerializationError, ex.Message);
+				Exceptor.ThrowCritical(AppExitCode.SerializationError, ex.Message, ex);
 			}
 
 			return localPath;

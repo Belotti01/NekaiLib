@@ -47,11 +47,11 @@ public static class NekaiLogs
 					// Logger creation failed. Return a void logger, and retry on the next call.
 					return Logger.None;
 
-				if(sharedLogFilesTemplate is null)
-				{
-					field.Warning($"Logs folder could not be accessed or created. Logs will not be exported. (Error: {fileCreationResult.GetMessage()})");
-					Debug.Assert(!fileCreationResult.IsSuccessful(), "Logical error: the file was found.");
-				}
+				if(sharedLogFilesTemplate is not null)
+					return field;
+				
+				field.Warning("Logs folder could not be accessed or created. Logs will not be exported. (Error: {error})", fileCreationResult.GetMessage());
+				Debug.Assert(!fileCreationResult.IsSuccessful(), "Logical error: the file was found.");
 			}
 
 			return field;

@@ -51,6 +51,7 @@ public static class HttpClientExtensions
 	/// <summary>
 	/// Send an HTTP request to the <paramref name="requestUri"/> using the specified <paramref name="method"/>, optionally containing <paramref name="content"/>.
 	/// </summary>
+	/// <param name="client"> The client to use. </param>
 	/// <param name="method"> The HTTP method of the request. </param>
 	/// <param name="requestUri"> The endpoint to send the request to. </param>
 	/// <param name="content"> The content of the request. </param>

@@ -45,15 +45,14 @@ public static class NekaiParsing
 		if(type.IsEnum)
 			return Enum.Parse(type, value);
 
-		if(_TryGetTryParseMethod(type, out MethodInfo? method))
-		{
-			object?[] args = [ value, null ];
-			bool parsed = (bool)method.Invoke(null, args)!;
-			if(!parsed)
-				throw new FormatException($"Value could not be parsed to type {type.Name}.");
-			return args[1];
-		}
-		throw new InvalidTypeException(type, $"Parsing of string to type '{type.Name}' is not supported.");
+		if(!_TryGetTryParseMethod(type, out MethodInfo? method))
+			throw new InvalidTypeException(type, $"Parsing of string to type '{type.Name}' is not supported.");
+		
+		object?[] args = [ value, null ];
+		bool parsed = (bool)method.Invoke(null, args)!;
+		if(!parsed)
+			throw new FormatException($"Value could not be parsed to type {type.Name}.");
+		return args[1];
 	}
 
 	[Pure]
