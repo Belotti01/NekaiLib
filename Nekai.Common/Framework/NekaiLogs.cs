@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using Nekai.Common.Utils.Serializers;
 using Serilog;
 using Serilog.Core;
 using ILogger = Serilog.ILogger;
@@ -158,8 +159,7 @@ public static class NekaiLogs
 	public static NekaiLog[] Deserialize(PathString filePath)
 	{
 		// The runtime-tied file can't be accessed without the FileShare.ReadWrite option.
-
-        List<string> json = [];
+		List<string> json = [];
 		using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		var line = stream.ReadLine();
 		while(line is not null)
@@ -169,7 +169,7 @@ public static class NekaiLogs
 		}
 
 		NekaiLog[] fileLogs = json
-			.Select(x => JsonSerializer.Deserialize<NekaiLog>(x))
+			.Select(x => JsonSerializer.Deserialize(x, NekaiLogsDeserializer.Default.NekaiLog))
 			.ExceptNulls()
 			.ToArray();
 		return fileLogs;
