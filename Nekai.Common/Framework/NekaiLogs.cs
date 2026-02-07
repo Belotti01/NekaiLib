@@ -169,7 +169,18 @@ public static class NekaiLogs
 		}
 
 		NekaiLog[] fileLogs = json
-			.Select(x => JsonSerializer.Deserialize(x, NekaiLogsDeserializer.Default.NekaiLog))
+			.Select(x =>
+			{
+				try
+				{
+					return JsonSerializer.Deserialize(x, NekaiLogsDeserializer.Default.NekaiLog);
+				}
+				catch
+				{
+					return null;
+				}
+			})
+			// Ignore malformed log entries.
 			.ExceptNulls()
 			.ToArray();
 		return fileLogs;
