@@ -1,5 +1,4 @@
 using MailKit;
-using MailKit.Net.Smtp;
 using MimeKit;
 using Nekai.Common.Data;
 

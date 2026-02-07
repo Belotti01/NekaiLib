@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Nekai.Common;
+﻿namespace Nekai.Common;
 
 public static class BooleanExtensions
 {

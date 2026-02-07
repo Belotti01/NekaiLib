@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Nekai.Common.Utils.Serializers;
-using Serilog;
 using Serilog.Core;
 using ILogger = Serilog.ILogger;
 
@@ -153,7 +152,7 @@ public static class NekaiLogs
 			logs.AddRange(Deserialize(file));
 		}
 
-		return new(logs);
+		return [..logs];
 	}
 
 	public static NekaiLog[] Deserialize(PathString filePath)

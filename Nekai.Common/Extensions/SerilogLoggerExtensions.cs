@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Serilog;
-using Serilog.Core;
 using Serilog.Events;
 
 namespace Nekai.Common;

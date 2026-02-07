@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Microsoft.Extensions.Configuration;
@@ -38,19 +37,18 @@ public static class NekaiApp
 	/// <summary> Load the current host's network information. </summary>
 	public static IPHostEntry LocalHost => Dns.GetHostEntry(LocalHostName);
 
-	private static IConfiguration? _appSettings { get; set; }
 	/// <summary> The configuration stored in appsettings.json. </summary>
 	public static IConfiguration AppSettings
 	{
 		get
 		{
-			if(_appSettings is not null)
-				return _appSettings;
+			if(field is not null)
+				return field;
 			
 			var result = PathString.TryParse("appsettings.json");
 			if(result.IsSuccessful && TryParseConfigurationFile(result.Value, out IConfiguration? configuration))
 			{
-				_appSettings = configuration;
+				field = configuration;
 				return configuration;
 			}
 			// Parsing failed.

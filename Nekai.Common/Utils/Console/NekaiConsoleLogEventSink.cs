@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nekai.Common.Extensions;
+﻿using Nekai.Common.Extensions;
 using Serilog.Core;
 using Serilog.Events;
 
